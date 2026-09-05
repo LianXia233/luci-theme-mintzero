@@ -1972,3 +1972,25 @@ table.cbi-section-table tbody tr:hover td {
 		padding: 14px;
 	}
 }
+/* === Footer center + links (override) === */
+.mz-footer {
+	padding: 16px 24px;
+	text-align: center;
+	line-height: 1.8;
+}
+.mz-footer a {
+	color: var(--mz-color-primary);
+	text-decoration: none;
+	transition: opacity .15s;
+}
+.mz-footer a:hover {
+	opacity: .75;
+	text-decoration: underline;
+}
+.mz-footer-sep {
+	margin: 0 10px;
+	opacity: .5;
+}
+.mz-footer-brand {
+	font-weight: 600;
+}

@@ -17,7 +17,7 @@
 				<a href="{{ entityencode(version.disturl ?? '#', true) }}" target="_blank" rel="noreferrer">
 					{{ version.distname }} {{ version.distversion }} ({{ version.distrevision }})</a>
 				<span class="mz-footer-sep">|</span>
-				<span class="mz-footer-brand">mintzero</span>
+				<a href="https://github.com/LianXia233/luci-theme-mintzero" target="_blank" rel="noreferrer" class="mz-footer-brand">mintzero</a>
 			</span>
 		</footer>
 		<script>L.require('menu-mintzero')</script>
