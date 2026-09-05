@@ -2457,3 +2457,144 @@ table.cbi-section-table tbody tr:hover td {
 	padding: 6px 12px;
 	font-size: .8rem;
 }
+/* ================================================================
+ * Fix: titles left-aligned, cards centered
+ * ================================================================ */
+
+/* Section titles: left-aligned, not centered */
+.mz-section-title {
+	text-align: left !important;
+	padding-left: 4px;
+}
+.mz-subtitle {
+	text-align: left !important;
+}
+
+/* All grid containers: center cards, use auto-fit to collapse empty columns */
+.mz-info-cards,
+.mz-rings,
+.mz-port-grid,
+.mz-net-grid,
+.mz-sys-grid,
+.mz-wifi-radios {
+	justify-content: center !important;
+	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+}
+.mz-net-grid {
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)) !important;
+}
+.mz-sys-grid {
+	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+}
+.mz-wifi-radios {
+	grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+}
+.mz-rings {
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+}
+.mz-info-cards {
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+}
+
+/* Desktop: fixed column counts but still centered */
+@media (min-width: 1024px) {
+	.mz-info-cards {
+		grid-template-columns: repeat(4, minmax(0, 280px)) !important;
+		justify-content: center !important;
+	}
+	.mz-rings {
+		grid-template-columns: repeat(3, minmax(0, 320px)) !important;
+		justify-content: center !important;
+	}
+	.mz-port-grid {
+		grid-template-columns: repeat(4, minmax(0, 240px)) !important;
+		justify-content: center !important;
+	}
+	.mz-net-grid {
+		grid-template-columns: repeat(2, minmax(0, 400px)) !important;
+		justify-content: center !important;
+	}
+	.mz-sys-grid {
+		grid-template-columns: repeat(3, minmax(0, 340px)) !important;
+		justify-content: center !important;
+	}
+	.mz-wifi-radios {
+		grid-template-columns: repeat(2, minmax(0, 320px)) !important;
+		justify-content: center !important;
+	}
+}
+
+/* Table cards: centered, max-width constrained */
+.mz-table-card {
+	max-width: 900px;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+
+/* Empty state: centered */
+.mz-empty-state {
+	max-width: 600px;
+	margin-left: auto !important;
+	margin-right: auto !important;
+}
+/* ================================================================
+ * Fix: cards truly centered (fixed max column width, no 1fr stretch)
+ * ================================================================ */
+
+/* Base: fixed max width so cards don't stretch, leftover space centered */
+.mz-info-cards {
+	grid-template-columns: repeat(auto-fit, minmax(180px, 220px)) !important;
+	justify-content: center !important;
+}
+.mz-rings {
+	grid-template-columns: repeat(auto-fit, minmax(260px, 300px)) !important;
+	justify-content: center !important;
+}
+.mz-port-grid {
+	grid-template-columns: repeat(auto-fit, minmax(200px, 240px)) !important;
+	justify-content: center !important;
+}
+.mz-net-grid {
+	grid-template-columns: repeat(auto-fit, minmax(300px, 400px)) !important;
+	justify-content: center !important;
+}
+.mz-sys-grid {
+	grid-template-columns: repeat(auto-fit, minmax(240px, 300px)) !important;
+	justify-content: center !important;
+}
+.mz-wifi-radios {
+	grid-template-columns: repeat(auto-fit, minmax(220px, 320px)) !important;
+	justify-content: center !important;
+}
+
+/* Desktop: fixed pixel columns for true centering */
+@media (min-width: 1024px) {
+	.mz-info-cards {
+		grid-template-columns: repeat(4, 220px) !important;
+	}
+	.mz-rings {
+		grid-template-columns: repeat(3, 300px) !important;
+	}
+	.mz-port-grid {
+		grid-template-columns: repeat(4, 240px) !important;
+	}
+	.mz-net-grid {
+		grid-template-columns: repeat(2, 400px) !important;
+	}
+	.mz-sys-grid {
+		grid-template-columns: repeat(3, 300px) !important;
+	}
+	.mz-wifi-radios {
+		grid-template-columns: repeat(2, 320px) !important;
+	}
+}
+
+/* Ultra-wide: more columns but still centered */
+@media (min-width: 1400px) {
+	.mz-port-grid {
+		grid-template-columns: repeat(4, 260px) !important;
+	}
+	.mz-sys-grid {
+		grid-template-columns: repeat(4, 280px) !important;
+	}
+}
