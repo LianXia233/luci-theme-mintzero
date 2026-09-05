@@ -14,6 +14,11 @@ on:
 permissions:
   contents: write
 
+# Cancel superseded runs (e.g. a second push while the first is still building)
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   VERSION: ${{ github.ref_type == 'tag' && github.ref_name || (github.event.inputs.release_tag || 'nightly') }}
 
@@ -25,69 +30,67 @@ jobs:
       matrix:
         include:
           - target: x86/64
+            sdk_dir: x86/64
             suffix: x86_64
           - target: mediatek/filogic
+            sdk_dir: mediatek/filogic
             suffix: mediatek_filogic
 
     steps:
       - name: Checkout this repo (theme sources)
         uses: actions/checkout@v4
 
-      - name: Checkout OpenWrt main
+      # This package is pure data (htdocs / root / ucode templates / po, no
+      # src/), so luci.mk's Build/Compile is a no-op. Compiling the whole
+      # OpenWrt tools + toolchain from source (~40-60 min) was pure waste:
+      # the official prebuilt SDK ships the cross-toolchain + host tools, so
+      # we only build luci-base/host (po2lmo + jsmin) and assemble the ipk.
+      # Old flow: git clone openwrt.git + feeds update/install -a +
+      # make tools/install + make toolchain/install  ->  new flow: SDK.
+      - name: Download prebuilt OpenWrt SDK
         run: |
-          git clone --depth 1 https://github.com/openwrt/openwrt.git openwrt
-          cd openwrt
-          git log -1 --format='OpenWrt main %h %cd'
+          base="https://downloads.openwrt.org/snapshots/targets/${{ matrix.sdk_dir }}"
+          sdk=$(curl -fsSL "$base/" | grep -oE 'openwrt-sdk-[^"<]+\.tar\.zst' | head -n1)
+          [ -n "$sdk" ] || { echo "::error::SDK tarball not found under $base"; exit 1; }
+          curl -fsSLO "$base/$sdk"
+          tar --zstd -xf "$sdk"
+          mv openwrt-sdk-* sdk
 
-      - name: Checkout LuCI master
+      - name: Set up LuCI feed (luci only, no -a over all feeds)
         run: |
-          cd openwrt
-          git clone --depth 1 https://github.com/openwrt/luci.git feeds/luci
-
-      - name: Install theme package
-        run: |
-          cd openwrt
+          cd sdk
+          # Replace the SDK's multi-feed default with the single feed we need.
+          echo "src-git luci https://github.com/openwrt/luci.git;master" > feeds.conf.default
+          ./scripts/feeds update luci
           mkdir -p feeds/luci/themes/luci-theme-mintzero
           cp -a "$GITHUB_WORKSPACE"/theme/* feeds/luci/themes/luci-theme-mintzero/
-
-      - name: Install feeds
-        run: |
-          cd openwrt
-          ./scripts/feeds update -a
           ./scripts/feeds install -a
 
       - name: Configure
         run: |
-          cd openwrt
-          make defconfig
-
-      - name: Enable theme in config
-        run: |
-          cd openwrt
+          cd sdk
+          # JS minification stays on: jsmin ships with luci-base/host.
+          # CSS minification (csstidy) lives in the large packages feed and is
+          # deliberately disabled - pulling that feed would defeat this fast path.
           echo "CONFIG_PACKAGE_luci-theme-mintzero=m" >> .config
+          echo "CONFIG_LUCI_JSMIN=y" >> .config
+          echo "CONFIG_LUCI_CSSTIDY=n" >> .config
           make defconfig
           grep -q "CONFIG_PACKAGE_luci-theme-mintzero=m" .config || {
-            echo "theme package not selectable"; exit 1;
+            echo "::error::theme package not selectable"; exit 1;
           }
-
-      - name: Build tools & toolchain
-        run: |
-          cd openwrt
-          make tools/install -j$(nproc) || make tools/install -j1 V=s
-          make toolchain/install -j$(nproc) || make toolchain/install -j1 V=s
 
       - name: Build theme package
         run: |
-          cd openwrt
-          make package/luci-theme-mintzero/compile V=s -j$(nproc) || \
-            make package/luci-theme-mintzero/compile V=s -j1
+          cd sdk
+          make package/feeds/luci/luci-theme-mintzero/compile V=s -j$(nproc)
 
       - name: Collect artifacts
         run: |
-          cd openwrt
+          cd sdk
           mkdir -p "$GITHUB_WORKSPACE"/artifacts
           find bin/packages -name 'luci-theme-mintzero*' -exec cp {} "$GITHUB_WORKSPACE"/artifacts/ \;
-          
+
           # Rename artifacts with version suffix for clarity
           cd "$GITHUB_WORKSPACE"/artifacts
           for file in *; do
@@ -108,11 +111,11 @@ jobs:
         id: release_info
         run: |
           if [[ "${{ env.VERSION }}" == "nightly" ]]; then
-            echo "is_prerelease=true" >> $GITHUB_OUTPUT
-            echo "release_name=nightly" >> $GITHUB_OUTPUT
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "release_name=nightly" >> "$GITHUB_OUTPUT"
           else
-            echo "is_prerelease=false" >> $GITHUB_OUTPUT
-            echo "release_name=${{ env.VERSION }}" >> $GITHUB_OUTPUT
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "release_name=${{ env.VERSION }}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload to release

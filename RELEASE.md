@@ -31,7 +31,7 @@
 
 ### 产物说明
 
-编译产物为架构特定的 OpenWrt 安装包：
+编译产物为架构无关的 OpenWrt 安装包（主题无 `src/`，luci.mk 设 `PKGARCH=all`；双目标构建仅作验证，产物内容相同）：
 - `luci-theme-mintzero-v1.0.0-x86_64.ipk` - x86_64 架构
 - `luci-theme-mintzero-v1.0.0-mediatek_filogic.ipk` - MediaTek Filogic 架构
 

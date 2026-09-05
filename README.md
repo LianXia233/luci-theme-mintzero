@@ -53,6 +53,7 @@ theme/                        # 主题源码（放入 buildroot 的 feeds/luci/t
 
 推送到 `main` 分支自动触发构建（x86_64 与 mediatek/filogic 两个目标）：
 
+- 基于官方**预编译 SDK**（跳过工具链编译，单次构建从约 40-60 分钟降到 5-10 分钟）
 - 构建产物上传至 workflow artifacts
 - 同时发布到 `nightly` prerelease
 
@@ -60,16 +61,49 @@ theme/                        # 主题源码（放入 buildroot 的 feeds/luci/t
 
 ## 本地编译
 
-需要当前 OpenWrt buildroot 及 LuCI feed。把 `theme/` 目录内容放入 buildroot 的 `feeds/luci/themes/luci-theme-mintzero/`，然后：
+本主题是纯数据包（无 C/Lua 源码，luci.mk 的 `Build/Compile` 为空），构建实际只有文件装配 + po 转 lmo。**不要**为它编译整套 OpenWrt 工具链——用官方预编译 SDK 最快（几分钟），或只在完整 buildroot 里启用 ccache。
+
+### 方式一：官方预编译 SDK（推荐）
+
+```sh
+# 以 x86/64 为例；其他目标把路径换成对应的 targets/架构/
+BASE=https://downloads.openwrt.org/snapshots/targets/x86/64
+SDK=$(curl -fsSL "$BASE/" | grep -o 'openwrt-sdk-.*tar.zst' | head -1)
+curl -fsSLO "$BASE/$SDK"
+tar --zstd -xf "$SDK"
+mv openwrt-sdk-* sdk
+cd sdk
+
+echo "src-git luci https://github.com/openwrt/luci.git;master" > feeds.conf.default
+./scripts/feeds update luci
+mkdir -p feeds/luci/themes/luci-theme-mintzero
+cp -a /本地路径/luci-theme-mintzero/theme/* feeds/luci/themes/luci-theme-mintzero/
+./scripts/feeds install -a
+
+echo "CONFIG_PACKAGE_luci-theme-mintzero=m" >> .config
+make defconfig
+make package/feeds/luci/luci-theme-mintzero/compile -j$(nproc) V=s
+```
+
+### 方式二：完整 buildroot
+
+把 `theme/` 目录内容放入 buildroot 的 `feeds/luci/themes/luci-theme-mintzero/`，然后：
 
 ```sh
 ./scripts/feeds update -a
 ./scripts/feeds install luci-theme-mintzero
 make menuconfig   # LuCI -> 4. Themes -> luci-theme-mintzero
-make package/luci-theme-mintzero/compile V=s
+make package/luci-theme-mintzero/compile -j$(nproc) V=s
 ```
 
-构建出的 `.apk`/`.ipk` 安装到设备即可。CSS/JS/ut 压缩由 LuCI 标准构建选项处理。
+buildroot 场景强烈建议启用 ccache（首次仍要编译工具链，之后增量编译显著加速）：
+
+```sh
+echo "CONFIG_CCACHE=y" >> .config
+make defconfig
+```
+
+构建出的 `.apk`/`.ipk` 安装到设备即可。JS 压缩由 luci-base 的 `jsmin` 处理；CSS 压缩（csstidy）位于 packages feed，默认未启用。包为架构无关的 `all` 包。
 
 ## 主题启用
 
