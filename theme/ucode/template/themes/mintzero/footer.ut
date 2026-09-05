@@ -120,6 +120,7 @@
       return '<svg class="mz-ring" viewBox="0 0 120 120" aria-hidden="true">' +
         '<circle class="mz-ring-bg" cx="60" cy="60" r="52"></circle>' +
         '<circle class="mz-ring-fg ' + cls + '" cx="60" cy="60" r="52" stroke-dasharray="' + CIRC + '" stroke-dashoffset="' + offset + '"></circle>' +
+        '<text class="mz-ring-text" x="60" y="67" text-anchor="middle">' + pct + '%</text>' +
         '</svg>';
     }
 
@@ -135,18 +136,15 @@
       '<div class="mz-rings">' +
         '<div class="mz-ring-card">' + ring(parseInt(cpu, 10), 'mz-ring-cpu') +
           '<div class="mz-ring-info"><div class="mz-ring-title">CPU</div>' +
-          '<div class="mz-ring-pct">' + cpu + '%</div>' +
           (temp ? '<div class="mz-ring-sub">温度 ' + temp + '°C</div>' : '') + '</div></div>' +
         '<div class="mz-ring-card">' + ring(mem.pct, 'mz-ring-mem') +
           '<div class="mz-ring-info"><div class="mz-ring-title">内存</div>' +
           '<div class="mz-ring-pct">' + mem.used + ' / ' + mem.total + ' ' + mem.totalUnit + '</div>' +
-          '<div class="mz-ring-sub">' + mem.pct + '% 已使用</div>' +
           '<div class="mz-mem-detail">' + memDetails.map(function (d) { return '<span>' + d.label + ' ' + d.value + '</span>'; }).join('') + '</div>' +
           '</div></div>' +
         '<div class="mz-ring-card">' + ring(storage.pct, 'mz-ring-storage') +
           '<div class="mz-ring-info"><div class="mz-ring-title">存储</div>' +
           '<div class="mz-ring-pct">' + storage.used + ' / ' + storage.total + ' ' + storage.totalUnit + '</div>' +
-          '<div class="mz-ring-sub">' + storage.pct + '% 已使用</div>' +
           (tempInfo ? '<div class="mz-ring-sub">临时 ' + tempInfo + '</div>' : '') + '</div></div>' +
       '</div>';
 

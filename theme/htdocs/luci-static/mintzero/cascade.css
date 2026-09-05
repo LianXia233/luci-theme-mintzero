@@ -1485,3 +1485,15 @@ table.cbi-section-table th {
 .cbi-button-edit {
 	background: var(--mz-color-surface-2);
 }
+/* Ring percentage text inside circle */
+.mz-ring text.mz-ring-text {
+	font-size: 18px;
+	font-weight: 700;
+	fill: var(--mz-color-text);
+	font-family: inherit;
+}
+@media (max-width: 640px) {
+	.mz-ring text.mz-ring-text {
+		font-size: 15px;
+	}
+}
