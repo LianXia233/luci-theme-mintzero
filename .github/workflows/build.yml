@@ -21,6 +21,9 @@ jobs:
             suffix: mediatek_filogic
 
     steps:
+      - name: Checkout this repo (theme sources)
+        uses: actions/checkout@v4
+
       - name: Checkout OpenWrt main
         run: |
           git clone --depth 1 https://github.com/openwrt/openwrt.git openwrt
