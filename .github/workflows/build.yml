@@ -47,13 +47,30 @@ jobs:
       # we only build luci-base/host (po2lmo + jsmin) and assemble the ipk.
       # Old flow: git clone openwrt.git + feeds update/install -a +
       # make tools/install + make toolchain/install  ->  new flow: SDK.
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y zstd
+
       - name: Download prebuilt OpenWrt SDK
         run: |
+          set -e
           base="https://downloads.openwrt.org/snapshots/targets/${{ matrix.sdk_dir }}"
           sdk=$(curl -fsSL "$base/" | grep -oE 'openwrt-sdk-[^"<]+\.tar\.zst' | head -n1)
           [ -n "$sdk" ] || { echo "::error::SDK tarball not found under $base"; exit 1; }
-          curl -fsSLO "$base/$sdk"
-          tar --zstd -xf "$sdk"
+          echo "Downloading SDK: $sdk"
+          curl -fsSLO "$base/$sdk" || { echo "::error::Failed to download $sdk"; exit 1; }
+          echo "Extracting SDK ($(ls -lh "$sdk" | awk '{print $5}'))..."
+          if tar --zstd -xf "$sdk" 2>&1; then
+            echo "Successfully extracted with tar --zstd"
+          else
+            echo "tar --zstd failed, trying zstd + tar separately"
+            zstd -d "$sdk" -o "${sdk%.zst}"
+            tar -xf "${sdk%.zst}"
+          fi
+          echo "Renaming extracted directory..."
+          ls -la | grep openwrt-sdk || { echo "::error::No openwrt-sdk directory found after extraction"; exit 1; }
           mv openwrt-sdk-* sdk
 
       - name: Set up LuCI feed (luci only, no -a over all feeds)
