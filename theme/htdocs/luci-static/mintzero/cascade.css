@@ -1497,3 +1497,478 @@ table.cbi-section-table th {
 		font-size: 15px;
 	}
 }
+/* ================================================================
+ * UI OVERHAUL - comprehensive rewrite
+ * ================================================================ */
+
+/* Fix ring text direction: SVG is rotated -90deg, counter-rotate text */
+.mz-ring text.mz-ring-text {
+	transform: rotate(90deg);
+	transform-origin: 60px 60px;
+	transform-box: fill-box;
+	transform-origin: center;
+}
+
+/* Hide duplicate bottom modemenu (管理权 already in top menu) */
+.mz-sidebar-footer #modemenu,
+#modemenu {
+	display: none !important;
+}
+
+/* === Buttons - unified === */
+.btn,
+.cbi-button,
+button.cbi-button,
+input[type="submit"].cbi-button,
+input[type="button"].cbi-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 8px 18px;
+	border: 1px solid var(--mz-color-border);
+	border-radius: 8px;
+	background: var(--mz-color-surface);
+	color: var(--mz-color-text);
+	font-size: .88rem;
+	font-family: inherit;
+	font-weight: 500;
+	line-height: 1.4;
+	cursor: pointer;
+	transition: all .15s ease;
+	white-space: nowrap;
+	text-decoration: none;
+}
+.btn:hover,
+.cbi-button:hover {
+	border-color: var(--mz-color-primary);
+	background: var(--mz-color-primary-soft);
+	color: var(--mz-color-primary);
+}
+.btn:active,
+.cbi-button:active {
+	transform: translateY(1px);
+}
+.btn:disabled,
+.cbi-button:disabled {
+	opacity: .5;
+	cursor: not-allowed;
+	transform: none;
+}
+
+/* Primary / positive */
+.btn.important,
+.cbi-button.important,
+.cbi-button-positive.important,
+.cbi-button-apply.important {
+	background: var(--mz-color-primary);
+	border-color: var(--mz-color-primary);
+	color: #fff;
+}
+.btn.important:hover,
+.cbi-button.important:hover,
+.cbi-button-apply.important:hover {
+	background: var(--mz-color-primary-hover);
+	border-color: var(--mz-color-primary-hover);
+	color: #fff;
+}
+
+/* Save / positive */
+.cbi-button-save,
+.cbi-button-positive {
+	background: var(--mz-color-success-soft);
+	border-color: transparent;
+	color: var(--mz-color-success);
+}
+.cbi-button-save:hover,
+.cbi-button-positive:hover {
+	background: var(--mz-color-success);
+	border-color: var(--mz-color-success);
+	color: #fff;
+}
+
+/* Reset / neutral */
+.cbi-button-reset,
+.cbi-button-neutral,
+.cbi-button-edit {
+	background: var(--mz-color-surface-2);
+	border-color: transparent;
+	color: var(--mz-color-text);
+}
+.cbi-button-reset:hover,
+.cbi-button-neutral:hover {
+	background: var(--mz-color-border);
+}
+
+/* Negative / danger */
+.cbi-button-negative,
+.cbi-button-remove {
+	background: var(--mz-color-danger-soft);
+	border-color: transparent;
+	color: var(--mz-color-danger);
+}
+.cbi-button-negative:hover,
+.cbi-button-remove:hover {
+	background: var(--mz-color-danger);
+	border-color: var(--mz-color-danger);
+	color: #fff;
+}
+
+/* === cbi-dropdown apply button === */
+.cbi-dropdown {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	user-select: none;
+	padding: 8px 14px;
+}
+.cbi-dropdown > ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: inline;
+}
+.cbi-dropdown > ul > li {
+	display: none;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.cbi-dropdown > ul > li[selected] {
+	display: inline;
+	font-weight: 500;
+}
+.cbi-dropdown.open > ul {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	z-index: 100;
+	min-width: 180px;
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: 8px;
+	box-shadow: 0 4px 16px rgba(0,0,0,.12);
+	padding: 4px;
+	margin: 0;
+	display: block;
+}
+.cbi-dropdown.open > ul > li {
+	display: block;
+	padding: 8px 12px;
+	border-radius: 6px;
+	color: var(--mz-color-text);
+	font-size: .88rem;
+	font-weight: 400;
+	white-space: nowrap;
+}
+.cbi-dropdown.open > ul > li:hover {
+	background: var(--mz-color-surface-2);
+}
+.cbi-dropdown .more,
+.cbi-dropdown .open {
+	margin-left: 8px;
+	font-size: .75rem;
+	opacity: .7;
+}
+
+/* === Form inputs === */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"],
+select,
+textarea {
+	padding: 8px 12px;
+	border: 1px solid var(--mz-color-border);
+	border-radius: 8px;
+	background: var(--mz-color-surface);
+	color: var(--mz-color-text);
+	font-size: .88rem;
+	font-family: inherit;
+	line-height: 1.4;
+	transition: border-color .15s, box-shadow .15s;
+}
+input:focus,
+select:focus,
+textarea:focus {
+	border-color: var(--mz-color-primary);
+	box-shadow: 0 0 0 3px var(--mz-color-primary-soft);
+	outline: none;
+}
+input[type="checkbox"],
+input[type="radio"] {
+	width: 16px;
+	height: 16px;
+	accent-color: var(--mz-color-primary);
+	cursor: pointer;
+}
+
+/* === Form rows === */
+.cbi-value {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 8px 16px;
+	padding: 10px 0;
+	border-bottom: 1px solid var(--mz-color-border);
+}
+.cbi-value:last-child {
+	border-bottom: none;
+}
+.cbi-value-title {
+	flex: 0 0 180px;
+	min-width: 140px;
+	color: var(--mz-color-text-muted);
+	font-size: .88rem;
+	padding-top: 9px;
+}
+.cbi-value-field {
+	flex: 1 1 300px;
+	min-width: 200px;
+}
+.cbi-value-field input,
+.cbi-value-field select,
+.cbi-value-field textarea {
+	width: 100%;
+}
+.cbi-value-description {
+	font-size: .8rem;
+	color: var(--mz-color-text-muted);
+	margin-top: 4px;
+}
+
+/* === Tables === */
+table.table,
+table.cbi-section-table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	margin: 8px 0;
+	font-size: .88rem;
+}
+table.table th,
+table.table td,
+table.cbi-section-table th,
+table.cbi-section-table td {
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--mz-color-border);
+	text-align: left;
+	vertical-align: middle;
+}
+table.table thead th,
+table.cbi-section-table thead th,
+.table .table-titles .td {
+	font-weight: 600;
+	color: var(--mz-color-text-muted);
+	font-size: .8rem;
+	text-transform: uppercase;
+	letter-spacing: .03em;
+	background: var(--mz-color-surface-2);
+}
+table.table tbody tr:hover td,
+table.cbi-section-table tbody tr:hover td {
+	background: var(--mz-color-surface-2);
+}
+
+/* === Cards / sections === */
+.cbi-section {
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: 12px;
+	padding: 20px;
+	margin: 16px 0;
+}
+.cbi-section h2,
+.cbi-section h3,
+.cbi-section-title {
+	font-size: 1.05rem;
+	font-weight: 600;
+	margin: 0 0 16px 0;
+	padding-bottom: 12px;
+	border-bottom: 1px solid var(--mz-color-border);
+}
+.cbi-section-actions,
+.cbi-page-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+	padding: 16px 0 0 0;
+	margin-top: 16px;
+	border-top: 1px solid var(--mz-color-border);
+}
+
+/* === Tabs === */
+.cbi-tabmenu {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0;
+	border-bottom: 2px solid var(--mz-color-border);
+	margin-bottom: 20px;
+	padding: 0;
+	list-style: none;
+}
+.cbi-tabmenu > li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.cbi-tabmenu > li > a {
+	display: block;
+	padding: 10px 20px;
+	color: var(--mz-color-text-muted);
+	text-decoration: none;
+	font-size: .9rem;
+	font-weight: 500;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -2px;
+	transition: color .15s, border-color .15s;
+}
+.cbi-tabmenu > li > a:hover {
+	color: var(--mz-color-primary);
+}
+.cbi-tabmenu > li.active > a {
+	color: var(--mz-color-primary);
+	border-bottom-color: var(--mz-color-primary);
+}
+
+/* === Info / error / warning boxes === */
+.errorbox,
+.warningbox,
+.infobox,
+.cbi-section-error {
+	padding: 14px 18px;
+	border-radius: 10px;
+	margin: 14px 0;
+	font-size: .88rem;
+	line-height: 1.5;
+}
+.errorbox,
+.cbi-section-error {
+	background: var(--mz-color-danger-soft);
+	color: var(--mz-color-danger);
+	border: 1px solid var(--mz-color-danger);
+}
+.warningbox {
+	background: #fff7e6;
+	color: #ad6800;
+	border: 1px solid #ffd591;
+}
+.infobox {
+	background: var(--mz-color-primary-soft);
+	color: var(--mz-color-primary);
+	border: 1px solid var(--mz-color-primary);
+}
+
+/* === ifacebox / status cards === */
+.ifacebox {
+	border: 1px solid var(--mz-color-border);
+	border-radius: 12px;
+	overflow: hidden;
+	background: var(--mz-color-surface);
+	margin: 10px 0;
+}
+.ifacebox-head {
+	padding: 10px 16px;
+	background: var(--mz-color-surface-2);
+	font-size: .85rem;
+	font-weight: 600;
+}
+.ifacebox-head.active {
+	background: var(--mz-color-success-soft);
+	color: var(--mz-color-success);
+}
+.ifacebox-body {
+	padding: 16px;
+	font-size: .88rem;
+	line-height: 1.7;
+}
+
+/* === Progress bars === */
+.cbi-progressbar {
+	position: relative;
+	height: 8px;
+	background: var(--mz-color-surface-2);
+	border-radius: 999px;
+	overflow: hidden;
+}
+.cbi-progressbar > div {
+	height: 100%;
+	background: var(--mz-color-primary);
+	border-radius: 999px;
+	transition: width .3s ease;
+}
+
+/* === Sidebar menu polish === */
+.mz-menu-group > a {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 10px 16px;
+	color: var(--mz-color-text);
+	text-decoration: none;
+	font-size: .9rem;
+	font-weight: 500;
+	border-radius: 8px;
+	transition: background .15s;
+}
+.mz-menu-group > a::after {
+	content: "▾";
+	font-size: .7rem;
+	opacity: .5;
+	transition: transform .2s;
+}
+.mz-menu-group.mz-collapsed > a::after {
+	transform: rotate(-90deg);
+}
+.mz-menu-group > a:hover {
+	background: var(--mz-color-surface-2);
+}
+.mz-menu-group > ul {
+	padding-left: 12px;
+}
+.mz-menu-group > ul > li > a {
+	display: block;
+	padding: 8px 16px;
+	color: var(--mz-color-text-muted);
+	text-decoration: none;
+	font-size: .88rem;
+	border-radius: 8px;
+	transition: all .15s;
+}
+.mz-menu-group > ul > li > a:hover,
+.mz-menu-group > ul > li.active > a {
+	background: var(--mz-color-primary-soft);
+	color: var(--mz-color-primary);
+}
+
+/* === Responsive === */
+@media (max-width: 768px) {
+	.cbi-value {
+		flex-direction: column;
+		gap: 4px;
+	}
+	.cbi-value-title {
+		flex: none;
+		min-width: 0;
+		padding-top: 0;
+	}
+	.cbi-page-actions,
+	.cbi-section-actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.cbi-page-actions .btn,
+	.cbi-section-actions .btn,
+	.cbi-page-actions .cbi-button,
+	.cbi-section-actions .cbi-button {
+		width: 100%;
+	}
+	.cbi-section {
+		padding: 14px;
+	}
+}
