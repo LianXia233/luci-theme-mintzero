@@ -2356,3 +2356,104 @@ table.cbi-section-table tbody tr:hover td {
 		--mz-sidebar-width: 256px;
 	}
 }
+/* ================================================================
+ * Polish: hide page title, uniform sys cards, apply button, notices
+ * ================================================================ */
+
+/* Hide leftover LuCI page title (h2) - our panels have their own titles */
+#mz-view > h2 {
+	display: none !important;
+}
+#mz-view > div:empty {
+	display: none !important;
+}
+
+/* System info: uniform card height, no wrapping values */
+.mz-sys-item {
+	min-height: 48px;
+	align-items: center;
+}
+.mz-sys-value {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 65%;
+}
+.mz-sys-label {
+	flex-shrink: 0;
+	max-width: 35%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Apply button: blue even without .important class */
+.cbi-button-apply {
+	background: var(--mz-color-primary) !important;
+	border-color: var(--mz-color-primary) !important;
+	color: #fff !important;
+	font-weight: 600;
+	box-shadow: 0 2px 8px rgba(59, 130, 246, .25);
+	transition: all .15s ease;
+}
+.cbi-button-apply:hover {
+	background: var(--mz-color-primary-hover) !important;
+	border-color: var(--mz-color-primary-hover) !important;
+	box-shadow: 0 4px 12px rgba(59, 130, 246, .35);
+	transform: translateY(-1px);
+}
+.cbi-button-apply:active {
+	transform: translateY(0);
+	box-shadow: 0 1px 4px rgba(59, 130, 246, .2);
+}
+
+/* Save/apply notice / change list */
+.cbi-change-list,
+.alert-message,
+.apply-notice,
+#xhr_poll_status {
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-left: 4px solid var(--mz-color-primary);
+	border-radius: 10px;
+	padding: 14px 18px;
+	margin: 14px 0;
+	font-size: .88rem;
+	color: var(--mz-color-text);
+	box-shadow: 0 2px 8px rgba(0,0,0,.06);
+}
+.alert-message.warning {
+	border-left-color: var(--mz-color-warning, #faad14);
+	background: #fffbe6;
+}
+.alert-message.error {
+	border-left-color: var(--mz-color-danger);
+	background: var(--mz-color-danger-soft);
+}
+.alert-message.success {
+	border-left-color: var(--mz-color-success);
+	background: var(--mz-color-success-soft);
+}
+.cbi-change-list h3,
+.alert-message h4 {
+	margin: 0 0 8px 0;
+	font-size: .95rem;
+	font-weight: 600;
+}
+.cbi-change-list ul {
+	margin: 8px 0;
+	padding-left: 20px;
+}
+.cbi-change-list li {
+	padding: 2px 0;
+	font-size: .85rem;
+}
+
+/* Loading indicator */
+#xhr_poll_status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 12px;
+	font-size: .8rem;
+}
