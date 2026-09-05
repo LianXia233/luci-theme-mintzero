@@ -2719,3 +2719,34 @@ table.cbi-section-table tbody tr:hover td {
 		grid-template-columns: repeat(2, 1fr) !important;
 	}
 }
+/* ================================================================
+ * Fix: system info all items in one card
+ * ================================================================ */
+.mz-sys-grid {
+	background: var(--mz-color-surface) !important;
+	border: 1px solid var(--mz-color-border) !important;
+	border-radius: 12px !important;
+	padding: 6px 18px !important;
+	gap: 0 !important;
+	overflow: hidden;
+}
+.mz-sys-item {
+	background: transparent !important;
+	border: none !important;
+	border-radius: 0 !important;
+	padding: 12px 4px !important;
+	border-bottom: 1px solid var(--mz-color-border) !important;
+	min-height: auto !important;
+}
+.mz-sys-item:last-child {
+	border-bottom: none !important;
+}
+/* Keep 2 columns on desktop, 1 on mobile */
+.mz-sys-grid {
+	grid-template-columns: repeat(2, 1fr) !important;
+}
+@media (max-width: 640px) {
+	.mz-sys-grid {
+		grid-template-columns: 1fr !important;
+	}
+}
