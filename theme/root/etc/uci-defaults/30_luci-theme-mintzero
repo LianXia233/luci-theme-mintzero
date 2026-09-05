@@ -10,9 +10,13 @@
 # under themes/$(basename mediaurlbase)/, and htdocs/luci-static/ plus
 # ucode/template/themes/ provide mintzero-light / mintzero-dark symlinks
 # pointing to the mintzero originals.
+# NOTE: UCI option names may only contain [a-zA-Z0-9_]; hyphens (e.g.
+# "mintzero-light") make uci set fail with uci: Parse error, so the
+# registered keys use CamelCase while the mediaurlbase values keep the
+# hyphenated symlink paths.
 uci set luci.themes.mintzero=/luci-static/mintzero
-uci set luci.themes.mintzero-light=/luci-static/mintzero-light
-uci set luci.themes.mintzero-dark=/luci-static/mintzero-dark
+uci set luci.themes.MintzeroLight=/luci-static/mintzero-light
+uci set luci.themes.MintzeroDark=/luci-static/mintzero-dark
 
 # Wallpaper defaults for the mintzero UCI section. Only written when the
 # section does not exist yet, so user config survives upgrades.

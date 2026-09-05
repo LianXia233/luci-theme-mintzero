@@ -122,7 +122,7 @@ Bing HPImageArchive API
         |
   ucode 后端（wallpaper.uc）    <- 路由器服务端
         |  严格 JSON 校验
-        |  host 白名单（www.bing.com / cn.bing.com / th.bing.com）
+        |  host 白名单（仅 www.bing.com）
         |  4 秒超时
         v
 元数据缓存（/tmp/mintzero-wallpaper/metadata.json，TTL 可配置）

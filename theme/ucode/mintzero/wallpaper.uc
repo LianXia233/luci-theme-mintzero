@@ -16,8 +16,8 @@
 //    so a partially written file can never reach the frontend.
 //
 // Security:
-//  - Host allowlist: only www.bing.com / cn.bing.com (API) and
-//    www.bing.com / th.bing.com (images) are ever contacted or emitted.
+//  - Host allowlist: only www.bing.com (API and images) is ever
+//    contacted or emitted.
 //  - Strict JSON schema validation before use.
 //  - Timeouts enforced via wget -T.
 //  - Cache files live in fixed paths under /tmp (no traversal).
@@ -44,21 +44,39 @@ const DEFAULTS = {
 
 const ALLOWED_MARKETS = ['zh-CN', 'en-US', 'ja-JP', 'zh-TW'];
 
+// NOTE: ucode (libucode 20230711 era) does NOT hoist function declarations,
+// so helpers must be defined before the functions that call them.
+
+function clampInt(v, min, max, dflt) {
+	const n = int(v);
+	if (n === null)
+		return dflt;
+	if (n < min)
+		return min;
+	return (n > max) ? max : n;
+}
+
+// List membership test. Avoids Array.prototype.indexOf, which is missing
+// in older ucode (libucode 20230711 era) runtimes.
+function inList(v, list) {
+	let i;
+
+	for (i = 0; i < length(list); i++) {
+		if (list[i] == v)
+			return true;
+	}
+
+	return false;
+}
+
 function loadConfig() {
 	const wp = cursor().get_all('mintzero', 'wallpaper') ?? {};
 	return {
 		enabled: wp.enabled ?? DEFAULTS.enabled,
-		market: (ALLOWED_MARKETS.indexOf(wp.market ?? '') > -1) ? wp.market : DEFAULTS.market,
+		market: inList(wp.market ?? '', ALLOWED_MARKETS) ? wp.market : DEFAULTS.market,
 		count: clampInt(wp.count, 1, 8, DEFAULTS.count),
 		cache_ttl: clampInt(wp.cache_ttl, 300, 604800, DEFAULTS.cache_ttl)
 	};
-}
-
-function clampInt(v, min, max, dflt) {
-	const n = int(v);
-	if (n === null || n < min)
-		return min;
-	return (n > max) ? max : n;
 }
 
 // Validate a Bing image path emitted by the API before trusting it.
@@ -81,17 +99,20 @@ function parsePool(raw) {
 		return null;
 
 	const pool = [];
+	const images = data.images;
+	let i, img, imageUrl, imageUrlBase;
 
-	for (const img of data.images) {
+	for (i = 0; i < length(images); i++) {
+		img = images[i];
 		if (type(img) != 'object')
 			continue;
 
-		const imageUrl = validImagePath(img.url);
+		imageUrl = validImagePath(img.url);
 		if (!imageUrl)
 			continue;
 
 		// Derive a reasonably sized variant from urlbase when present
-		const imageUrlBase = validImagePath(img.urlbase);
+		imageUrlBase = validImagePath(img.urlbase);
 
 		push(pool, {
 			url: imageUrl,
@@ -118,6 +139,23 @@ function readCache() {
 	return images ? { fetched: st.mtime, images } : null;
 }
 
+// Minimal POSIX single-quote shell escaping. Implemented with basic
+// builtins only (substr/length) for compatibility with older ucode.
+function shellquote(s) {
+	let out = "'";
+	let i, c;
+
+	for (i = 0; i < length(s); i++) {
+		c = substr(s, i, 1);
+		if (c == "'")
+			out += "'\\''";
+		else
+			out += c;
+	}
+
+	return out + "'";
+}
+
 // Spawn a detached background refresh. The subshell redirects all output
 // so popen() returns immediately; wget outlives the ucode process.
 function spawnRefresh(cfg) {
@@ -135,7 +173,7 @@ function spawnRefresh(cfg) {
 
 	const cmd = sprintf(
 		'( wget -q -O %s -T 8 -U "mintzero-wallpaper/1.0" %s ) >/dev/null 2>&1 &',
-		shquote(CACHE_RAW), shquote(url)
+		shellquote(CACHE_RAW), shellquote(url)
 	);
 
 	const p = popen(cmd, 'r');
@@ -169,5 +207,3 @@ export function getWallpapers() {
 	// 4. Nothing yet - frontend falls back to CSS gradient
 	return { enabled: true, images: [], source: 'none' };
 }
-
-return { getWallpapers };

@@ -20,8 +20,8 @@ define Package/luci-theme-mintzero/postrm
 #!/bin/sh
 [ -n "$${IPKG_INSTROOT}" ] || {
 	uci -q delete luci.themes.mintzero
-	uci -q delete luci.themes.mintzero-light
-	uci -q delete luci.themes.mintzero-dark
+	uci -q delete luci.themes.MintzeroLight
+	uci -q delete luci.themes.MintzeroDark
 	uci commit luci
 }
 endef

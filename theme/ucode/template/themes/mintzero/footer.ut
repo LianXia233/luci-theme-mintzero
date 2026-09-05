@@ -21,6 +21,191 @@
 			</span>
 		</footer>
 		<script>L.require('menu-mintzero')</script>
+		<script>
+(function () {
+  'use strict';
+
+  /* ==== Collapsible menu groups ==== */
+  function initMenu() {
+    var groups = document.querySelectorAll('#mainmenu > li > ul > li');
+    groups.forEach(function (li) {
+      var sub = li.querySelector(':scope > ul');
+      if (!sub) return;
+      li.classList.add('mz-menu-group');
+      var a = li.querySelector(':scope > a');
+      if (!a) return;
+      var label = a.textContent.trim();
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        var collapsed = li.classList.toggle('mz-collapsed');
+        sub.style.display = collapsed ? 'none' : '';
+        try { localStorage.setItem('mz-nav-' + label, collapsed ? '1' : '0'); } catch (err) {}
+      });
+      try {
+        if (localStorage.getItem('mz-nav-' + label) === '1') {
+          li.classList.add('mz-collapsed');
+          sub.style.display = 'none';
+        }
+      } catch (err) {}
+    });
+  }
+
+  /* ==== Overview page: circular gauges + info cards ==== */
+  function initOverview() {
+    if (document.body.getAttribute('data-page') !== 'admin-status-overview') return;
+    if (document.querySelector('.mz-overview-panel')) return;
+
+    var tables = document.querySelectorAll('#mz-view table.table');
+    if (tables.length < 3) return;
+
+    var t0 = tables[0].innerText;
+    function grab(re) { var m = t0.match(re); return m ? m[1].trim() : ''; }
+
+    var cpu = grab(/CPU\s*使用率[（(]?\s*%?[）)]?\s*(\d+)/) || '0';
+    var temp = grab(/温度\s*CPU:\s*([\d.]+)/) || '';
+    var hostname = grab(/主机名\s*([^\n]+)/) || '';
+    var uptime = grab(/运行时间\s*([^\n]+)/) || '';
+    var load = grab(/平均负载\s*([^\n]+)/) || '';
+    var model = grab(/型号\s*([^\n]+)/) || '';
+
+    function parseBar(tableIdx) {
+      var bars = tables[tableIdx].querySelectorAll('.cbi-progressbar[title]');
+      if (!bars.length) return null;
+      var m = bars[0].getAttribute('title').match(/([\d.]+)\s*([A-Za-z]+)\s*\/\s*([\d.]+)\s*([A-Za-z]+)\s*\((\d+)%\)/);
+      if (!m) return null;
+      return { used: m[1], usedUnit: m[2], total: m[3], totalUnit: m[4], pct: parseInt(m[5], 10) };
+    }
+
+    var mem = parseBar(1) || { used: '0', usedUnit: 'MiB', total: '0', totalUnit: 'MiB', pct: 0 };
+    var storage = parseBar(2) || { used: '0', usedUnit: 'MiB', total: '0', totalUnit: 'MiB', pct: 0 };
+
+    var memDetails = [];
+    tables[1].querySelectorAll('tr').forEach(function (row) {
+      var cells = row.querySelectorAll('td');
+      if (cells.length >= 2) {
+        var label = cells[0].textContent.trim();
+        var bar = cells[1].querySelector('.cbi-progressbar[title]');
+        var val = '';
+        if (bar) {
+          var m = bar.getAttribute('title').match(/([\d.]+\s*[A-Za-z]+)/);
+          if (m) val = m[1];
+        } else {
+          val = cells[1].textContent.trim();
+        }
+        if (label && val) memDetails.push({ label: label, value: val });
+      }
+    });
+
+    var tempInfo = '';
+    tables[2].querySelectorAll('tr').forEach(function (row) {
+      if (row.textContent.indexOf('临时') >= 0) {
+        var bar = row.querySelector('.cbi-progressbar[title]');
+        if (bar) tempInfo = bar.getAttribute('title').replace(/\s*\(.*\)/, '');
+      }
+    });
+
+    var CIRC = 2 * Math.PI * 52;
+    function ring(pct, cls) {
+      var offset = CIRC * (1 - pct / 100);
+      return '<svg class="mz-ring" viewBox="0 0 120 120" aria-hidden="true">' +
+        '<circle class="mz-ring-bg" cx="60" cy="60" r="52"></circle>' +
+        '<circle class="mz-ring-fg ' + cls + '" cx="60" cy="60" r="52" stroke-dasharray="' + CIRC + '" stroke-dashoffset="' + offset + '"></circle>' +
+        '</svg>';
+    }
+
+    var panel = document.createElement('div');
+    panel.className = 'mz-overview-panel';
+    panel.innerHTML =
+      '<div class="mz-info-cards">' +
+        '<div class="mz-info-card"><div class="mz-info-label">设备</div><div class="mz-info-value">' + hostname + '</div></div>' +
+        '<div class="mz-info-card"><div class="mz-info-label">运行时间</div><div class="mz-info-value">' + uptime + '</div></div>' +
+        '<div class="mz-info-card"><div class="mz-info-label">平均负载</div><div class="mz-info-value">' + load + '</div></div>' +
+        '<div class="mz-info-card"><div class="mz-info-label">型号</div><div class="mz-info-value">' + model + '</div></div>' +
+      '</div>' +
+      '<div class="mz-rings">' +
+        '<div class="mz-ring-card">' + ring(parseInt(cpu, 10), 'mz-ring-cpu') +
+          '<div class="mz-ring-info"><div class="mz-ring-title">CPU</div>' +
+          '<div class="mz-ring-pct">' + cpu + '%</div>' +
+          (temp ? '<div class="mz-ring-sub">温度 ' + temp + '°C</div>' : '') + '</div></div>' +
+        '<div class="mz-ring-card">' + ring(mem.pct, 'mz-ring-mem') +
+          '<div class="mz-ring-info"><div class="mz-ring-title">内存</div>' +
+          '<div class="mz-ring-pct">' + mem.used + ' / ' + mem.total + ' ' + mem.totalUnit + '</div>' +
+          '<div class="mz-ring-sub">' + mem.pct + '% 已使用</div>' +
+          '<div class="mz-mem-detail">' + memDetails.map(function (d) { return '<span>' + d.label + ' ' + d.value + '</span>'; }).join('') + '</div>' +
+          '</div></div>' +
+        '<div class="mz-ring-card">' + ring(storage.pct, 'mz-ring-storage') +
+          '<div class="mz-ring-info"><div class="mz-ring-title">存储</div>' +
+          '<div class="mz-ring-pct">' + storage.used + ' / ' + storage.total + ' ' + storage.totalUnit + '</div>' +
+          '<div class="mz-ring-sub">' + storage.pct + '% 已使用</div>' +
+          (tempInfo ? '<div class="mz-ring-sub">临时 ' + tempInfo + '</div>' : '') + '</div></div>' +
+      '</div>';
+
+    var view = document.getElementById('mz-view');
+    if (!view) return;
+    view.insertBefore(panel, view.firstChild);
+
+    // Persistently hide original memory+storage sections (LuCI re-renders on refresh).
+    var hideAttempts = 0;
+    var hideTimer = setInterval(function () {
+      hideAttempts++;
+      document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
+        var h = sec.querySelector('h2, h3, .cbi-section-title');
+        if (h) {
+          var txt = h.textContent.trim();
+          if ((txt.indexOf('内存') === 0 || txt.indexOf('存储') === 0) && !sec.classList.contains('mz-hidden-section')) {
+            sec.classList.add('mz-hidden-section');
+          }
+        }
+      });
+      if (hideAttempts > 120) clearInterval(hideTimer);
+    }, 500);
+  }
+
+  /* ==== Boot: wait for LuCI async render ==== */
+  var menuDone = false;
+  var overviewDone = false;
+
+  function tryInitMenu() {
+    if (menuDone) return;
+    var mm = document.getElementById('mainmenu');
+    if (mm && mm.children.length > 0) {
+      menuDone = true;
+      try { initMenu(); } catch (err) {}
+    }
+  }
+
+  function tryInitOverview() {
+    if (overviewDone) return;
+    if (document.body.getAttribute('data-page') !== 'admin-status-overview') {
+      overviewDone = true;
+      return;
+    }
+    var tables = document.querySelectorAll('#mz-view table.table');
+    if (tables.length >= 3) {
+      overviewDone = true;
+      try { initOverview(); } catch (err) {}
+    }
+  }
+
+  function boot() {
+    tryInitMenu();
+    tryInitOverview();
+    if (menuDone && overviewDone) return;
+    var observer = new MutationObserver(function () {
+      tryInitMenu();
+      tryInitOverview();
+      if (menuDone && overviewDone) observer.disconnect();
+    });
+    var mm = document.getElementById('mainmenu');
+    var view = document.getElementById('mz-view');
+    if (mm) observer.observe(mm, { childList: true, subtree: true });
+    if (view) observer.observe(view, { childList: true, subtree: true });
+    setTimeout(function () { observer.disconnect(); }, 20000);
+  }
+
+  setTimeout(boot, 800);
+})();
+		</script>
 		{% endif %}
 	</body>
 </html>
