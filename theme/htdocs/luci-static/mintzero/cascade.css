@@ -2598,3 +2598,95 @@ table.cbi-section-table tbody tr:hover td {
 		grid-template-columns: repeat(4, 280px) !important;
 	}
 }
+/* ================================================================
+ * Fix: all cards left-aligned (container + inner content)
+ * ================================================================ */
+
+/* Grid containers: left-aligned, not centered */
+.mz-info-cards,
+.mz-rings,
+.mz-port-grid,
+.mz-net-grid,
+.mz-sys-grid,
+.mz-wifi-radios {
+	justify-content: flex-start !important;
+}
+
+/* Port card: inner content left-aligned */
+.mz-port-card {
+	text-align: left !important;
+}
+.mz-port-status {
+	justify-content: flex-start !important;
+}
+.mz-port-traffic {
+	justify-content: flex-start !important;
+}
+.mz-port-name {
+	text-align: left;
+}
+.mz-port-zones {
+	text-align: left;
+}
+
+/* Network card: left-aligned */
+.mz-net-card,
+.mz-net-card-header {
+	text-align: left !important;
+}
+.mz-net-card-header h3 {
+	text-align: left;
+}
+
+/* WiFi card: left-aligned */
+.mz-wifi-card,
+.mz-wifi-card-header {
+	text-align: left !important;
+}
+
+/* System info item: left-aligned */
+.mz-sys-item {
+	text-align: left !important;
+	justify-content: flex-start !important;
+}
+
+/* Ring card: left-aligned (already flex, ensure meta text left) */
+.mz-ring-meta,
+.mz-ring-label,
+.mz-ring-value-text,
+.mz-ring-pct,
+.mz-ring-sub {
+	text-align: left !important;
+}
+
+/* Info card: left-aligned */
+.mz-info-card,
+.mz-info-label,
+.mz-info-value {
+	text-align: left !important;
+}
+
+/* Table card: left-aligned headers */
+.mz-table-card th {
+	text-align: left !important;
+}
+
+/* Desktop: keep fixed columns but left-aligned */
+@media (min-width: 1024px) {
+	.mz-info-cards,
+	.mz-rings,
+	.mz-port-grid,
+	.mz-net-grid,
+	.mz-sys-grid,
+	.mz-wifi-radios {
+		justify-content: flex-start !important;
+	}
+}
+/* Fix: net/wifi card headers left-aligned (correct class names) */
+.mz-net-header {
+	text-align: left !important;
+}
+.mz-wifi-header,
+.mz-wifi-card-header {
+	text-align: left !important;
+}
