@@ -161,7 +161,106 @@
     if (!view) return;
     view.insertBefore(panel, view.firstChild);
 
-    // Persistently hide original memory+storage sections (LuCI re-renders on refresh).
+    /* ==== Port status cards (aurora-style grid) ==== */
+    var portSection = null;
+    document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
+      var h = sec.querySelector('h2, h3');
+      if (h && h.textContent.trim().indexOf('端口状态') === 0) portSection = sec;
+    });
+    var portPanel = null;
+    if (portSection) {
+      var portCards = [];
+      portSection.querySelectorAll('.ifacebox').forEach(function (box) {
+        var heads = box.querySelectorAll('.ifacebox-head');
+        var bodies = box.querySelectorAll('.ifacebox-body');
+        var name = heads[0] ? heads[0].textContent.trim() : '';
+        var statusText = bodies[0] ? bodies[0].textContent.trim() : '';
+        var isUp = statusText.indexOf('未连接') < 0 && statusText.length > 0;
+        var speed = isUp ? statusText : '未连接';
+        var tx = '', rx = '';
+        if (bodies[1]) {
+          var t = bodies[1].innerText;
+          var txm = t.match(/\u25b2\s*([\d.]+\s*[A-Za-z]+)/);
+          var rxm = t.match(/\u25bc\s*([\d.]+\s*[A-Za-z]+)/);
+          if (txm) tx = txm[1].trim();
+          if (rxm) rx = rxm[1].trim();
+        }
+        var zones = [];
+        box.querySelectorAll('.ifacebadge').forEach(function (b) {
+          var zt = b.textContent.trim().replace(/\s+/g, ' ');
+          if (zt) { zt = zt.replace(/:\s*$/, '').trim(); if (zt && zones.indexOf(zt) < 0) zones.push(zt); }
+        });
+        portCards.push({name: name, speed: speed, isUp: isUp, tx: tx, rx: rx, zones: zones});
+      });
+      if (portCards.length > 0) {
+        portPanel = document.createElement('div');
+        portPanel.className = 'mz-port-panel';
+        portPanel.innerHTML = '<h3 class="mz-section-title">端口状态</h3>' +
+          '<div class="mz-port-grid">' +
+          portCards.map(function (p) {
+            return '<div class="mz-port-card' + (p.isUp ? ' up' : ' down') + '">' +
+              '<div class="mz-port-name">' + p.name + '</div>' +
+              '<div class="mz-port-status">' + (p.isUp ? '<span class="mz-port-dot up"></span>' : '<span class="mz-port-dot down"></span>') + ' ' + p.speed + '</div>' +
+              (p.zones.length > 0 ? '<div class="mz-port-zones">' + p.zones.join(', ') + '</div>' : '') +
+              ((p.tx || p.rx) ? '<div class="mz-port-traffic">' +
+                (p.tx ? '<span class="mz-tx">▲ ' + p.tx + '</span>' : '') +
+                (p.rx ? '<span class="mz-rx">▼ ' + p.rx + '</span>' : '') +
+                '</div>' : '') +
+              '</div>';
+          }).join('') +
+          '</div>';
+        view.insertBefore(portPanel, panel.nextSibling);
+      }
+    }
+
+    /* ==== Network upstream cards (aurora-style) ==== */
+    var netSection = null;
+    document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
+      var h = sec.querySelector('h2, h3');
+      if (h && h.textContent.trim().indexOf('网络') === 0) netSection = sec;
+    });
+    if (netSection) {
+      var netCards = [];
+      netSection.querySelectorAll('.ifacebox').forEach(function (box) {
+        var head = box.querySelector('.ifacebox-head');
+        var title = head ? head.textContent.trim() : '';
+        var body = box.querySelector('.ifacebox-body');
+        var items = [];
+        var deviceInfo = '';
+        if (body) {
+          body.querySelectorAll('.nowrap').forEach(function (nw) {
+            var strong = nw.querySelector('strong');
+            var label = strong ? strong.textContent.trim() : '';
+            var value = nw.textContent.replace(label, '').trim();
+            if (label && value && label.indexOf('DHCPv6') < 0 && label.indexOf('设备') < 0 && label.indexOf('MAC') < 0) items.push({label: label, value: value});
+          });
+          var devBadge = body.querySelector('.ifacebadge');
+          if (devBadge) deviceInfo = devBadge.textContent.trim().replace(/\s+/g, ' ');
+        }
+        netCards.push({title: title, items: items, device: deviceInfo});
+      });
+      if (netCards.length > 0) {
+        var netPanel = document.createElement('div');
+        netPanel.className = 'mz-net-panel';
+        netPanel.innerHTML = '<h3 class="mz-section-title">网络</h3>' +
+          '<div class="mz-net-grid">' +
+          netCards.map(function (n) {
+            return '<div class="mz-net-card">' +
+              '<div class="mz-net-header">' + n.title + '</div>' +
+              '<div class="mz-net-body">' +
+              n.items.map(function (it) {
+                return '<div class="mz-net-row"><span class="mz-net-label">' + it.label + '</span><span class="mz-net-value">' + it.value + '</span></div>';
+              }).join('') +
+              (n.device ? '<div class="mz-net-device">' + n.device + '</div>' : '') +
+              '</div></div>';
+          }).join('') +
+          '</div>';
+        var refNode = portPanel || panel;
+        view.insertBefore(netPanel, refNode.nextSibling);
+      }
+    }
+
+    // Persistently hide original memory+storage+port+network sections (LuCI re-renders on refresh).
     var hideAttempts = 0;
     var hideTimer = setInterval(function () {
       hideAttempts++;
@@ -169,7 +268,7 @@
         var h = sec.querySelector('h2, h3, .cbi-section-title');
         if (h) {
           var txt = h.textContent.trim();
-          if ((txt.indexOf('内存') === 0 || txt.indexOf('存储') === 0) && !sec.classList.contains('mz-hidden-section')) {
+          if ((txt.indexOf('内存') === 0 || txt.indexOf('存储') === 0 || txt.indexOf('端口状态') === 0 || txt.indexOf('网络') === 0) && !sec.classList.contains('mz-hidden-section')) {
             sec.classList.add('mz-hidden-section');
           }
         }

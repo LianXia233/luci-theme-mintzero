@@ -1994,3 +1994,143 @@ table.cbi-section-table tbody tr:hover td {
 .mz-footer-brand {
 	font-weight: 600;
 }
+/* ================================================================
+ * Port status + Network upstream cards (aurora-style)
+ * ================================================================ */
+.mz-section-title {
+	font-size: 1.1rem;
+	font-weight: 600;
+	margin: 24px 0 14px 0;
+	padding: 0 4px;
+	color: var(--mz-color-text);
+}
+
+/* Port grid */
+.mz-port-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 14px;
+}
+.mz-port-card {
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: 12px;
+	padding: 18px 16px;
+	text-align: center;
+	transition: box-shadow .15s, transform .15s;
+}
+.mz-port-card:hover {
+	box-shadow: 0 4px 12px rgba(0,0,0,.08);
+	transform: translateY(-2px);
+}
+.mz-port-card.up {
+	border-top: 3px solid var(--mz-color-success);
+}
+.mz-port-card.down {
+	border-top: 3px solid var(--mz-color-text-muted);
+	opacity: .7;
+}
+.mz-port-name {
+	font-size: 1.1rem;
+	font-weight: 700;
+	margin-bottom: 10px;
+	color: var(--mz-color-text);
+}
+.mz-port-status {
+	font-size: .88rem;
+	color: var(--mz-color-text-muted);
+	margin-bottom: 8px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+}
+.mz-port-dot {
+	display: inline-block;
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+}
+.mz-port-dot.up { background: var(--mz-color-success); }
+.mz-port-dot.down { background: var(--mz-color-text-muted); }
+.mz-port-zones {
+	font-size: .78rem;
+	color: var(--mz-color-text-muted);
+	margin-bottom: 10px;
+	line-height: 1.5;
+}
+.mz-port-traffic {
+	display: flex;
+	justify-content: center;
+	gap: 14px;
+	font-size: .82rem;
+	padding-top: 10px;
+	border-top: 1px solid var(--mz-color-border);
+}
+.mz-port-traffic .mz-tx { color: var(--mz-color-primary); }
+.mz-port-traffic .mz-rx { color: var(--mz-color-success); }
+
+/* Network upstream cards */
+.mz-net-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+	gap: 14px;
+}
+.mz-net-card {
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: 12px;
+	overflow: hidden;
+}
+.mz-net-header {
+	background: var(--mz-color-primary);
+	color: #fff;
+	padding: 12px 18px;
+	font-size: .95rem;
+	font-weight: 600;
+	text-align: center;
+}
+.mz-net-body {
+	padding: 14px 18px;
+}
+.mz-net-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 6px 0;
+	border-bottom: 1px solid var(--mz-color-border);
+	font-size: .85rem;
+}
+.mz-net-row:last-child {
+	border-bottom: none;
+}
+.mz-net-label {
+	color: var(--mz-color-text-muted);
+	flex-shrink: 0;
+	font-weight: 500;
+}
+.mz-net-value {
+	color: var(--mz-color-text);
+	text-align: right;
+	word-break: break-all;
+}
+.mz-net-device {
+	margin-top: 10px;
+	padding: 10px 12px;
+	background: var(--mz-color-surface-2);
+	border-radius: 8px;
+	font-size: .8rem;
+	color: var(--mz-color-text-muted);
+	line-height: 1.6;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+	.mz-port-grid {
+		grid-template-columns: 1fr;
+	}
+	.mz-net-grid {
+		grid-template-columns: 1fr;
+	}
+}
