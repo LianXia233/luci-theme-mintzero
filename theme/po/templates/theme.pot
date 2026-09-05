@@ -127,6 +127,12 @@ msgstr ""
 msgid "Bing Wallpaper"
 msgstr ""
 
+msgid "Dashboard"
+msgstr ""
+
+msgid "Wallpaper Settings"
+msgstr ""
+
 msgid "Background image for the login page. Metadata is fetched server-side with caching; the browser loads the image directly from Bing."
 msgstr ""
 

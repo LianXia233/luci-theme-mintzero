@@ -1,26 +1,21 @@
 #!/bin/sh
 # uci-defaults script for luci-theme-mintzero
-# Registers the theme in luci.themes and activates it on fresh installs.
-# Idempotent: only sets values that are missing; upgrades keep user config.
+# Registers the theme variants in luci.themes and activates the theme on
+# fresh installs. The theme keys are package-owned and rewritten on every
+# install/upgrade; the user's active theme (luci.main.mediaurlbase) is
+# only touched on fresh installs.
 
-changed=0
-
-set_opt() {
-	local key=$1
-	local val=$2
-
-	if ! uci -q get "luci.$key" 2>/dev/null; then
-		uci set "luci.$key=$val"
-		changed=1
-	fi
-}
-
-set_opt themes.mintzero /luci-static/mintzero
-set_opt themes.mintzero-light /luci-static/mintzero
-set_opt themes.mintzero-dark /luci-static/mintzero
+# Each variant gets its own mediaurlbase so that the LuCI theme selector
+# can switch between them: header/footer/sysauth templates are looked up
+# under themes/$(basename mediaurlbase)/, and htdocs/luci-static/ plus
+# ucode/template/themes/ provide mintzero-light / mintzero-dark symlinks
+# pointing to the mintzero originals.
+uci set luci.themes.mintzero=/luci-static/mintzero
+uci set luci.themes.mintzero-light=/luci-static/mintzero-light
+uci set luci.themes.mintzero-dark=/luci-static/mintzero-dark
 
 # Wallpaper defaults for the mintzero UCI section. Only written when the
-# section does not exist yet, so user overrides survive upgrades.
+# section does not exist yet, so user config survives upgrades.
 if ! uci -q get mintzero.wallpaper 2>/dev/null; then
 	uci -q set mintzero.wallpaper=wallpaper 2>/dev/null || {
 		[ -f /etc/config/mintzero ] || touch /etc/config/mintzero
@@ -32,16 +27,13 @@ if ! uci -q get mintzero.wallpaper 2>/dev/null; then
 	uci -q set mintzero.wallpaper.overlay=0.45
 	uci -q set mintzero.wallpaper.blur=0
 	uci -q set mintzero.wallpaper.random=1
-	changed=1
 fi
 
-if [ "$PKG_UPGRADE" != 1 ] && [ $changed = 1 ]; then
-	set_opt main.mediaurlbase /luci-static/mintzero
+if [ "$PKG_UPGRADE" != 1 ]; then
+	uci -q set luci.main.mediaurlbase=/luci-static/mintzero
 fi
 
-if [ $changed = 1 ]; then
-	uci commit luci
-	uci commit mintzero
-fi
+uci commit luci
+uci commit mintzero
 
 exit 0

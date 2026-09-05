@@ -142,8 +142,11 @@ luci-theme-mintzero/
 ## Build
 
 Requires a current OpenWrt buildroot with the LuCI feed. The package uses the
-standard `luci.mk` build; CSS/JS/ut minification is applied by the standard
-LuCI build options (`LUCI_MINIFY_CSS`, `LUCI_MINIFY_JS`, `LUCI_UTMIN`).
+standard `luci.mk` build; CSS/JS minification is applied by the standard LuCI
+build options (`LUCI_MINIFY_CSS`, `LUCI_MINIFY_JS`). ucode template
+precompilation is disabled (`LUCI_MINIFY_UT=0`) because `header.ut` imports
+the theme's own backend module `luci.mintzero.wallpaper`, which cannot be
+resolved by the build host's ucode compiler.
 
 ```sh
 make package/luci-theme-mintzero/compile V=s
@@ -162,7 +165,7 @@ make package/luci-theme-mintzero/compile V=s
 
 - Theme not selectable: run the uci-defaults script manually
   (`sh /etc/uci-defaults/30_luci-theme-mintzero`), then reload rpcd.
-- Wallpaper never appears: check `/tmp/mintzero-wallpaper/metadata.json`;
+- Wallpaper never appears: check `/tmp/mintzero-wallpaper/bing-raw.json`;
   if absent, the router has no internet or Bing is unreachable - the gradient
   fallback is expected behavior.
 - Want to force a fixed scheme: pick `mintzero-light` or `mintzero-dark` in

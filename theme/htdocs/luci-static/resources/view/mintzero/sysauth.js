@@ -2,20 +2,20 @@
 // Copyright (C) 2026 LianXia233
 // Licensed to the public under the Apache License 2.0.
 //
-// Frontend for the mintzero login page. The visible card is rendered by
-// sysauth.ut; this module wires it to the hidden standard LuCI form so the
-// actual POST / authentication flow stays 100% LuCI-native.
+// Frontend for the mintzero login page. The login card rendered by
+// sysauth.ut contains the single native LuCI login form, so authentication
+// is a plain POST of luci_username / luci_password - no JS in the loop.
+// This module only adds remember-username and the wallpaper background.
 //
 // Wallpaper strategy (never blocks login):
 //   1. Page renders instantly with CSS gradient fallback
-//   2. JS fetches local wallpaper metadata from the theme endpoint
+//   2. Wallpaper metadata is embedded server-side by header.ut
 //   3. Selected image is preloaded via new Image(), then cross-fades in
 //   4. Any failure keeps the gradient - no white screen possible
 
 'use strict';
 'require view';
 'require ui';
-'require request';
 
 const REMEMBER_KEY = 'mz-username';
 
@@ -52,17 +52,6 @@ function applyWallpaperSettings(card, wp) {
 		document.documentElement.style.setProperty('--mz-wallpaper-blur', parseInt(wp.blur) + 'px');
 }
 
-function requestWallpaperMetadata(timeoutMs) {
-	/* Local-only endpoint rendered by the theme; falls through to gradient
-	   on any error. request.get default timeout keeps this from hanging. */
-	return request.get(L.url('mintzero/wallpapers'), { timeout: timeoutMs })
-		.then((r) => {
-			const j = r.json();
-			return (j && j.images && j.images.length) ? j : null;
-		})
-		.catch(() => null);
-}
-
 function setupRemember() {
 	const user = document.querySelector('#luci_username');
 	const remember = document.querySelector('#mz-remember');
@@ -80,71 +69,41 @@ function setupRemember() {
 	} catch (e) { /* storage unavailable */ }
 }
 
-function bindSubmit() {
-	const form = document.querySelector('#mz-login-form');
-	const btn = form?.querySelector('button[type="submit"]');
-	if (!form || !btn)
-		return;
-
-	btn.addEventListener('click', () => {
-		const user = document.querySelector('#luci_username');
-		const remember = document.querySelector('#mz-remember');
-
-		if (user && remember) {
-			try {
-				if (remember.checked)
-					localStorage.setItem(REMEMBER_KEY, user.value);
-				else
-					localStorage.removeItem(REMEMBER_KEY);
-			} catch (e) { /* storage unavailable */ }
-		}
-	});
-
-	form.addEventListener('keypress', (ev) => {
-		if (ev.key === 'Enter')
-			btn.click();
-	});
-}
-
 return view.extend({
 	render() {
 		const root = document.getElementById('mz-login');
 		const card = root?.querySelector('.mz-login-card');
 		const bg = document.getElementById('mz-login-bg');
 		const copyright = document.getElementById('mz-login-copyright');
+		const form = document.getElementById('mz-login-form');
 
-		/* Wire login card to the hidden native form */
-		const nativeForm = document.querySelector('section form');
-		const nativeBtn = document.querySelector('section button');
-		const submitBtn = card?.querySelector('button[type="submit"]');
+		setupRemember();
 
-		if (nativeForm && submitBtn) {
-			const submit = () => nativeForm.submit();
+		/* Persist the remembered username when the native form is submitted.
+		   The form posts by itself; JS must not interfere with the flow. */
+		if (form) {
+			form.addEventListener('submit', () => {
+				const user = document.querySelector('#luci_username');
+				const remember = document.querySelector('#mz-remember');
 
-			submitBtn.addEventListener('click', submit);
-			document.getElementById('mz-login-form')?.addEventListener('keypress', (ev) => {
-				if (ev.key === 'Enter') {
-					ev.preventDefault();
-					submit();
+				if (user && remember) {
+					try {
+						if (remember.checked)
+							localStorage.setItem(REMEMBER_KEY, user.value);
+						else
+							localStorage.removeItem(REMEMBER_KEY);
+					} catch (e) { /* storage unavailable */ }
 				}
 			});
-
-			setupRemember();
-			bindSubmit();
 		}
 
-		/* Wallpaper: local UI first, remote later; never blocks */
+		/* Wallpaper: data embedded server-side; local UI first, image later */
 		const cfg = window.mintzeroWallpaper ?? {};
-		if (cfg.enabled !== false && bg) {
-			requestWallpaperMetadata(5000).then((wp) => {
-				if (!wp)
-					return;
+		if (cfg.enabled !== false && Array.isArray(cfg.images) && cfg.images.length && bg) {
+			applyWallpaperSettings(card, cfg);
 
-				applyWallpaperSettings(card, wp);
-				const pick = pickWallpaper(wp.images, cfg.random !== false);
-				if (!pick)
-					return;
-
+			const pick = pickWallpaper(cfg.images, cfg.random !== false);
+			if (pick) {
 				const img = new Image();
 				const timer = window.setTimeout(() => { img.src = ''; }, 10000);
 
@@ -162,7 +121,7 @@ return view.extend({
 
 				img.onerror = () => window.clearTimeout(timer);
 				img.src = pick.url;
-			});
+			}
 		}
 
 		document.querySelector('#luci_password')?.focus();

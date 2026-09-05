@@ -170,8 +170,17 @@ msgid "Collecting data..."
 msgstr "正在收集数据…"
 
 #: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+#: root/usr/share/luci/menu.d/luci-theme-mintzero.json
 msgid "Bing Wallpaper"
 msgstr "Bing 壁纸"
+
+#: root/usr/share/luci/menu.d/luci-theme-mintzero.json
+msgid "Dashboard"
+msgstr "仪表盘"
+
+#: root/usr/share/luci/menu.d/luci-theme-mintzero.json
+msgid "Wallpaper Settings"
+msgstr "壁纸设置"
 
 #: htdocs/luci-static/resources/view/mintzero/wallpaper.js
 msgid "Background image for the login page. Metadata is fetched server-side with caching; the browser loads the image directly from Bing."

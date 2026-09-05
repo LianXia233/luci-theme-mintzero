@@ -51,29 +51,12 @@ theme/                        # 主题源码（放入 buildroot 的 feeds/luci/t
 
 ## 云编译（GitHub Actions）
 
-### 自动构建
-
 推送到 `main` 分支自动触发构建（x86_64 与 mediatek/filogic 两个目标）：
 
 - 构建产物上传至 workflow artifacts
 - 同时发布到 `nightly` prerelease
 
-### 正式版本发布
-
-创建版本标签（如 `v1.0.0`）自动触发构建并发布到 Releases：
-
-```sh
-# 方法1：使用脚本
-./scripts/create-release.sh v1.0.0
-
-# 方法2：手动 git 命令
-git tag -a v1.0.0 -m "Release v1.0.0"
-git push origin v1.0.0
-```
-
-### 手动触发
-
-也可在 Actions 页面手动触发（workflow_dispatch），指定版本号或使用默认 nightly。
+也可在 Actions 页面手动触发（workflow_dispatch）。
 
 ## 本地编译
 
@@ -150,7 +133,7 @@ Bing 绝不阻塞或破坏登录页。
 ## 故障排查
 
 - 主题不可选：手动执行 `sh /etc/uci-defaults/30_luci-theme-mintzero`，然后重启 rpcd
-- 壁纸不出现：检查 `/tmp/mintzero-wallpaper/metadata.json`；文件不存在说明路由器无外网或 Bing 不可达，渐变兜底属预期行为
+- 壁纸不出现：检查 `/tmp/mintzero-wallpaper/bing-raw.json`；文件不存在说明路由器无外网或 Bing 不可达，渐变兜底属预期行为
 - 强制固定配色：在 系统 > 系统 > 语言和外观 选择 `mintzero-light` 或 `mintzero-dark`，或使用侧栏切换按钮
 
 ## 许可证

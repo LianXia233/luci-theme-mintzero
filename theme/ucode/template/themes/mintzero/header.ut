@@ -6,17 +6,31 @@
 
 {%
 	import { getuid, getspnam } from 'luci.core';
+	import { getWallpapers } from 'luci.mintzero.wallpaper';
 
 	const boardinfo = ubus.call('system', 'board') ?? {};
 
-	/* Theme variant handling: mintzero follows system preference by default,
-	   explicit light/dark registration forces data-theme. */
+	/* Theme variant handling: `theme` is the basename of the configured
+	   mediaurlbase (mintzero | mintzero-light | mintzero-dark). */
 	const themepref = (theme == 'mintzero-dark' ? 'dark' : (theme == 'mintzero-light' ? 'light' : 'system'));
 
-	/* Wallpaper settings from UCI (written by uci-defaults). */
-	const uci = import('uci') ?? {};
-	const uci_ctx = uci.connect();
-	const wp = uci_ctx.get_all('mintzero', 'wallpaper') ?? {};
+	/* Wallpaper settings from UCI; `uci` is the cursor provided by the
+	   LuCI dispatcher environment. */
+	const wp = uci.get_all('mintzero', 'wallpaper') ?? {};
+
+	/* Wallpaper pool for the login page only. The backend serves cache
+	   immediately and refreshes Bing metadata in the background, so
+	   rendering never blocks on the network. */
+	let wallpaper = { enabled: true, images: [], source: 'embedded' };
+
+	if (blank_page) {
+		try {
+			wallpaper = getWallpapers();
+		}
+		catch (e) {
+			wallpaper = { enabled: true, images: [], source: 'error' };
+		}
+	}
 
 	http.prepare_content('text/html; charset=UTF-8');
 -%}
@@ -54,13 +68,16 @@
 		<script src="{{ dispatcher.build_url('admin/translations', dispatcher.lang) }}"></script>
 		<script src="{{ resource }}/cbi.js"></script>
 		<script>
-			/* Expose wallpaper settings to the frontend (server-rendered, no extra request). */
+			/* Expose wallpaper settings to the frontend (server-rendered,
+			   no extra request). */
 			window.mintzeroWallpaper = {
-				enabled: {{ wp.enabled == '0' ? 'false' : 'true' }},
+				enabled: {{ (wp.enabled == '0' || wallpaper.enabled == false) ? 'false' : 'true' }},
 				market: {{ sprintf('%J', wp.market ?? 'zh-CN') }},
 				overlay: {{ sprintf('%J', wp.overlay ?? '0.45') }},
 				blur: {{ sprintf('%J', wp.blur ?? '0') }},
-				random: {{ wp.random == '0' ? 'false' : 'true' }}
+				random: {{ wp.random == '0' ? 'false' : 'true' }},
+				images: {{ sprintf('%J', wallpaper.images ?? []) }},
+				source: {{ sprintf('%J', wallpaper.source ?? 'embedded') }}
 			};
 		</script>
 	</head>
