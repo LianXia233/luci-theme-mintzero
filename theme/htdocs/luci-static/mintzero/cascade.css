@@ -2690,3 +2690,32 @@ table.cbi-section-table tbody tr:hover td {
 .mz-wifi-card-header {
 	text-align: left !important;
 }
+/* ================================================================
+ * Fix: port/net/wifi fixed 2 columns
+ * ================================================================ */
+.mz-port-grid {
+	grid-template-columns: repeat(2, 1fr) !important;
+}
+.mz-net-grid {
+	grid-template-columns: repeat(2, 1fr) !important;
+}
+.mz-wifi-radios {
+	grid-template-columns: repeat(2, 1fr) !important;
+}
+/* Desktop overrides also 2 columns for these */
+@media (min-width: 1024px) {
+	.mz-port-grid {
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
+	.mz-net-grid {
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
+	.mz-wifi-radios {
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
+}
+@media (min-width: 1400px) {
+	.mz-port-grid {
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
+}
