@@ -1,0 +1,15 @@
+# mintzero wallpaper configuration
+# Read by the ucode wallpaper backend; see /usr/share/ucode/luci/mintzero/
+
+config mintzero 'wallpaper'
+	option enabled '1'
+	# Bing market: zh-CN, en-US, ja-JP, zh-TW
+	option market 'zh-CN'
+	# Metadata cache TTL in seconds (12~24h recommended)
+	option cache_ttl '86400'
+	# Dark overlay opacity over the wallpaper (0.0 - 1.0)
+	option overlay '0.45'
+	# Background blur in px (0 = disabled)
+	option blur '0'
+	# Randomly pick one of the cached wallpapers on each login page load
+	option random '1'

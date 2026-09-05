@@ -1,0 +1,222 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "Skip to main content"
+msgstr "跳转到主要内容"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "Toggle navigation menu"
+msgstr "切换导航菜单"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "Main navigation"
+msgstr "主导航"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "Menu"
+msgstr "菜单"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "System"
+msgstr "系统"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "Switch color scheme"
+msgstr "切换配色方案"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "Log out"
+msgstr "注销"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "No password set!"
+msgstr "未设置密码！"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "There is no password set on this router. Please configure a root password to protect the web interface."
+msgstr "此路由器尚未设置密码。请配置 root 密码以保护 Web 管理界面。"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "Go to password configuration..."
+msgstr "前往密码配置..."
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "System running in recovery (initramfs) mode."
+msgstr "系统正运行于恢复（initramfs）模式。"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade"
+msgstr "所有设置更改都不会被保存，重启后将丢失。此模式仅应用于安装固件升级"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "Go to firmware upgrade..."
+msgstr "前往固件升级..."
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "JavaScript required!"
+msgstr "需要 JavaScript！"
+
+#: ucode/template/themes/mintzero/header.ut
+msgid "You must enable JavaScript in your browser or LuCI will not work properly."
+msgstr "必须在浏览器中启用 JavaScript，否则 LuCI 无法正常工作。"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Username"
+msgstr "用户名"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Password"
+msgstr "密码"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Invalid username and/or password! Please try again."
+msgstr "用户名和/或密码无效！请重试。"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Log in"
+msgstr "登录"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Welcome back! Log in to manage your network."
+msgstr "欢迎回来！登录以管理你的网络。"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Remember me"
+msgstr "记住我"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Sign in with Passkey"
+msgstr "使用 Passkey 登录"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Passkeys are not configured on this system"
+msgstr "本系统未配置 Passkey"
+
+#: ucode/template/themes/mintzero/sysauth.ut
+msgid "Loading view…"
+msgstr "正在加载视图…"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "N/A"
+msgstr "不可用"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "System"
+msgstr "系统"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Hostname"
+msgstr "主机名"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Model"
+msgstr "型号"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Firmware Version"
+msgstr "固件版本"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Kernel Version"
+msgstr "内核版本"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Resources"
+msgstr "资源"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Memory Usage"
+msgstr "内存占用"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Load Average"
+msgstr "负载"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Uptime"
+msgstr "运行时间"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Traffic"
+msgstr "流量"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Download"
+msgstr "下载"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Upload"
+msgstr "上传"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Live traffic requires a statistics source (e.g. luci-mod-dashboard or nlbwmon). Without it, values show N/A."
+msgstr "实时流量需要统计来源（如 luci-mod-dashboard 或 nlbwmon）。缺失时显示为不可用。"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Software"
+msgstr "软件"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "LuCI Version"
+msgstr "LuCI 版本"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Target Platform"
+msgstr "目标平台"
+
+#: htdocs/luci-static/resources/view/mintzero/dashboard.js
+msgid "Collecting data..."
+msgstr "正在收集数据…"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Bing Wallpaper"
+msgstr "Bing 壁纸"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Background image for the login page. Metadata is fetched server-side with caching; the browser loads the image directly from Bing."
+msgstr "登录页背景图。元数据由服务端缓存获取；图片由浏览器直接从 Bing 加载。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Settings"
+msgstr "设置"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Enabled"
+msgstr "启用"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "When disabled, the login page uses the built-in gradient fallback."
+msgstr "禁用后登录页使用内置渐变兜底背景。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Bing Market"
+msgstr "Bing 市场"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Cache TTL (seconds)"
+msgstr "缓存有效期（秒）"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Overlay opacity"
+msgstr "遮罩不透明度"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Dark overlay strength over the wallpaper (0.0 - 1.0)."
+msgstr "壁纸上的深色遮罩强度（0.0 - 1.0）。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Blur (px)"
+msgstr "模糊（像素）"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Background blur in pixels; 0 disables."
+msgstr "背景模糊像素数；0 为关闭。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Random wallpaper"
+msgstr "随机壁纸"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Pick a random image from the last fetched pool on each login page load."
+msgstr "每次进入登录页时从最近获取的壁纸池中随机选择一张。"

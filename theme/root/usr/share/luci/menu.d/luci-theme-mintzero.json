@@ -1,0 +1,38 @@
+{
+	"admin/mintzero": {
+		"title": "mintzero",
+		"order": 89,
+		"action": { "type": "firstchild" },
+		"depends": {
+			"acl": [ "wallpaper" ]
+		}
+	},
+
+	"admin/mintzero/wallpaper": {
+		"title": "Wallpaper Settings",
+		"order": 90,
+		"action": { "type": "firstchild" },
+		"depends": {
+			"acl": [ "wallpaper" ],
+			"uci": { "mintzero": true }
+		}
+	},
+
+	"admin/mintzero/wallpaper/settings": {
+		"title": "Bing Wallpaper",
+		"order": 1,
+		"action": {
+			"type": "view",
+			"path": "mintzero/wallpaper"
+		}
+	},
+
+	"admin/mintzero/dashboard": {
+		"title": "Dashboard",
+		"order": 1,
+		"action": {
+			"type": "view",
+			"path": "mintzero/dashboard"
+		}
+	}
+}

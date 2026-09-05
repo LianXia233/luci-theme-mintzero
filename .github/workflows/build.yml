@@ -1,0 +1,95 @@
+name: Build Package
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86/64
+            suffix: x86_64
+          - target: mediatek/filogic
+            suffix: mediatek_filogic
+
+    steps:
+      - name: Checkout OpenWrt main
+        run: |
+          git clone --depth 1 https://git.openwrt.org/openwrt.git openwrt
+          cd openwrt
+          git log -1 --format='OpenWrt main %h %cd'
+
+      - name: Checkout LuCI master
+        run: |
+          cd openwrt
+          git clone --depth 1 https://git.openwrt.org/project/luci.git feeds/luci
+
+      - name: Install theme package
+        run: |
+          cd openwrt
+          mkdir -p feeds/luci/themes/luci-theme-mintzero
+          cp -a "$GITHUB_WORKSPACE"/theme/* feeds/luci/themes/luci-theme-mintzero/
+
+      - name: Install feeds
+        run: |
+          cd openwrt
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Configure
+        run: |
+          cd openwrt
+          make defconfig
+
+      - name: Enable theme in config
+        run: |
+          cd openwrt
+          echo "CONFIG_PACKAGE_luci-theme-mintzero=m" >> .config
+          make defconfig
+          grep -q "CONFIG_PACKAGE_luci-theme-mintzero=m" .config || {
+            echo "theme package not selectable"; exit 1;
+          }
+
+      - name: Build tools & toolchain
+        run: |
+          cd openwrt
+          make tools/install -j$(nproc) || make tools/install -j1 V=s
+          make toolchain/install -j$(nproc) || make toolchain/install -j1 V=s
+
+      - name: Build theme package
+        run: |
+          cd openwrt
+          make package/luci-theme-mintzero/compile V=s -j$(nproc) || \
+            make package/luci-theme-mintzero/compile V=s -j1
+
+      - name: Collect artifacts
+        run: |
+          cd openwrt
+          mkdir -p "$GITHUB_WORKSPACE"/artifacts
+          find bin/packages -name 'luci-theme-mintzero*' -exec cp {} "$GITHUB_WORKSPACE"/artifacts/ \;
+          ls -la "$GITHUB_WORKSPACE"/artifacts
+
+      - name: Upload to workflow artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: luci-theme-mintzero-${{ matrix.suffix }}
+          path: artifacts/*
+
+      - name: Upload to release (nightly)
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: nightly
+          name: nightly
+          prerelease: true
+          files: artifacts/*
+          allowUpdates: true
+          tag_overwrite: true

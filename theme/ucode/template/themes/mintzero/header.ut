@@ -1,0 +1,140 @@
+{#
+ mintzero - modern LuCI theme
+ Copyright (C) 2026 LianXia233
+ Licensed to the public under the Apache License 2.0.
+-#}
+
+{%
+	import { getuid, getspnam } from 'luci.core';
+
+	const boardinfo = ubus.call('system', 'board') ?? {};
+
+	/* Theme variant handling: mintzero follows system preference by default,
+	   explicit light/dark registration forces data-theme. */
+	const themepref = (theme == 'mintzero-dark' ? 'dark' : (theme == 'mintzero-light' ? 'light' : 'system'));
+
+	/* Wallpaper settings from UCI (written by uci-defaults). */
+	const uci = import('uci') ?? {};
+	const uci_ctx = uci.connect();
+	const wp = uci_ctx.get_all('mintzero', 'wallpaper') ?? {};
+
+	http.prepare_content('text/html; charset=UTF-8');
+-%}
+
+<!DOCTYPE html>
+<html lang="{{ dispatcher.lang }}" data-theme="{{ themepref }}">
+	<head>
+		<meta charset="utf-8">
+		<title>{{ striptags(`${boardinfo.hostname ?? '?'}${dispatched?.title ? ` | ${_(dispatched.title)}` : ''}`) }}</title>
+		{% if (themepref == 'system'): %}
+			<script>
+				(function() {
+					var mq = window.matchMedia('(prefers-color-scheme: dark)');
+					var apply = function(m) {
+						document.documentElement.setAttribute('data-theme', m.matches ? 'dark' : 'light');
+					};
+					mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
+					apply(mq);
+				})();
+			</script>
+		{% endif %}
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="darkreader-lock">
+		<meta name="theme-color" content="#0f172a">
+		<link rel="stylesheet" href="{{ media }}/cascade.css">
+		<link rel="icon" href="{{ media }}/favicon/favicon.svg" sizes="any" type="image/svg+xml">
+		<link rel="icon" href="{{ media }}/favicon/favicon-48.png" sizes="48x48">
+		<link rel="apple-touch-icon" href="{{ media }}/favicon/favicon-180.png">
+		{% if (dispatched?.css): %}
+		<link rel="stylesheet" href="{{ resource }}/{{ dispatched.css }}">
+		{% endif %}
+		{% if (css): %}
+		<style title="text/css">{{ css }}</style>
+		{% endif %}
+		<script src="{{ dispatcher.build_url('admin/translations', dispatcher.lang) }}"></script>
+		<script src="{{ resource }}/cbi.js"></script>
+		<script>
+			/* Expose wallpaper settings to the frontend (server-rendered, no extra request). */
+			window.mintzeroWallpaper = {
+				enabled: {{ wp.enabled == '0' ? 'false' : 'true' }},
+				market: {{ sprintf('%J', wp.market ?? 'zh-CN') }},
+				overlay: {{ sprintf('%J', wp.overlay ?? '0.45') }},
+				blur: {{ sprintf('%J', wp.blur ?? '0') }},
+				random: {{ wp.random == '0' ? 'false' : 'true' }}
+			};
+		</script>
+	</head>
+
+	<body class="lang_{{ dispatcher.lang }}" data-page="{{ entityencode(join('-', length(ctx.request_path) ? ctx.request_path : ctx.path), true) }}">
+		{% if (!blank_page): %}
+		<a class="mz-skip-link" href="#maincontent">{{ _('Skip to main content') }}</a>
+
+		<button type="button" id="mz-sidebar-toggle" class="mz-sidebar-toggle" aria-label="{{ _('Toggle navigation menu') }}" aria-expanded="false" aria-controls="mz-sidebar">
+			<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+		</button>
+		<div id="mz-overlay" class="mz-overlay" hidden></div>
+
+		<aside id="mz-sidebar" class="mz-sidebar" aria-label="{{ _('Main navigation') }}">
+			<div class="mz-brand">
+				<a href="/" class="mz-brand-link">
+					<img src="{{ media }}/logo.svg" alt="mintzero" class="mz-brand-logo">
+					<span class="mz-brand-name">mintzero</span>
+				</a>
+			</div>
+
+			<nav class="mz-nav" aria-label="{{ _('Menu') }}">
+				<ul id="mainmenu" class="mz-menu" style="display:none"></ul>
+			</nav>
+
+			<div class="mz-sidebar-footer">
+				<ul class="mz-modelist" id="modemenu" style="display:none"></ul>
+				<div class="mz-sidebar-actions">
+					<a href="{{ dispatcher.build_url('admin/system/system') }}" class="mz-icon-btn" title="{{ _('System') }}" aria-label="{{ _('System') }}">
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+					</a>
+					<button type="button" class="mz-icon-btn" id="mz-theme-toggle" title="{{ _('Switch color scheme') }}" aria-label="{{ _('Switch color scheme') }}">
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2m0 18v2M4.22 4.22l1.42 1.42m12.72 12.72 1.42 1.42M1 12h2m18 0h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+					</button>
+					<a href="#" class="mz-icon-btn" id="mz-logout" title="{{ _('Log out') }}" aria-label="{{ _('Log out') }}">
+						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+					</a>
+				</div>
+			</div>
+		</aside>
+
+		<div class="mz-main" id="maincontent">
+			<header class="mz-topbar">
+				<ul class="mz-breadcrumb" id="modemenu-breadcrumb" style="display:none"></ul>
+				<div id="indicators" class="mz-indicators pull-right"></div>
+			</header>
+
+			{% if (getuid() == 0 && getspnam('root')?.pwdp === ''): %}
+				<div class="alert-message warning" role="alert">
+					<h4>{{ _('No password set!') }}</h4>
+					<p>{{ _('There is no password set on this router. Please configure a root password to protect the web interface.') }}</p>
+					{% if (dispatcher.lookup("admin/system/admin")): %}
+					  <div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/admin") }}">{{ _('Go to password configuration...') }}</a></div>
+					{% endif %}
+				</div>
+			{% endif %}
+
+			{% if (boardinfo.rootfs_type == "initramfs"): %}
+				<div class="alert-message warning" role="alert">
+					<h4>{{ _('System running in recovery (initramfs) mode.') }}</h4>
+					<p>{{ _('No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade') }}</p>
+					{% if (dispatcher.lookup("admin/system/flash")): %}
+					  <div class="right"><a class="btn" href="{{ dispatcher.build_url("admin/system/flash") }}">{{ _('Go to firmware upgrade...') }}</a></div>
+					{% endif %}
+				</div>
+			{% endif %}
+
+			<noscript>
+				<div class="alert-message warning" role="alert">
+					<h4>{{ _('JavaScript required!') }}</h4>
+					<p>{{ _('You must enable JavaScript in your browser or LuCI will not work properly.') }}</p>
+				</div>
+			</noscript>
+
+			<main id="mz-view" class="mz-view">
+				<div id="tabmenu" style="display:none"></div>
+		{% endif %}

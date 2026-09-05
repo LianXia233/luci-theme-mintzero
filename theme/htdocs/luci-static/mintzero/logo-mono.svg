@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="mintzero logo">
+  <!-- Monochrome version: uses currentColor so it adapts to light/dark contexts -->
+  <path d="M32 6c10.5 12.2 17 20.8 17 29.3C49 46.2 41.4 54 32 54S15 46.2 15 35.3C15 26.8 21.5 18.2 32 6z"
+        fill="none" stroke="currentColor" stroke-width="4"/>
+  <path d="M32 30c6 1.2 9.4 4.6 10 9.8-5.9.9-9.4-2.3-10-9.8z" fill="currentColor"/>
+</svg>

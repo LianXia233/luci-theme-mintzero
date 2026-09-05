@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="mintzero logo">
+  <!-- Dark-mode variant: lighter gradient + dark core removed -->
+  <defs>
+    <linearGradient id="mzgraddark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7d93ff"/>
+      <stop offset="1" stop-color="#4cbd8b"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 6c10.5 12.2 17 20.8 17 29.3C49 46.2 41.4 54 32 54S15 46.2 15 35.3C15 26.8 21.5 18.2 32 6z"
+        fill="url(#mzgraddark)"/>
+  <path d="M32 16c6.3 7.6 10 13 10 18.4 0 6.6-4.4 11.1-10 11.1s-10-4.5-10-11.1C22 29 25.7 23.6 32 16z"
+        fill="#171e2c" opacity=".85"/>
+  <path d="M32 30c6 1.2 9.4 4.6 10 9.8-5.9.9-9.4-2.3-10-9.8z" fill="#4cbd8b"/>
+</svg>

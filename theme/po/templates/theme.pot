@@ -1,0 +1,164 @@
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8"
+
+msgid "Skip to main content"
+msgstr ""
+
+msgid "Toggle navigation menu"
+msgstr ""
+
+msgid "Main navigation"
+msgstr ""
+
+msgid "Menu"
+msgstr ""
+
+msgid "System"
+msgstr ""
+
+msgid "Switch color scheme"
+msgstr ""
+
+msgid "Log out"
+msgstr ""
+
+msgid "No password set!"
+msgstr ""
+
+msgid "There is no password set on this router. Please configure a root password to protect the web interface."
+msgstr ""
+
+msgid "Go to password configuration..."
+msgstr ""
+
+msgid "System running in recovery (initramfs) mode."
+msgstr ""
+
+msgid "No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade"
+msgstr ""
+
+msgid "Go to firmware upgrade..."
+msgstr ""
+
+msgid "JavaScript required!"
+msgstr ""
+
+msgid "You must enable JavaScript in your browser or LuCI will not work properly."
+msgstr ""
+
+msgid "Username"
+msgstr ""
+
+msgid "Password"
+msgstr ""
+
+msgid "Invalid username and/or password! Please try again."
+msgstr ""
+
+msgid "Log in"
+msgstr ""
+
+msgid "Welcome back! Log in to manage your network."
+msgstr ""
+
+msgid "Remember me"
+msgstr ""
+
+msgid "Sign in with Passkey"
+msgstr ""
+
+msgid "Passkeys are not configured on this system"
+msgstr ""
+
+msgid "Loading view…"
+msgstr ""
+
+msgid "N/A"
+msgstr ""
+
+msgid "Hostname"
+msgstr ""
+
+msgid "Model"
+msgstr ""
+
+msgid "Firmware Version"
+msgstr ""
+
+msgid "Kernel Version"
+msgstr ""
+
+msgid "Resources"
+msgstr ""
+
+msgid "Memory Usage"
+msgstr ""
+
+msgid "Load Average"
+msgstr ""
+
+msgid "Uptime"
+msgstr ""
+
+msgid "Traffic"
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "Live traffic requires a statistics source (e.g. luci-mod-dashboard or nlbwmon). Without it, values show N/A."
+msgstr ""
+
+msgid "Software"
+msgstr ""
+
+msgid "LuCI Version"
+msgstr ""
+
+msgid "Target Platform"
+msgstr ""
+
+msgid "Collecting data..."
+msgstr ""
+
+msgid "Bing Wallpaper"
+msgstr ""
+
+msgid "Background image for the login page. Metadata is fetched server-side with caching; the browser loads the image directly from Bing."
+msgstr ""
+
+msgid "Settings"
+msgstr ""
+
+msgid "Enabled"
+msgstr ""
+
+msgid "When disabled, the login page uses the built-in gradient fallback."
+msgstr ""
+
+msgid "Bing Market"
+msgstr ""
+
+msgid "Cache TTL (seconds)"
+msgstr ""
+
+msgid "Overlay opacity"
+msgstr ""
+
+msgid "Dark overlay strength over the wallpaper (0.0 - 1.0)."
+msgstr ""
+
+msgid "Blur (px)"
+msgstr ""
+
+msgid "Background blur in pixels; 0 disables."
+msgstr ""
+
+msgid "Random wallpaper"
+msgstr ""
+
+msgid "Pick a random image from the last fetched pool on each login page load."
+msgstr ""
