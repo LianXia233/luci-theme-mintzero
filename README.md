@@ -51,12 +51,29 @@ theme/                        # 主题源码（放入 buildroot 的 feeds/luci/t
 
 ## 云编译（GitHub Actions）
 
+### 自动构建
+
 推送到 `main` 分支自动触发构建（x86_64 与 mediatek/filogic 两个目标）：
 
 - 构建产物上传至 workflow artifacts
 - 同时发布到 `nightly` prerelease
 
-也可在 Actions 页面手动触发（workflow_dispatch）。
+### 正式版本发布
+
+创建版本标签（如 `v1.0.0`）自动触发构建并发布到 Releases：
+
+```sh
+# 方法1：使用脚本
+./scripts/create-release.sh v1.0.0
+
+# 方法2：手动 git 命令
+git tag -a v1.0.0 -m "Release v1.0.0"
+git push origin v1.0.0
+```
+
+### 手动触发
+
+也可在 Actions 页面手动触发（workflow_dispatch），指定版本号或使用默认 nightly。
 
 ## 本地编译
 

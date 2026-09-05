@@ -3,10 +3,19 @@ name: Build Package
 on:
   push:
     branches: [main]
+    tags: ['v*']
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g., v1.0.0, nightly)'
+        required: false
+        default: 'nightly'
 
 permissions:
   contents: write
+
+env:
+  VERSION: ${{ github.ref_type == 'tag' && github.ref_name || (github.event.inputs.release_tag || 'nightly') }}
 
 jobs:
   build:
@@ -78,6 +87,15 @@ jobs:
           cd openwrt
           mkdir -p "$GITHUB_WORKSPACE"/artifacts
           find bin/packages -name 'luci-theme-mintzero*' -exec cp {} "$GITHUB_WORKSPACE"/artifacts/ \;
+          
+          # Rename artifacts with version suffix for clarity
+          cd "$GITHUB_WORKSPACE"/artifacts
+          for file in *; do
+            if [[ "${{ env.VERSION }}" != "nightly" ]]; then
+              new_name="${file%.*}-${{ env.VERSION }}.${file##*.}"
+              mv "$file" "$new_name"
+            fi
+          done
           ls -la "$GITHUB_WORKSPACE"/artifacts
 
       - name: Upload to workflow artifacts
@@ -86,13 +104,23 @@ jobs:
           name: luci-theme-mintzero-${{ matrix.suffix }}
           path: artifacts/*
 
-      - name: Upload to release (nightly)
-        if: github.ref == 'refs/heads/main'
+      - name: Determine release info
+        id: release_info
+        run: |
+          if [[ "${{ env.VERSION }}" == "nightly" ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+            echo "release_name=nightly" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+            echo "release_name=${{ env.VERSION }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload to release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: nightly
-          name: nightly
-          prerelease: true
+          tag_name: ${{ env.VERSION }}
+          name: ${{ steps.release_info.outputs.release_name }}
+          prerelease: ${{ steps.release_info.outputs.is_prerelease }}
           files: artifacts/*
-          allowUpdates: true
-          tag_overwrite: true
+          allowUpdates: ${{ env.VERSION == 'nightly' }}
+          tag_overwrite: ${{ env.VERSION == 'nightly' }}
