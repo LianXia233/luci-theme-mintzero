@@ -27,7 +27,16 @@
 
   /* ==== Collapsible menu groups ==== */
   function initMenu() {
-    var groups = document.querySelectorAll('#mainmenu > li > ul > li');
+    /* Remove top-level wrapper (管理权), promote child groups to mainmenu */
+    var topLi = document.querySelector('#mainmenu > li');
+    if (topLi) {
+      var topUl = topLi.querySelector(':scope > ul');
+      if (topUl) {
+        while (topUl.firstChild) topLi.parentNode.insertBefore(topUl.firstChild, topLi);
+      }
+      topLi.parentNode.removeChild(topLi);
+    }
+    var groups = document.querySelectorAll('#mainmenu > li');
     groups.forEach(function (li) {
       var sub = li.querySelector(':scope > ul');
       if (!sub) return;
