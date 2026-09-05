@@ -1147,3 +1147,341 @@ body.mz-login-active #maincontent {
 
 /* Hide original memory/storage sections on overview (persistent across LuCI refreshes) */
 .mz-hidden-section { display: none !important; }
+
+/* ================================================================
+ * LuCI component fixes - buttons, forms, tables, layout
+ * ================================================================ */
+
+/* Page / section action bars */
+.cbi-page-actions,
+.cbi-section-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	padding: 12px 0;
+	margin-top: 8px;
+}
+.cbi-page-actions .btn,
+.cbi-section-actions .btn {
+	margin: 0;
+}
+
+/* Apply dropdown button fix */
+.cbi-button-apply {
+	position: relative;
+}
+.cbi-button-apply .dropdown,
+.cbi-button-apply + .dropdown-menu,
+.btn + .dropdown-menu {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 100;
+	min-width: 180px;
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: var(--mz-radius-md);
+	box-shadow: var(--mz-shadow-md);
+	padding: 4px;
+	margin-top: 4px;
+	list-style: none;
+	display: none;
+}
+.cbi-button-apply.open .dropdown,
+.cbi-button-apply[aria-expanded="true"] + .dropdown-menu {
+	display: block;
+}
+.cbi-button-apply .dropdown li,
+.cbi-button-apply + .dropdown-menu li,
+.dropdown-menu li,
+.dropdown li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.cbi-button-apply .dropdown li a,
+.cbi-button-apply + .dropdown-menu li a,
+.dropdown-menu li a,
+.dropdown li a,
+.cbi-button-apply .dropdown li button,
+.dropdown-menu li button {
+	display: block;
+	width: 100%;
+	text-align: left;
+	padding: 8px 12px;
+	border: none;
+	background: transparent;
+	color: var(--mz-color-text);
+	font-size: .9rem;
+	border-radius: var(--mz-radius-sm);
+	cursor: pointer;
+	text-decoration: none;
+	white-space: nowrap;
+}
+.cbi-button-apply .dropdown li a:hover,
+.dropdown-menu li a:hover,
+.dropdown li a:hover,
+.dropdown-menu li button:hover {
+	background: var(--mz-color-surface-2);
+}
+
+/* Generic dropdown: no bullets */
+.dropdown,
+.dropdown-menu {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+/* Form rows: label + field two-column */
+.cbi-value {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 8px 16px;
+	padding: 8px 0;
+	border-bottom: 1px solid var(--mz-color-border);
+}
+.cbi-value:last-child {
+	border-bottom: none;
+}
+.cbi-value-title {
+	flex: 0 0 180px;
+	min-width: 140px;
+	color: var(--mz-color-text-muted);
+	font-size: .9rem;
+	padding-top: 7px;
+}
+.cbi-value-field {
+	flex: 1 1 300px;
+	min-width: 200px;
+}
+.cbi-value-field input,
+.cbi-value-field select,
+.cbi-value-field textarea {
+	width: 100%;
+	max-width: 100%;
+}
+
+/* cbi-row alternative layout */
+.cbi-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	align-items: center;
+	padding: 6px 0;
+}
+
+/* Tables: better spacing */
+table.table,
+table.cbi-section-table {
+	display: table;
+	width: 100%;
+	margin: 8px 0;
+}
+table.table td,
+table.table th,
+table.cbi-section-table td,
+table.cbi-section-table th {
+	white-space: normal;
+	word-break: break-word;
+}
+
+/* Tabs */
+.cbi-tabmenu {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	border-bottom: 2px solid var(--mz-color-border);
+	margin-bottom: 16px;
+	padding: 0;
+}
+.cbi-tabmenu > li {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+.cbi-tabmenu > li > a {
+	display: block;
+	padding: 8px 16px;
+	color: var(--mz-color-text-muted);
+	text-decoration: none;
+	font-size: .9rem;
+	border-bottom: 2px solid transparent;
+	margin-bottom: -2px;
+}
+.cbi-tabmenu > li.active > a,
+.cbi-tabmenu > li > a:hover {
+	color: var(--mz-color-primary);
+	border-bottom-color: var(--mz-color-primary);
+}
+
+/* Error / warning / info boxes */
+.errorbox,
+.warningbox,
+.infobox,
+.cbi-section-error {
+	padding: 12px 16px;
+	border-radius: var(--mz-radius-md);
+	margin: 12px 0;
+	font-size: .9rem;
+}
+.errorbox,
+.cbi-section-error {
+	background: var(--mz-color-danger-soft);
+	color: var(--mz-color-danger);
+	border: 1px solid var(--mz-color-danger);
+}
+.warningbox {
+	background: #fff7e6;
+	color: #ad6800;
+	border: 1px solid #ffd591;
+}
+.infobox {
+	background: var(--mz-color-primary-soft);
+	color: var(--mz-color-primary);
+	border: 1px solid var(--mz-color-primary);
+}
+
+/* ifacebox: ensure proper card look */
+.ifacebox {
+	margin: 8px 0;
+}
+.ifacebox-body {
+	line-height: 1.6;
+}
+.ifacebox-body .table {
+	margin: 4px 0;
+}
+
+/* Status page: network info lists */
+#mz-view ul,
+#mz-view ol {
+	padding-left: 20px;
+}
+#mz-view li {
+	margin: 2px 0;
+}
+
+/* Responsive: narrow screens */
+@media (max-width: 768px) {
+	.cbi-value {
+		flex-direction: column;
+		gap: 4px;
+	}
+	.cbi-value-title {
+		flex: none;
+		min-width: 0;
+		padding-top: 0;
+	}
+	.cbi-page-actions,
+	.cbi-section-actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.cbi-page-actions .btn,
+	.cbi-section-actions .btn {
+		width: 100%;
+	}
+}
+/* ================================================================
+ * cbi-dropdown (保存并应用/强制应用) fix
+ * ================================================================ */
+.cbi-dropdown {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	cursor: pointer;
+	user-select: none;
+}
+.cbi-dropdown > ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	display: inline;
+}
+.cbi-dropdown > ul > li {
+	display: none;
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+.cbi-dropdown > ul > li[selected] {
+	display: inline;
+}
+.cbi-dropdown.open > ul {
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 100;
+	min-width: 180px;
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: var(--mz-radius-md);
+	box-shadow: var(--mz-shadow-md);
+	padding: 4px;
+	margin-top: 4px;
+	display: block;
+}
+.cbi-dropdown.open > ul > li {
+	display: block;
+	padding: 8px 12px;
+	border-radius: var(--mz-radius-sm);
+	color: var(--mz-color-text);
+	font-size: .9rem;
+	white-space: nowrap;
+}
+.cbi-dropdown.open > ul > li:hover {
+	background: var(--mz-color-surface-2);
+}
+.cbi-dropdown .more,
+.cbi-dropdown .open {
+	margin-left: 6px;
+	font-size: .8rem;
+	opacity: .7;
+}
+
+/* cbi-button base (save/reset have .cbi-button, not .btn) */
+.cbi-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 7px 16px;
+	border: 1px solid var(--mz-color-border);
+	border-radius: var(--mz-radius-md);
+	background: var(--mz-color-surface);
+	color: var(--mz-color-text);
+	font-size: .9rem;
+	font-family: inherit;
+	line-height: 1.4;
+	cursor: pointer;
+	transition: background var(--mz-transition), border-color var(--mz-transition);
+}
+.cbi-button:hover {
+	border-color: var(--mz-color-text-muted);
+}
+.cbi-button-save {
+	background: var(--mz-color-success-soft);
+	border-color: transparent;
+	color: var(--mz-color-success);
+}
+.cbi-button-reset {
+	background: var(--mz-color-surface-2);
+}
+.cbi-button-negative,
+.cbi-button-remove {
+	background: var(--mz-color-danger-soft);
+	border-color: transparent;
+	color: var(--mz-color-danger);
+}
+.cbi-button-positive {
+	background: var(--mz-color-success-soft);
+	border-color: transparent;
+	color: var(--mz-color-success);
+}
+.cbi-button-neutral,
+.cbi-button-edit {
+	background: var(--mz-color-surface-2);
+}

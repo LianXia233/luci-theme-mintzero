@@ -35,18 +35,28 @@
       var a = li.querySelector(':scope > a');
       if (!a) return;
       var label = a.textContent.trim();
+
+      // Determine default state: expand group containing active page, collapse others.
+      var hasActive = sub.querySelector('.active, li.active > a, a.active') !== null;
+      var stored = null;
+      try { stored = localStorage.getItem('mz-nav-' + label); } catch (err) {}
+      var collapsed;
+      if (stored !== null) {
+        collapsed = stored === '1';
+      } else {
+        collapsed = !hasActive;
+      }
+      if (collapsed) {
+        li.classList.add('mz-collapsed');
+        sub.style.display = 'none';
+      }
+
       a.addEventListener('click', function (e) {
         e.preventDefault();
-        var collapsed = li.classList.toggle('mz-collapsed');
-        sub.style.display = collapsed ? 'none' : '';
-        try { localStorage.setItem('mz-nav-' + label, collapsed ? '1' : '0'); } catch (err) {}
+        var nowCollapsed = li.classList.toggle('mz-collapsed');
+        sub.style.display = nowCollapsed ? 'none' : '';
+        try { localStorage.setItem('mz-nav-' + label, nowCollapsed ? '1' : '0'); } catch (err) {}
       });
-      try {
-        if (localStorage.getItem('mz-nav-' + label) === '1') {
-          li.classList.add('mz-collapsed');
-          sub.style.display = 'none';
-        }
-      } catch (err) {}
     });
   }
 
