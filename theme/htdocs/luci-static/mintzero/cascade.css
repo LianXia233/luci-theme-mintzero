@@ -2134,3 +2134,157 @@ table.cbi-section-table tbody tr:hover td {
 		grid-template-columns: 1fr;
 	}
 }
+/* ================================================================
+ * Overview section cards: system / DHCP / WiFi / UPnP
+ * ================================================================ */
+.mz-section-title {
+	text-align: center;
+	font-size: 1.15rem;
+	font-weight: 700;
+	margin: 28px 0 16px 0;
+	padding: 0 4px;
+	color: var(--mz-color-text);
+}
+.mz-subtitle {
+	text-align: center;
+	font-size: .95rem;
+	font-weight: 600;
+	margin: 20px 0 12px 0;
+	color: var(--mz-color-text-muted);
+}
+
+/* System info grid */
+.mz-sys-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 10px;
+}
+.mz-sys-item {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+	padding: 10px 14px;
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: 10px;
+}
+.mz-sys-label {
+	color: var(--mz-color-text-muted);
+	font-size: .85rem;
+	flex-shrink: 0;
+}
+.mz-sys-value {
+	color: var(--mz-color-text);
+	font-size: .88rem;
+	font-weight: 500;
+	text-align: right;
+	word-break: break-all;
+}
+
+/* Data table card */
+.mz-table-card {
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: 12px;
+	overflow: hidden;
+	margin: 10px 0;
+}
+.mz-data-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: .85rem;
+}
+.mz-data-table thead th {
+	background: var(--mz-color-surface-2);
+	color: var(--mz-color-text-muted);
+	font-weight: 600;
+	font-size: .78rem;
+	text-transform: uppercase;
+	letter-spacing: .02em;
+	padding: 10px 14px;
+	text-align: left;
+	border-bottom: 1px solid var(--mz-color-border);
+}
+.mz-data-table tbody td {
+	padding: 10px 14px;
+	border-bottom: 1px solid var(--mz-color-border);
+	color: var(--mz-color-text);
+	vertical-align: middle;
+}
+.mz-data-table tbody tr:last-child td {
+	border-bottom: none;
+}
+.mz-data-table tbody tr:hover td {
+	background: var(--mz-color-surface-2);
+}
+
+/* Empty state */
+.mz-empty-state {
+	text-align: center;
+	padding: 32px 20px;
+	color: var(--mz-color-text-muted);
+	font-size: .9rem;
+	background: var(--mz-color-surface);
+	border: 1px dashed var(--mz-color-border);
+	border-radius: 12px;
+	margin: 10px 0;
+}
+
+/* WiFi cards */
+.mz-wifi-radios {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 14px;
+	margin-bottom: 8px;
+}
+.mz-wifi-card {
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: 12px;
+	padding: 18px 16px;
+	text-align: center;
+	transition: box-shadow .15s, transform .15s;
+}
+.mz-wifi-card:hover {
+	box-shadow: 0 4px 12px rgba(0,0,0,.08);
+	transform: translateY(-2px);
+}
+.mz-wifi-name {
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: var(--mz-color-text);
+	margin-bottom: 6px;
+}
+.mz-wifi-sub {
+	font-size: .8rem;
+	color: var(--mz-color-text-muted);
+	margin-bottom: 12px;
+}
+.mz-wifi-stats {
+	display: flex;
+	justify-content: center;
+	gap: 16px;
+	font-size: .82rem;
+	color: var(--mz-color-text-muted);
+	padding-top: 10px;
+	border-top: 1px solid var(--mz-color-border);
+}
+.mz-wifi-stats strong {
+	color: var(--mz-color-primary);
+	font-weight: 600;
+}
+
+/* Responsive tables */
+@media (max-width: 640px) {
+	.mz-data-table {
+		font-size: .78rem;
+	}
+	.mz-data-table thead th,
+	.mz-data-table tbody td {
+		padding: 8px 10px;
+	}
+	.mz-sys-grid {
+		grid-template-columns: 1fr;
+	}
+}

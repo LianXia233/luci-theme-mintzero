@@ -260,7 +260,178 @@
       }
     }
 
-    // Persistently hide original memory+storage+port+network sections (LuCI re-renders on refresh).
+    /* ==== System detail card ==== */
+    var sysSection = null;
+    document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
+      var h = sec.querySelector('h2, h3');
+      if (h && h.textContent.trim().indexOf('系统') === 0 && h.textContent.trim().indexOf('端口') < 0) sysSection = sec;
+    });
+    if (sysSection) {
+      var sysItems = [];
+      sysSection.querySelectorAll('table tr').forEach(function (row) {
+        var cells = row.querySelectorAll('td');
+        if (cells.length >= 2) {
+          var label = cells[0].textContent.trim();
+          var value = cells[1].textContent.trim();
+          if (label && value && label !== '?') sysItems.push({label: label, value: value});
+        }
+      });
+      if (sysItems.length > 0) {
+        var sysPanel = document.createElement('div');
+        sysPanel.className = 'mz-sys-panel';
+        sysPanel.innerHTML = '<h3 class="mz-section-title">系统信息</h3>' +
+          '<div class="mz-sys-grid">' +
+          sysItems.map(function (it) {
+            return '<div class="mz-sys-item"><span class="mz-sys-label">' + it.label + '</span><span class="mz-sys-value">' + it.value + '</span></div>';
+          }).join('') +
+          '</div>';
+        var refNode = netPanel || portPanel || panel;
+        view.insertBefore(sysPanel, refNode.nextSibling);
+      }
+    }
+
+    /* ==== DHCP leases card ==== */
+    var dhcpSection = null;
+    document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
+      var h = sec.querySelector('h2, h3');
+      if (h && h.textContent.trim().indexOf('DHCP') === 0) dhcpSection = sec;
+    });
+    if (dhcpSection) {
+      var dhcpTables = dhcpSection.querySelectorAll('table');
+      var dhcpHtml = '<h3 class="mz-section-title">DHCP 租约</h3>';
+      dhcpTables.forEach(function (t, ti) {
+        var rows = t.querySelectorAll('tr');
+        if (rows.length <= 1) {
+          dhcpHtml += '<div class="mz-empty-state">' + (ti === 0 ? '暂无 IPv4 租约' : '暂无 IPv6 租约') + '</div>';
+          return;
+        }
+        dhcpHtml += '<div class="mz-table-card"><table class="mz-data-table"><thead><tr>';
+        rows[0].querySelectorAll('th').forEach(function (th, ci) {
+          if (ci < 5) dhcpHtml += '<th>' + th.textContent.trim() + '</th>';
+        });
+        dhcpHtml += '</tr></thead><tbody>';
+        for (var ri = 1; ri < rows.length; ri++) {
+          var cells = rows[ri].querySelectorAll('td');
+          if (cells.length < 2) continue;
+          dhcpHtml += '<tr>';
+          for (var ci = 0; ci < Math.min(cells.length, 5); ci++) {
+            dhcpHtml += '<td>' + cells[ci].textContent.trim() + '</td>';
+          }
+          dhcpHtml += '</tr>';
+        }
+        dhcpHtml += '</tbody></table></div>';
+      });
+      var dhcpPanel = document.createElement('div');
+      dhcpPanel.className = 'mz-dhcp-panel';
+      dhcpPanel.innerHTML = dhcpHtml;
+      var refNode2 = sysPanel || netPanel || portPanel || panel;
+      view.insertBefore(dhcpPanel, refNode2.nextSibling);
+    }
+
+    /* ==== WiFi card ==== */
+    var wifiSection = null;
+    document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
+      var h = sec.querySelector('h2, h3');
+      if (h && h.textContent.trim().indexOf('无线') === 0) wifiSection = sec;
+    });
+    if (wifiSection) {
+      var wifiRadios = [];
+      wifiSection.querySelectorAll('.ifacebox').forEach(function (box) {
+        var name = box.querySelector('.ifacebox-head') ? box.querySelector('.ifacebox-head').textContent.trim() : '';
+        var body = box.querySelector('.ifacebox-body');
+        var info = {};
+        if (body) {
+          body.querySelectorAll('.nowrap').forEach(function (nw) {
+            var strong = nw.querySelector('strong');
+            var label = strong ? strong.textContent.trim().replace(/:$/, '') : '';
+            var value = nw.textContent.replace(strong ? strong.textContent : '', '').trim();
+            if (label) info[label] = value;
+          });
+        }
+        wifiRadios.push({name: name, info: info});
+      });
+      var wifiHtml = '<h3 class="mz-section-title">无线</h3><div class="mz-wifi-radios">';
+      wifiRadios.forEach(function (r) {
+        wifiHtml += '<div class="mz-wifi-card">' +
+          '<div class="mz-wifi-name">' + (r.info['SSID'] || r.name) + '</div>' +
+          '<div class="mz-wifi-sub">' + r.name + ' · ' + (r.info['信道'] || '') + ' · ' + (r.info['速率'] || '') + '</div>' +
+          '<div class="mz-wifi-stats">' +
+          '<span><strong>' + (r.info['关联数'] || '0') + '</strong> 已连接</span>' +
+          '<span><strong>' + (r.info['加密'] ? r.info['加密'].substring(0, 15) : '-') + '</strong></span>' +
+          '</div></div>';
+      });
+      wifiHtml += '</div>';
+      // 已连接站点表格
+      var wifiTable = wifiSection.querySelector('table');
+      if (wifiTable) {
+        var rows = wifiTable.querySelectorAll('tr');
+        if (rows.length > 1) {
+          wifiHtml += '<h4 class="mz-subtitle">已连接站点</h4><div class="mz-table-card"><table class="mz-data-table"><thead><tr>';
+          var headers = rows[0].querySelectorAll('th');
+          for (var hi = 0; hi < Math.min(headers.length, 5); hi++) {
+            wifiHtml += '<th>' + headers[hi].textContent.trim().substring(0, 12) + '</th>';
+          }
+          wifiHtml += '</tr></thead><tbody>';
+          for (var ri = 1; ri < rows.length; ri++) {
+            var cells = rows[ri].querySelectorAll('td');
+            if (cells.length < 2) continue;
+            wifiHtml += '<tr>';
+            for (var ci = 0; ci < Math.min(cells.length, 5); ci++) {
+              wifiHtml += '<td>' + cells[ci].textContent.trim().substring(0, 25) + '</td>';
+            }
+            wifiHtml += '</tr>';
+          }
+          wifiHtml += '</tbody></table></div>';
+        }
+      }
+      var wifiPanel = document.createElement('div');
+      wifiPanel.className = 'mz-wifi-panel';
+      wifiPanel.innerHTML = wifiHtml;
+      var refNode3 = dhcpPanel || sysPanel || netPanel || portPanel || panel;
+      view.insertBefore(wifiPanel, refNode3.nextSibling);
+    }
+
+    /* ==== UPnP port mapping card ==== */
+    var upnpSection = null;
+    document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
+      var h = sec.querySelector('h2, h3');
+      if (h && (h.textContent.trim().indexOf('UPnP') >= 0 || h.textContent.trim().indexOf('端口映射') >= 0)) upnpSection = sec;
+    });
+    if (upnpSection) {
+      var upnpTable = upnpSection.querySelector('table');
+      var upnpHtml = '<h3 class="mz-section-title">UPnP 端口映射</h3>';
+      if (upnpTable) {
+        var rows = upnpTable.querySelectorAll('tr');
+        if (rows.length <= 1 || (rows.length === 2 && rows[1].textContent.indexOf('没有') >= 0)) {
+          upnpHtml += '<div class="mz-empty-state">当前没有生效的端口映射</div>';
+        } else {
+          upnpHtml += '<div class="mz-table-card"><table class="mz-data-table"><thead><tr>';
+          rows[0].querySelectorAll('th').forEach(function (th, ci) {
+            if (ci < 6) upnpHtml += '<th>' + th.textContent.trim().substring(0, 10) + '</th>';
+          });
+          upnpHtml += '</tr></thead><tbody>';
+          for (var ri = 1; ri < rows.length; ri++) {
+            var cells = rows[ri].querySelectorAll('td');
+            if (cells.length < 2) continue;
+            upnpHtml += '<tr>';
+            for (var ci = 0; ci < Math.min(cells.length, 6); ci++) {
+              upnpHtml += '<td>' + cells[ci].textContent.trim() + '</td>';
+            }
+            upnpHtml += '</tr>';
+          }
+          upnpHtml += '</tbody></table></div>';
+        }
+      } else {
+        upnpHtml += '<div class="mz-empty-state">当前没有生效的端口映射</div>';
+      }
+      var upnpPanel = document.createElement('div');
+      upnpPanel.className = 'mz-upnp-panel';
+      upnpPanel.innerHTML = upnpHtml;
+      var refNode4 = wifiPanel || dhcpPanel || sysPanel || netPanel || portPanel || panel;
+      view.insertBefore(upnpPanel, refNode4.nextSibling);
+    }
+
+    // Persistently hide original sections (LuCI re-renders on refresh).
     var hideAttempts = 0;
     var hideTimer = setInterval(function () {
       hideAttempts++;
@@ -268,7 +439,7 @@
         var h = sec.querySelector('h2, h3, .cbi-section-title');
         if (h) {
           var txt = h.textContent.trim();
-          if ((txt.indexOf('内存') === 0 || txt.indexOf('存储') === 0 || txt.indexOf('端口状态') === 0 || txt.indexOf('网络') === 0) && !sec.classList.contains('mz-hidden-section')) {
+          if ((txt.indexOf('内存') === 0 || txt.indexOf('存储') === 0 || txt.indexOf('端口状态') === 0 || txt.indexOf('网络') === 0 || txt.indexOf('系统') === 0 || txt.indexOf('DHCP') === 0 || txt.indexOf('无线') === 0 || txt.indexOf('UPnP') >= 0 || txt.indexOf('端口映射') >= 0 || txt.indexOf('DSL') === 0) && !sec.classList.contains('mz-hidden-section')) {
             sec.classList.add('mz-hidden-section');
           }
         }
