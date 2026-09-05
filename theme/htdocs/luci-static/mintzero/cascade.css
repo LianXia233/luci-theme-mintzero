@@ -2288,3 +2288,71 @@ table.cbi-section-table tbody tr:hover td {
 		grid-template-columns: 1fr;
 	}
 }
+/* ================================================================
+ * PC desktop optimization + FOUC fix
+ * ================================================================ */
+
+/* FOUC: hide menu until JS finishes folding */
+#mainmenu {
+	display: none !important;
+}
+#mainmenu.mz-menu-ready {
+	display: block !important;
+}
+
+/* Main content: centered max-width on desktop */
+#mz-view {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 24px 28px;
+}
+.mz-topbar-inner {
+	max-width: 1280px;
+	margin: 0 auto;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: var(--mz-spacing-md);
+}
+
+/* Overview panels: wider grids on desktop */
+@media (min-width: 1024px) {
+	.mz-info-cards {
+		grid-template-columns: repeat(4, 1fr) !important;
+	}
+	.mz-rings {
+		grid-template-columns: repeat(3, 1fr) !important;
+	}
+	.mz-port-grid {
+		grid-template-columns: repeat(4, 1fr) !important;
+	}
+	.mz-net-grid {
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
+	.mz-sys-grid {
+		grid-template-columns: repeat(3, 1fr) !important;
+	}
+	.mz-wifi-radios {
+		grid-template-columns: repeat(2, 1fr) !important;
+	}
+}
+
+/* Ensure all cbi-sections inside view use full width but constrained */
+#mz-view .cbi-section {
+	max-width: 100%;
+}
+
+/* Better table horizontal scroll on narrow columns */
+.mz-table-card {
+	overflow-x: auto;
+}
+.mz-data-table {
+	min-width: 500px;
+}
+
+/* Sidebar: slightly wider on very large screens */
+@media (min-width: 1600px) {
+	:root {
+		--mz-sidebar-width: 256px;
+	}
+}

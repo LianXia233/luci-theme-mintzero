@@ -67,6 +67,9 @@
         try { localStorage.setItem('mz-nav-' + label, nowCollapsed ? '1' : '0'); } catch (err) {}
       });
     });
+    // FOUC fix: show menu only after folding is done
+    var mm = document.getElementById('mainmenu');
+    if (mm) mm.classList.add('mz-menu-ready');
   }
 
   /* ==== Overview page: circular gauges + info cards ==== */
