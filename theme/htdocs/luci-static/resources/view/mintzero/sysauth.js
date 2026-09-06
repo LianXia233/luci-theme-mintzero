@@ -139,9 +139,10 @@ return view.extend({
 				showWallpaper(pick.url, pick);
 		};
 
-		/* Random wallpaper: device-aware third-party APIs, with the
-		   local Bing pool (and then the CSS gradient) as fallbacks. */
-		if (cfg.random !== false && cfg.images !== null) {
+		/* Random wallpaper: device-aware third-party APIs only. On
+		   failure the CSS gradient fallback stays in place - the Bing
+		   pool is intentionally NOT used for random mode. */
+		if (cfg.random !== false) {
 			const img = new Image();
 			const timer = window.setTimeout(() => { img.src = ''; }, 12000);
 
@@ -151,7 +152,7 @@ return view.extend({
 			};
 			img.onerror = () => {
 				window.clearTimeout(timer);
-				loadFromPool();
+				/* keep gradient fallback; no Bing pool fallback here */
 			};
 			img.src = randomApiUrl();
 		} else {
