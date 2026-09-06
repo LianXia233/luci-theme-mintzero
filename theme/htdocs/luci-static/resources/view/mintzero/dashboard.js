@@ -66,33 +66,7 @@ function loadPercent(v, max) {
 	return (max > 0 && v != null) ? '%.1f%%'.format(100 * v / max) : null;
 }
 
-/* Pure-SVG sparkline for live traffic. Fixed ring buffer, no libraries. */
-function sparkline(series, color) {
-	const W = 280, H = 48, N = 60;
-	const max = Math.max.apply(null, series.concat([1]));
-
-	let pts = '';
-	for (let i = 0; i < series.length; i++) {
-		const x = (i / (N - 1)) * W;
-		const y = H - (series[i] / max) * (H - 4) - 2;
-		pts += (i ? ' L' : 'M') + x.toFixed(1) + ' ' + y.toFixed(1);
-	}
-
-	return E('svg', {
-		'viewBox': '0 0 %d %d'.format(W, H),
-		'class': 'mz-spark',
-		'aria-hidden': 'true',
-		'stroke': color,
-		'fill': 'none'
-	}, E('path', { 'd': pts + (series.length ? ' L%d %d L0 %d Z'.format(W, H, H) : '') }));
-}
-
 return view.extend({
-	state: {
-		down: [],
-		up: []
-	},
-
 	load() {
 		return Promise.all([
 			L.resolveDefault(callSystemBoard(), {}),
@@ -100,12 +74,6 @@ return view.extend({
 			L.resolveDefault(callLuciVersion(), {}),
 			uci.load('luci').catch(() => {})
 		]);
-	},
-
-	pollData() {
-		return Promise.all([
-			L.resolveDefault(callSystemInfo(), {})
-		]).then((data) => this.updateCards(data[0]));
 	},
 
 	updateCards(info) {
@@ -121,7 +89,9 @@ return view.extend({
 				dom.content(el, na(v));
 		};
 
-		set('mz-dash-memory', memPct != null ? '%s (%s / %s)'.format(memPct, fmtBytes(memUsed), fmtBytes(mem.total)) : null);
+		set('mz-dash-memory', memPct != null
+			? '%s (%s / %s)'.format(memPct, fmtBytes(memUsed), fmtBytes(mem.total))
+			: null);
 		set('mz-dash-load', load1 != null ? '%.2f'.format(load1) : null);
 		set('mz-dash-uptime', fmtUptime(info.uptime));
 	},
@@ -151,21 +121,6 @@ return view.extend({
 				return t;
 			})()),
 
-			card(_('Traffic'), E('div', { 'class': 'mz-traffic' }, [
-				E('div', { 'class': 'mz-traffic-row' }, [
-					E('span', { 'class': 'mz-traffic-label mz-traffic-down' }, _('Download')),
-					E('span', { 'id': 'mz-traffic-down-now', 'class': 'mz-traffic-now' }, E('em', {}, _('N/A')))
-				]),
-				E('div', { 'id': 'mz-traffic-down-graph' }, [ this.renderGraph('down') ]),
-				E('div', { 'class': 'mz-traffic-row' }, [
-					E('span', { 'class': 'mz-traffic-label mz-traffic-up' }, _('Upload')),
-					E('span', { 'id': 'mz-traffic-up-now', 'class': 'mz-traffic-now' }, E('em', {}, _('N/A')))
-				]),
-				E('div', { 'id': 'mz-traffic-up-graph' }, [ this.renderGraph('up') ]),
-				E('p', { 'class': 'mz-traffic-note' },
-					_('Live traffic requires a statistics source (e.g. luci-mod-dashboard or nlbwmon). Without it, values show N/A.'))
-			])),
-
 			card(_('Software'), kv([
 				_('LuCI Version'), (luciver.branch ?? '') + ' ' + (luciver.revision ?? ''),
 				_('Target Platform'), rel.target ?? null
@@ -180,10 +135,6 @@ return view.extend({
 		}, this), 5);
 
 		return grid;
-	},
-
-	renderGraph(kind) {
-		return sparkline(this.state[kind], kind == 'down' ? '#4f6ef7' : '#2f9e6e');
 	},
 
 	handleSaveApply: null,
