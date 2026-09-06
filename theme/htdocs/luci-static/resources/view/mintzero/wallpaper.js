@@ -16,9 +16,10 @@ var callFileWrite = rpc.declare({
 	expect: { code: 0 }
 });
 
-return view.extend({
-	render() {
-		const m = new form.Map('mintzero', _('Bing Wallpaper'),
+	return view.extend({
+		render() {
+			const self = this;
+			const m = new form.Map('mintzero', _('Bing Wallpaper'),
 			_('Background image for the login page. Metadata is fetched server-side with caching; the browser loads the image directly from Bing.'));
 
 		const s = m.section(form.TypedSection, 'wallpaper', null, _('Settings'));
@@ -64,21 +65,29 @@ return view.extend({
 			_('Pick a random image from the last fetched pool on each login page load.'));
 
 		return m.render().then((nodes) => {
-			const btnRow = E('div', { 'class': 'cbi-page-actions' }, [
+			const btnRow = E('div', { 'class': 'cbi-page-actions mz-wp-actions' }, [
 				E('button', {
-					'class': 'btn cbi-button',
-					'click': ui.createHandlerFn(this, 'handleRefresh')
+					'type': 'button',
+					'class': 'btn cbi-button cbi-button-edit',
+					'click': function(ev) {
+						ev.preventDefault();
+						ev.stopPropagation();
+						self.handleRefresh(ev);
+					}
 				}, [ _('Refresh Bing cache') ]),
 				E('input', {
 					'type': 'file',
 					'id': 'mz-wp-file',
 					'style': 'display:none',
 					'accept': 'image/jpeg,image/png,image/webp',
-					'change': ui.createHandlerFn(this, 'handleUpload')
+					'change': ui.createHandlerFn(self, 'handleUpload')
 				}),
 				E('button', {
+					'type': 'button',
 					'class': 'btn cbi-button',
 					'click': function(ev) {
+						ev.preventDefault();
+						ev.stopPropagation();
 						document.getElementById('mz-wp-file').click();
 					}
 				}, [ _('Upload custom image…') ])
@@ -90,6 +99,10 @@ return view.extend({
 	},
 
 	handleRefresh(ev) {
+		if (ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+		}
 		return fetch(L.url('admin/mintzero/wallpaper/refresh'), {
 			method: 'POST',
 			credentials: 'same-origin'

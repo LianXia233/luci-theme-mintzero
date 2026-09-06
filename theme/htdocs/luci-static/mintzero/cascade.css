@@ -479,30 +479,40 @@ input[type="button"].cbi-button {
 	box-shadow: var(--mz-shadow-sm);
 }
 
-/* Save / positive */
+/* Save / positive: light blue fill, blue text (official LuCI look) */
 .cbi-button-save,
 .cbi-button-positive {
-	background: var(--mz-color-success-soft);
+	background: var(--mz-color-primary-soft);
 	border-color: transparent;
-	color: var(--mz-color-success);
+	color: var(--mz-color-primary);
 }
 
 .cbi-button-save:hover,
 .cbi-button-positive:hover {
-	background: var(--mz-color-success);
-	border-color: var(--mz-color-success);
+	background: var(--mz-color-primary);
+	border-color: var(--mz-color-primary);
 	color: #fff;
 }
 
-/* Reset / neutral / edit */
-.cbi-button-reset,
+/* Reset / neutral / edit: light red fill, red text */
+.cbi-button-reset {
+	background: var(--mz-color-danger-soft);
+	border-color: transparent;
+	color: var(--mz-color-danger);
+}
+
+.cbi-button-reset:hover {
+	background: var(--mz-color-danger);
+	border-color: var(--mz-color-danger);
+	color: #fff;
+}
+
 .cbi-button-neutral {
 	background: var(--mz-color-surface-2);
 	border-color: transparent;
 	color: var(--mz-color-text);
 }
 
-.cbi-button-reset:hover,
 .cbi-button-neutral:hover {
 	background: var(--mz-color-border);
 	color: var(--mz-color-text);
@@ -3045,9 +3055,22 @@ body.modal-overlay-active {
 		padding: 16px 14px 18px;
 	}
 
+	/* flex-basis becomes HEIGHT in the stacked column layout: a fixed
+	   120px basis used to inflate every modal label to 120px tall. */
 	.modal .cbi-value-title {
-		flex: 0 0 120px;
+		flex: 0 0 auto;
 		min-width: 0;
+		width: 100%;
+	}
+
+	.modal .cbi-value-field {
+		flex: 1 1 auto;
+		min-height: 0;
+		width: 100%;
+	}
+
+	.modal .cbi-value {
+		padding: 5px 0;
 	}
 }
 
@@ -3313,4 +3336,48 @@ html[data-theme="dark"] {
 	.cbi-page-actions .cbi-dropdown.cbi-button > ul > li {
 		line-height: 30px;
 	}
+}
+
+/* ================================================================
+ * Button color tiers - final layer (official LuCI look)
+ * Must live at EOF: the consolidated .cbi-button base rule sits
+ * later in the file and otherwise wins the cascade.
+ * ================================================================ */
+.cbi-page-actions .cbi-button-save,
+.cbi-button-save,
+.cbi-button-positive {
+	background: var(--mz-color-primary-soft);
+	border-color: transparent;
+	color: var(--mz-color-primary);
+}
+
+.cbi-page-actions .cbi-button-save:hover,
+.cbi-button-save:hover,
+.cbi-button-positive:hover {
+	background: var(--mz-color-primary);
+	border-color: var(--mz-color-primary);
+	color: #fff;
+}
+
+.cbi-page-actions .cbi-button-reset,
+.cbi-button-reset {
+	background: var(--mz-color-danger-soft);
+	border-color: transparent;
+	color: var(--mz-color-danger);
+}
+
+.cbi-page-actions .cbi-button-reset:hover,
+.cbi-button-reset:hover {
+	background: var(--mz-color-danger);
+	border-color: var(--mz-color-danger);
+	color: #fff;
+}
+
+/* Modal status <output> blocks: cap height, scroll internally */
+.modal output {
+	display: block;
+	max-height: 9rem;
+	overflow-y: auto;
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
 }

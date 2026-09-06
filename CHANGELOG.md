@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed (2026-09-07 手机端排版与壁纸按钮)
+- P1：无线编辑弹窗手机端每个标签行被撑到 120px 高——`.modal .cbi-value-title { flex: 0 0 120px }` 的 flex-basis 在列布局下变成高度 → 改为 `flex: 0 0 auto; width: 100%`，弹窗内表单行恢复紧凑
+- P1：壁纸设置页「刷新 Bing 缓存」「上传自定义图片」按钮缺少 type=button，点击触发 LuCI 表单提交导致跳转页面 → 补 `type='button'` 与 preventDefault，点击后原地弹出通知
+- P2：弹窗内无线状态 <output> 文本块限高 9rem 内部滚动，避免状态行超过 1000px
+- P2：保存/重置按钮配色对齐官方 LuCI 分层（保存浅蓝、重置浅红），修复合并后的基础按钮规则在文件后部覆盖前部配色层的问题（配色层追加至文件末尾）
+
 ### Added
 - 菜单一级标题加粗 700 字重 + 深色，与二级菜单明确区分
 - 顶部信息卡片（设备/运行时间/平均负载/型号）统一 72px 高度 + 垂直居中
