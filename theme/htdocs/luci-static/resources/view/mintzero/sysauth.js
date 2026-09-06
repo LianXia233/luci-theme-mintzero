@@ -98,31 +98,66 @@ return view.extend({
 		}
 
 		/* Wallpaper: data embedded server-side; local UI first, image later */
-		const cfg = window.mintzeroWallpaper ?? {};
-		if (cfg.enabled !== false && Array.isArray(cfg.images) && cfg.images.length && bg) {
-			applyWallpaperSettings(card, cfg);
+	function isMobileUA() {
+		return /Android|iPhone|iPad|iPod|Mobile|Windows Phone|WebOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || '');
+	}
 
+	function randomApiUrl() {
+		const api = isMobileUA()
+			? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
+			: 'https://api.paugram.com/wallpaper/';
+		return api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
+	}
+
+	const cfg = window.mintzeroWallpaper ?? {};
+	if (cfg.enabled !== false && bg) {
+		applyWallpaperSettings(card, cfg);
+
+		const showWallpaper = (url, meta) => {
+			const img = new Image();
+			const timer = window.setTimeout(() => { img.src = ''; }, 12000);
+
+			img.onload = () => {
+				window.clearTimeout(timer);
+				document.documentElement.style.setProperty('--mz-wallpaper', `url("${url}")`);
+				bg.classList.add('is-loaded');
+
+				if (copyright && meta && (meta.title || meta.copyright)) {
+					copyright.textContent = [meta.title, meta.copyright]
+						.filter(Boolean).join(' - ');
+					copyright.removeAttribute('aria-hidden');
+				}
+			};
+
+			img.onerror = () => window.clearTimeout(timer);
+			img.src = url;
+		};
+
+		const loadFromPool = () => {
 			const pick = pickWallpaper(cfg.images, cfg.random !== false);
-			if (pick) {
-				const img = new Image();
-				const timer = window.setTimeout(() => { img.src = ''; }, 10000);
+			if (pick)
+				showWallpaper(pick.url, pick);
+		};
 
-				img.onload = () => {
-					window.clearTimeout(timer);
-					document.documentElement.style.setProperty('--mz-wallpaper', `url("${pick.url}")`);
-					bg.classList.add('is-loaded');
+		/* Random wallpaper: device-aware third-party APIs, with the
+		   local Bing pool (and then the CSS gradient) as fallbacks. */
+		if (cfg.random !== false && cfg.images !== null) {
+			const img = new Image();
+			const timer = window.setTimeout(() => { img.src = ''; }, 12000);
 
-					if (copyright && (pick.title || pick.copyright)) {
-						copyright.textContent = [pick.title, pick.copyright]
-							.filter(Boolean).join(' - ');
-						copyright.removeAttribute('aria-hidden');
-					}
-				};
-
-				img.onerror = () => window.clearTimeout(timer);
-				img.src = pick.url;
-			}
+			img.onload = () => {
+				window.clearTimeout(timer);
+				showWallpaper(img.src, null);
+			};
+			img.onerror = () => {
+				window.clearTimeout(timer);
+				loadFromPool();
+			};
+			img.src = randomApiUrl();
+		} else {
+			loadFromPool();
 		}
+	}
 
 		document.querySelector('#luci_password')?.focus();
 

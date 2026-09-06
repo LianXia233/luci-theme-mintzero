@@ -1188,19 +1188,6 @@ body.mz-login-active #maincontent {
 	font-size: .85rem;
 	letter-spacing: .01em;
 }
-.mz-menu-group > a::after {
-	content: "";
-	margin-left: auto;
-	width: 0; height: 0;
-	border-left: 4px solid transparent;
-	border-right: 4px solid transparent;
-	border-top: 5px solid var(--mz-color-text-muted);
-	transition: transform var(--mz-transition);
-	flex-shrink: 0;
-}
-.mz-menu-group.mz-collapsed > a::after {
-	transform: rotate(-90deg);
-}
 .mz-menu-group > ul {
 	padding-left: 18px;
 	border-left: 1px solid var(--mz-color-border);
@@ -1895,9 +1882,14 @@ table.cbi-section-table tbody tr:hover td {
 	transition: background .15s;
 }
 .mz-menu-group > a::after {
-	content: "▾";
-	font-size: .7rem;
-	opacity: .5;
+	content: "";
+	flex-shrink: 0;
+	margin-left: auto;
+	width: 0;
+	height: 0;
+	border-left: 4px solid transparent;
+	border-right: 4px solid transparent;
+	border-top: 5px solid var(--mz-color-text-muted);
 	transition: transform .2s;
 }
 .mz-menu-group.mz-collapsed > a::after {
@@ -3473,4 +3465,61 @@ html[data-theme="dark"] {
 	border: 1px solid transparent;
 	color: var(--mz-color-success);
 	font-weight: 600;
+}
+
+/* ================================================================
+ * cbi-dynlist (candidate NTP servers and similar dynamic lists)
+ * ================================================================ */
+.cbi-dynlist {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-width: 480px;
+}
+
+.cbi-dynlist > .item {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 10px;
+	padding: 7px 12px;
+	background: var(--mz-color-surface-2);
+	border: 1px solid var(--mz-color-border);
+	border-radius: 8px;
+	font-size: .88rem;
+	color: var(--mz-color-text);
+	cursor: grab;
+	transition: border-color .15s;
+}
+
+.cbi-dynlist > .item:hover {
+	border-color: var(--mz-color-primary);
+}
+
+.cbi-dynlist > .item > span {
+	flex: 1 1 auto;
+	overflow-wrap: anywhere;
+}
+
+.cbi-dynlist > .add-item {
+	display: flex;
+	gap: 8px;
+	align-items: stretch;
+}
+
+.cbi-dynlist > .add-item > input[type="text"] {
+	flex: 1 1 auto;
+	width: 100%;
+	min-height: 34px;
+}
+
+.cbi-dynlist > .add-item > .btn {
+	min-width: 40px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 0 12px;
+	margin: 0;
+	font-size: 1.05rem;
+	line-height: 1;
 }
