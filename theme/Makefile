@@ -23,6 +23,8 @@ define Package/luci-theme-mintzero/postrm
 	uci -q delete luci.themes.MintzeroLight
 	uci -q delete luci.themes.MintzeroDark
 	uci commit luci
+	rm -f /usr/share/luci/acl.d/luci-theme-mintzero.json
+	rm -f /usr/share/rpcd/acl.d/luci-theme-mintzero.json
 }
 endef
 

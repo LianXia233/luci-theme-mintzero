@@ -1,0 +1,11 @@
+{
+	"wallpaper": {
+		"description": "Grant access to the mintzero wallpaper settings",
+		"read": {
+			"uci": [ [ "mintzero", "wallpaper" ] ]
+		},
+		"write": {
+			"uci": [ [ "mintzero", "wallpaper" ] ]
+		}
+	}
+}

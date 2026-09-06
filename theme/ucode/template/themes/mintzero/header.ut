@@ -41,21 +41,32 @@
 		<meta charset="utf-8">
 		<title>{{ striptags(`${boardinfo.hostname ?? '?'}${dispatched?.title ? ` | ${_(dispatched.title)}` : ''}`) }}</title>
 		{% if (themepref == 'system'): %}
-			<script>
-				(function() {
-					var mq = window.matchMedia('(prefers-color-scheme: dark)');
-					var apply = function(m) {
-						document.documentElement.setAttribute('data-theme', m.matches ? 'dark' : 'light');
-					};
+		<script>
+			(function() {
+				/* Honor a user-chosen override first; fall back to the OS
+				   preference only when no explicit choice was stored. */
+				var saved = null;
+				try { saved = localStorage.getItem('mz-theme'); } catch (e) {}
+				var mq = window.matchMedia('(prefers-color-scheme: dark)');
+				var apply = function() {
+					var mode = saved;
+					if (mode !== 'light' && mode !== 'dark')
+						mode = (mq.matches ? 'dark' : 'light');
+					document.documentElement.setAttribute('data-theme', mode);
+				};
+				if (saved === 'light' || saved === 'dark') {
+					document.documentElement.setAttribute('data-theme', saved);
+				} else {
 					mq.addEventListener ? mq.addEventListener('change', apply) : mq.addListener(apply);
-					apply(mq);
-				})();
-			</script>
-		{% endif %}
+					apply();
+				}
+			})();
+		</script>
+	{% endif %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="darkreader-lock">
 		<meta name="theme-color" content="#0f172a">
-		<link rel="stylesheet" href="{{ media }}/cascade.css?v=mz20260906t">
+		<link rel="stylesheet" href="{{ media }}/cascade.css?v=mz20260907a">
 		<link rel="icon" href="{{ media }}/favicon/favicon.svg" sizes="any" type="image/svg+xml">
 		<link rel="icon" href="{{ media }}/favicon/favicon-48.png" sizes="48x48">
 		<link rel="apple-touch-icon" href="{{ media }}/favicon/favicon-180.png">

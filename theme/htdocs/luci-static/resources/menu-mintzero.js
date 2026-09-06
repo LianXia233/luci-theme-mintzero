@@ -26,6 +26,7 @@ return baseclass.extend({
 
 	render(tree) {
 		this.renderMainMenu(tree);
+		this.renderBreadcrumb(tree);
 		this.renderModeMenu(tree);
 
 		/* Tab menu for pages with sub-views */
@@ -50,6 +51,39 @@ return baseclass.extend({
 
 		this.renderMenuLevel(ul, tree, '', 0);
 		ul.style.display = '';
+	},
+
+	/* Breadcrumb in the topbar, built from the live dispatch path */
+	renderBreadcrumb(tree) {
+		const crumb = document.getElementById('modemenu-breadcrumb');
+		if (!crumb || !tree)
+			return;
+
+		const segs = L.env.dispatchpath || [];
+		const titles = [];
+		let node = tree;
+
+		/* The first segment is usually 'admin'; the tree root already
+		   represents that node, so start one level deeper. */
+		for (let i = (segs[0] === 'admin' ? 1 : 0); i < segs.length; i++) {
+			if (!node || !node.children)
+				break;
+			node = node.children[segs[i]];
+			if (!node)
+				break;
+			titles.push(node.title);
+		}
+
+		if (titles.length === 0)
+			return;
+
+		crumb.innerHTML = '';
+		titles.forEach((t, i) => {
+			crumb.appendChild(E('li', {}, [ _(t) ]));
+			if (i < titles.length - 1)
+				crumb.appendChild(E('li', { 'class': 'mz-crumb-sep' }, [ '/' ]));
+		});
+		crumb.style.display = '';
 	},
 
 	renderMenuLevel(ul, tree, url, level) {

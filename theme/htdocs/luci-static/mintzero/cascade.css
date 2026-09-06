@@ -1501,10 +1501,11 @@ table.cbi-section-table th {
  * UI OVERHAUL - comprehensive rewrite
  * ================================================================ */
 
-/* Fix ring text direction: SVG is rotated -90deg, counter-rotate text */
+/* Fix ring text direction: the parent .mz-ring is rotated -90deg, so the
+   text is counter-rotated +90deg around its own bounding-box center to
+   stay upright. */
 .mz-ring text.mz-ring-text {
 	transform: rotate(90deg);
-	transform-origin: 60px 60px;
 	transform-box: fill-box;
 	transform-origin: center;
 }
@@ -2858,4 +2859,121 @@ table.cbi-section-table tbody tr:hover td {
 #mainmenu.mz-menu ul li a.active {
 	font-weight: 600 !important;
 	color: var(--mz-color-primary) !important;
+}
+
+/* ================================================================
+ * Dashboard view (admin/mintzero/dashboard) - previously unstyled
+ * ================================================================ */
+.mz-dash-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+	gap: var(--mz-spacing-lg);
+	align-items: start;
+}
+
+.mz-card {
+	background: var(--mz-color-surface);
+	border: 1px solid var(--mz-color-border);
+	border-radius: var(--mz-radius-lg);
+	box-shadow: var(--mz-shadow-sm);
+	padding: var(--mz-spacing-lg);
+	box-sizing: border-box;
+}
+
+.mz-card-title {
+	margin: 0 0 var(--mz-spacing-md);
+	padding-bottom: var(--mz-spacing-sm);
+	border-bottom: 1px solid var(--mz-color-border);
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--mz-color-text);
+}
+
+.mz-card-body {
+	font-size: .9rem;
+	color: var(--mz-color-text);
+}
+
+.mz-card-body .table {
+	margin: 0;
+}
+
+.mz-card-body .table .td {
+	border-bottom: 1px solid var(--mz-color-border);
+	padding: 7px 10px;
+	font-size: .88rem;
+}
+
+.mz-card-body .table .tr:last-child .td {
+	border-bottom: none;
+}
+
+/* Traffic card */
+.mz-traffic {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mz-spacing-sm);
+}
+
+.mz-traffic-row {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--mz-spacing-md);
+}
+
+.mz-traffic-label {
+	font-weight: 600;
+	font-size: .9rem;
+}
+
+.mz-traffic-down { color: var(--mz-color-primary); }
+.mz-traffic-up { color: var(--mz-color-success); }
+
+.mz-traffic-now {
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+	color: var(--mz-color-text);
+}
+
+.mz-traffic-note {
+	margin: var(--mz-spacing-sm) 0 0;
+	font-size: .8rem;
+	color: var(--mz-color-text-muted);
+	line-height: 1.5;
+}
+
+/* Sparkline (live traffic graph) */
+.mz-spark {
+	display: block;
+	width: 100%;
+	height: 48px;
+	margin-top: var(--mz-spacing-xs);
+}
+
+@media (max-width: 640px) {
+	.mz-dash-grid { grid-template-columns: 1fr; }
+}
+
+/* ================================================================
+ * Dark mode: override hardcoded light backgrounds
+ * ================================================================ */
+html[data-theme="dark"] .warningbox {
+	background: var(--mz-color-warning-soft);
+	color: var(--mz-color-warning);
+	border-color: var(--mz-color-warning);
+}
+html[data-theme="dark"] .alert-message.warning {
+	background: var(--mz-color-warning-soft);
+	border-color: var(--mz-color-warning);
+	color: var(--mz-color-text);
+}
+html[data-theme="dark"] .infobox {
+	background: var(--mz-color-primary-soft);
+	color: var(--mz-color-primary);
+	border-color: var(--mz-color-primary);
+}
+html[data-theme="dark"] .cbi-change-list,
+html[data-theme="dark"] #xhr_poll_status {
+	background: var(--mz-color-surface);
 }

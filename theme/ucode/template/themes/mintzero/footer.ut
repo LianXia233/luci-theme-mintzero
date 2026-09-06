@@ -25,6 +25,24 @@
 (function () {
   'use strict';
 
+  /* Match a section title against Chinese/English prefixes. */
+  function mzTitleStarts(h, prefixes) {
+    if (!h) return false;
+    var t = h.textContent.trim();
+    for (var i = 0; i < prefixes.length; i++) {
+      if (t.indexOf(prefixes[i]) === 0) return true;
+    }
+    return false;
+  }
+  function mzTitleHas(h, prefixes) {
+    if (!h) return false;
+    var t = h.textContent.trim();
+    for (var i = 0; i < prefixes.length; i++) {
+      if (t.indexOf(prefixes[i]) >= 0) return true;
+    }
+    return false;
+  }
+
   /* ==== Collapsible menu groups ==== */
   function initMenu() {
     /* Remove top-level wrapper (管理权), promote child groups to mainmenu */
@@ -168,7 +186,7 @@
     var portSection = null;
     document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
       var h = sec.querySelector('h2, h3');
-      if (h && h.textContent.trim().indexOf('端口状态') === 0) portSection = sec;
+      if (h && mzTitleStarts(h, ['端口状态', 'Ports', 'Switch'])) portSection = sec;
     });
     var portPanel = null;
     if (portSection) {
@@ -220,7 +238,7 @@
     var netSection = null;
     document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
       var h = sec.querySelector('h2, h3');
-      if (h && h.textContent.trim().indexOf('网络') === 0) netSection = sec;
+      if (h && mzTitleStarts(h, ['网络', 'Network'])) netSection = sec;
     });
     if (netSection) {
       var netCards = [];
@@ -267,7 +285,8 @@
     var sysSection = null;
     document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
       var h = sec.querySelector('h2, h3');
-      if (h && h.textContent.trim().indexOf('系统') === 0 && h.textContent.trim().indexOf('端口') < 0) sysSection = sec;
+      var _st = h ? h.textContent.trim() : '';
+      if (h && mzTitleStarts(h, ['系统', 'System']) && _st.indexOf('端口') < 0 && _st.indexOf('Ports') < 0) sysSection = sec;
     });
     if (sysSection) {
       var sysItems = [];
@@ -297,7 +316,7 @@
     var dhcpSection = null;
     document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
       var h = sec.querySelector('h2, h3');
-      if (h && h.textContent.trim().indexOf('DHCP') === 0) dhcpSection = sec;
+      if (h && mzTitleStarts(h, ['DHCP'])) dhcpSection = sec;
     });
     if (dhcpSection) {
       var dhcpTables = dhcpSection.querySelectorAll('table');
@@ -335,7 +354,7 @@
     var wifiSection = null;
     document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
       var h = sec.querySelector('h2, h3');
-      if (h && h.textContent.trim().indexOf('无线') === 0) wifiSection = sec;
+      if (h && mzTitleStarts(h, ['无线', 'Wireless'])) wifiSection = sec;
     });
     if (wifiSection) {
       var wifiRadios = [];
@@ -398,7 +417,7 @@
     var upnpSection = null;
     document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
       var h = sec.querySelector('h2, h3');
-      if (h && (h.textContent.trim().indexOf('UPnP') >= 0 || h.textContent.trim().indexOf('端口映射') >= 0)) upnpSection = sec;
+      if (h && mzTitleHas(h, ['UPnP', '端口映射', 'Active Connections'])) upnpSection = sec;
     });
     if (upnpSection) {
       var upnpTable = upnpSection.querySelector('table');
@@ -442,7 +461,7 @@
         var h = sec.querySelector('h2, h3, .cbi-section-title');
         if (h) {
           var txt = h.textContent.trim();
-          if ((txt.indexOf('内存') === 0 || txt.indexOf('存储') === 0 || txt.indexOf('端口状态') === 0 || txt.indexOf('网络') === 0 || txt.indexOf('系统') === 0 || txt.indexOf('DHCP') === 0 || txt.indexOf('无线') === 0 || txt.indexOf('UPnP') >= 0 || txt.indexOf('端口映射') >= 0 || txt.indexOf('DSL') === 0) && !sec.classList.contains('mz-hidden-section')) {
+          if ((txt.indexOf('内存') === 0 || txt.indexOf('存储') === 0 || txt.indexOf('端口状态') === 0 || txt.indexOf('网络') === 0 || txt.indexOf('系统') === 0 || txt.indexOf('DHCP') === 0 || txt.indexOf('无线') === 0 || txt.indexOf('UPnP') >= 0 || txt.indexOf('端口映射') >= 0 || txt.indexOf('DSL') === 0 || txt.indexOf('Memory') === 0 || txt.indexOf('Storage') === 0 || txt.indexOf('Ports') === 0 || txt.indexOf('Switch') === 0 || txt.indexOf('Network') === 0 || txt.indexOf('System') === 0 || txt.indexOf('Wireless') === 0 || txt.indexOf('Active Connections') >= 0) && !sec.classList.contains('mz-hidden-section')) {
             sec.classList.add('mz-hidden-section');
           }
         }
