@@ -138,16 +138,18 @@ return view.extend({
 				_('Kernel Version'), board.kernel
 			])),
 
-			card(_('Resources'), E('div', {}, [
-				kv([
-					_('Memory Usage'), null,
-					_('Load Average'), null,
-					_('Uptime'), null
-				]),
-				E('div', { 'id': 'mz-dash-memory' }, E('em', { 'class': 'spinning' }, _('Collecting data...'))),
-				E('div', { 'id': 'mz-dash-load' }),
-				E('div', { 'id': 'mz-dash-uptime' })
-			])),
+			card(_('Resources'), (() => {
+				const t = E('table', { 'class': 'table' });
+				const row = (label, id) => t.appendChild(E('tr', { 'class': 'tr' }, [
+					E('td', { 'class': 'td left', 'width': '40%' }, [label]),
+					E('td', { 'class': 'td left', 'id': id },
+						[E('em', { 'class': 'spinning' }, _('Collecting data...'))])
+				]));
+				row(_('Memory Usage'), 'mz-dash-memory');
+				row(_('Load Average'), 'mz-dash-load');
+				row(_('Uptime'), 'mz-dash-uptime');
+				return t;
+			})()),
 
 			card(_('Traffic'), E('div', { 'class': 'mz-traffic' }, [
 				E('div', { 'class': 'mz-traffic-row' }, [

@@ -72,6 +72,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - P1：日志页筛选行 label 中途折行、控件溢出（手机端）→ 筛选行 flex 换行 + label 禁止折行
 - P2：`.mz-view` 横向溢出护栏（`overflow-x: clip`），网络页表格轻微出血不再撑开页面
 
+### Added (2026-09-07 第四轮修复 + 壁纸功能)
+- 壁纸来源可选 Bing 每日壁纸或自定义图片；自定义支持上传图片（≤3MB，写入 /www/luci-static/mintzero/custom.jpg）或填写 http(s) 图片直链
+- 「刷新 Bing 缓存」手动刷新按钮（新增 `admin/mintzero/wallpaper/refresh` JSON 端点，跳过节流锁强制重取）
+- cbi 选项卡（`ul.cbi-tabmenu`）完整样式：active 蓝色下划线、disabled 灰色
+- 第三方应用设计变量桥接：定义 `--brand/--surface/--text/--hairline` 等 21 个变量映射到主题 token（修复 taygedo 等应用白底白字不可见）
+- 新增 `scripts/po2lmo.py`（po → lmo 编译器，PoC 于实机验证）
+
+### Fixed (2026-09-07 第四轮修复)
+- P0：**所有页面 tab 选项卡失效、编辑弹窗全部选项平铺**——根因是 LuCI `switchTab()` 只切换 `data-tab-active` 属性，面板隐藏完全依赖主题 CSS，而主题缺少 `[data-tab-active="false"] { display: none }` 规则 → 补上后 tab 正常切换，弹窗高度从 10177px 恢复正常
+- P0：cbi-dropdown 关闭态未隐藏未选中项（LuCI 用 `selected` **属性**而非 class），保存并应用按钮堆叠所有选项、高度 92px，误杀修复时又因选择器写错导致按钮文字消失 → 最终规则 `:not([selected]):not(.hidden)`
+- P1：手机端每个选项间隔 ~340px——`.cbi-value-field { flex: 1 1 300px }` 的 basis 在列布局下变成高度 300px → 移动端改为 `flex: 1 1 auto`
+- P1：wallpaper.uc 中 `validCustomUrl` 定义在调用方 `loadConfig` 之后，ucode 不做函数提升，登录页壁纸报 error、刷新端点 500 → 函数移到调用前
+- P1：设备 `/etc/config/mintzero` 的 section type 为 `mintzero` 而视图按 `wallpaper` 过滤，设置页显示「尚无任何配置」→ 修正设备配置类型
+- P2：主题 po 翻译未安装到设备（无 lmo 文件），Dashboard/mintzero 页面中英混杂 → po 编译 lmo 部署至 `/usr/lib/lua/luci/i18n/luci-theme-mintzero.zh-cn.lmo`，登录页与 mintzero 页面全中文
+- P2：Dashboard Resources 卡片值显示 N/A 且真实值散落行外（DOM 结构错误）→ 值直接填入对应行
+- P2：移动端保存/应用按钮全宽且过高 → 统一 32px 高、auto 宽度、行内排列，与「保存/重置」对齐
+
 ---
 
 ## [0.2.0] - 2026-09-06

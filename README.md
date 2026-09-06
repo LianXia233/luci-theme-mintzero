@@ -8,14 +8,17 @@
 
 - 基于 CSS 变量（Design Tokens）的现代设计系统：色彩、间距、圆角、阴影、字体
 - 浅色 / 深色 / 跟随系统三种配色（默认跟随系统，尊重 `prefers-color-scheme`；侧栏按钮可覆盖）
-- Bing 每日壁纸全屏登录页，带渐变兜底
+- Bing 每日壁纸全屏登录页，带渐变兜底；支持自定义壁纸（上传图片或填写图片直链）与手动刷新缓存；支持自定义壁纸（上传图片或填写图片直链）与手动刷新缓存
 - 侧栏导航从 LuCI 实时菜单树渲染（无硬编码菜单）
 - 移动端抽屉式导航 + 遮罩
 - 480px 至 1280px+ 全段响应式；移动端表格重排为卡片
 - Dashboard 视图展示真实系统数据（ubus/rpcd）；不支持的值显示 N/A，绝不造假数据
 - 无障碍：跳转链接、focus-visible、aria 标签、键盘可操作的登录页
 - 无 CDN、无 Web 字体、无图标字体、无前端框架、无 jQuery
-- 国际化就绪（英文 + 简体中文）
+- 国际化就绪（英文 + 简体中文，po 编译为 lmo 随包安装）
+- LuCI 弹窗系统主题化（#modal_overlay 遮罩 + 居中对话框，保存并应用进度可见）
+- cbi 选项卡（ul.cbi-tabmenu）完整样式与显隐规则
+- 第三方应用设计变量桥接（--brand/--surface/--text 等，兼容 taygedo 等应用）
 
 ## 目录结构
 
@@ -38,14 +41,16 @@ theme/                        # 主题源码（放入 buildroot 的 feeds/luci/t
 ├── ucode/template/themes/mintzero/
 │   ├── header.ut             # 页面骨架、侧栏、顶栏
 │   ├── footer.ut             # 页脚、L.require('menu-mintzero')
-│   └── sysauth.ut            # 登录页（保留原生认证表单）
+│   ├── sysauth.ut            # 登录页（保留原生认证表单）
+│   └── wallpaper-refresh.ut  # 壁纸缓存手动刷新 JSON 端点
 ├── ucode/mintzero/
 │   └── wallpaper.uc          # Bing 元数据抓取 + 缓存 + 校验
 ├── root/
 │   ├── etc/config/mintzero           # UCI 配置
 │   ├── etc/uci-defaults/30_luci-theme-mintzero
 │   ├── usr/share/luci/menu.d/luci-theme-mintzero.json
-│   └── usr/share/luci/acl.d/luci-theme-mintzero.json
+│   ├── usr/share/luci/acl.d/luci-theme-mintzero.json
+│   └── usr/share/rpcd/acl.d/luci-theme-mintzero.json  # rpcd 授权组（菜单 ACL 必需）
 └── po/                       # templates + zh_Hans
 ```
 

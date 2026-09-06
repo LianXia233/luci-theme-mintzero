@@ -27,6 +27,18 @@
 		}
 	},
 
+	"admin/mintzero/wallpaper/refresh": {
+		"title": "Wallpaper Refresh",
+		"order": 2,
+		"action": {
+			"type": "template",
+			"path": "themes/mintzero/wallpaper-refresh"
+		},
+		"depends": {
+			"acl": [ "wallpaper" ]
+		}
+	},
+
 	"admin/mintzero/dashboard": {
 		"title": "Dashboard",
 		"order": 1,

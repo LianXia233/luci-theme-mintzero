@@ -5,7 +5,16 @@
 'use strict';
 'require view';
 'require form';
+'require rpc';
 'require uci';
+'require ui';
+
+var callFileWrite = rpc.declare({
+	object: 'file',
+	method: 'write',
+	params: [ 'path', 'data' ],
+	expect: { code: 0 }
+});
 
 return view.extend({
 	render() {
@@ -19,15 +28,27 @@ return view.extend({
 		s.option(form.Flag, 'enabled', _('Enabled'),
 			_('When disabled, the login page uses the built-in gradient fallback.'));
 
+		const mode = s.option(form.ListValue, 'mode', _('Wallpaper source'));
+		mode.value('bing', _('Bing daily wallpaper'));
+		mode.value('custom', _('Custom image'));
+		mode.default = 'bing';
+
+		const url = s.option(form.Value, 'custom_url', _('Custom image URL'),
+			_('Direct http(s) link to an image. Used in "Custom image" mode when no image has been uploaded.'));
+		url.rmempty = true;
+		url.depends('mode', 'custom');
+
 		const market = s.option(form.ListValue, 'market', _('Bing Market'));
 		market.value('zh-CN', 'zh-CN');
 		market.value('en-US', 'en-US');
 		market.value('ja-JP', 'ja-JP');
 		market.value('zh-TW', 'zh-TW');
+		market.depends('mode', 'bing');
 
 		const ttl = s.option(form.Value, 'cache_ttl', _('Cache TTL (seconds)'));
 		ttl.datatype = 'range(300,604800)';
 		ttl.default = '86400';
+		ttl.depends('mode', 'bing');
 
 		const overlay = s.option(form.Value, 'overlay', _('Overlay opacity'),
 			_('Dark overlay strength over the wallpaper (0.0 - 1.0).'));
@@ -42,6 +63,67 @@ return view.extend({
 		s.option(form.Flag, 'random', _('Random wallpaper'),
 			_('Pick a random image from the last fetched pool on each login page load.'));
 
-		return m.render();
+		return m.render().then((nodes) => {
+			const btnRow = E('div', { 'class': 'cbi-page-actions' }, [
+				E('button', {
+					'class': 'btn cbi-button',
+					'click': ui.createHandlerFn(this, 'handleRefresh')
+				}, [ _('Refresh Bing cache') ]),
+				E('input', {
+					'type': 'file',
+					'id': 'mz-wp-file',
+					'style': 'display:none',
+					'accept': 'image/jpeg,image/png,image/webp',
+					'change': ui.createHandlerFn(this, 'handleUpload')
+				}),
+				E('button', {
+					'class': 'btn cbi-button',
+					'click': function(ev) {
+						document.getElementById('mz-wp-file').click();
+					}
+				}, [ _('Upload custom image…') ])
+			]);
+
+			nodes.insertBefore(btnRow, nodes.firstChild);
+			return nodes;
+		});
+	},
+
+	handleRefresh(ev) {
+		return fetch(L.url('admin/mintzero/wallpaper/refresh'), {
+			method: 'POST',
+			credentials: 'same-origin'
+		}).then(r => r.json()).then((data) => {
+			if (data && data.spawned)
+				ui.addNotification(null, E('p', _('Refresh triggered. The new wallpaper pool loads in the background and appears after the cache reloads.')), 'info');
+			else
+				ui.addNotification(null, E('p', _('Custom image mode is active - nothing to refresh.')), 'notice');
+		}).catch((e) => {
+			ui.addNotification(null, E('p', _('Refresh failed: %s').format(e.message)), 'error');
+		});
+	},
+
+	handleUpload(ev) {
+		const file = ev.target.files[0];
+		if (!file)
+			return;
+
+		if (file.size > 3 * 1024 * 1024) {
+			ui.addNotification(null, E('p', _('Image is too large (max 3 MB).')), 'error');
+			return;
+		}
+
+		return file.arrayBuffer().then((buf) => {
+			let bin = '';
+			const bytes = new Uint8Array(buf);
+			for (let i = 0; i < bytes.length; i++)
+				bin += String.fromCharCode(bytes[i]);
+
+			return callFileWrite('/www/luci-static/mintzero/custom.jpg', btoa(bin));
+		}).then(() => {
+			ui.addNotification(null, E('p', _('Image uploaded. It is used when "Wallpaper source" is set to "Custom image".')), 'info');
+		}).catch((e) => {
+			ui.addNotification(null, E('p', _('Upload failed: %s').format(e.message)), 'error');
+		});
 	}
 });

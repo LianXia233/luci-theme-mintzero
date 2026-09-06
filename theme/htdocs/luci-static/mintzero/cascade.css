@@ -2986,7 +2986,7 @@ html[data-theme="dark"] #xhr_poll_status {
 #maincontent textarea {
 	width: 100%;
 	box-sizing: border-box;
-	min-height: 18rem;
+	min-height: 8rem;
 	resize: vertical;
 	font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace;
 	font-size: .82rem;
@@ -3184,4 +3184,252 @@ textarea,
 	color: var(--mz-color-text);
 }
 
+/* ================================================================
+ * LuCI tab system (ui.js)
+ * switchTab() only toggles data-tab-active on panes; hiding the
+ * inactive panes is the THEME's job. Without this rule every tab
+ * pane renders at once ("all options on one page").
+ * ================================================================ */
+[data-tab][data-tab-active="false"],
+.cbi-tabcontainer[data-tab-active="false"] {
+	display: none !important;
+}
 
+/* Section tab menus (ul.cbi-tabmenu built by ui.tabs.init) */
+ul.cbi-tabmenu {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--mz-spacing-xs);
+	border-bottom: 1px solid var(--mz-color-border);
+	margin: 0 0 var(--mz-spacing-lg);
+	padding: 0;
+	list-style: none;
+}
+
+ul.cbi-tabmenu li a {
+	display: block;
+	padding: 8px 14px;
+	color: var(--mz-color-text-muted);
+	border-bottom: 2px solid transparent;
+	margin-bottom: -1px;
+	font-size: .9rem;
+	transition: color var(--mz-transition);
+}
+
+ul.cbi-tabmenu li a:hover {
+	color: var(--mz-color-text);
+}
+
+ul.cbi-tabmenu li.cbi-tab a {
+	color: var(--mz-color-primary);
+	border-bottom-color: var(--mz-color-primary);
+	font-weight: 600;
+}
+
+ul.cbi-tabmenu li.cbi-tab-disabled a {
+	color: var(--mz-color-text-muted);
+}
+
+.cbi-tab-descr {
+	margin-bottom: var(--mz-spacing-md);
+}
+
+/* ================================================================
+ * Third-party app design-token bridge (taygedo and similar apps
+ * style themselves with --brand/--surface/--text custom props and
+ * expect the active theme to provide them).
+ * ================================================================ */
+:root {
+	--brand: var(--mz-color-primary);
+	--brand-hover: var(--mz-color-primary-hover);
+	--brand-subtle: var(--mz-color-primary-soft);
+	--on-brand: #ffffff;
+	--control-bg: var(--mz-color-surface);
+	--hairline: var(--mz-color-border);
+	--radius-base: var(--mz-radius-md);
+	--scrim: rgba(8, 12, 20, .5);
+	--surface: var(--mz-color-surface);
+	--surface-sunken: var(--mz-color-background);
+	--text: var(--mz-color-text);
+	--text-muted: var(--mz-color-text-muted);
+	--text-subtle: var(--mz-color-text-muted);
+	--font-sans: var(--mz-font-sans);
+	--font-mono: var(--mz-font-mono);
+	--info: #0ea5e9;
+	--danger: var(--mz-color-danger);
+	--success: var(--mz-color-success);
+	--success-surface: var(--mz-color-success-soft);
+	--warning: var(--mz-color-warning);
+	--warning-surface: var(--mz-color-warning-soft);
+}
+
+html[data-theme="dark"] {
+	--info: #38bdf8;
+}
+
+/* ================================================================
+ * Visual polish: buttons, headings, cards
+ * ================================================================ */
+.btn,
+.cbi-button {
+	font-weight: 500;
+	box-shadow: var(--mz-shadow-sm);
+}
+
+.cbi-button.important,
+.cbi-button-action.important {
+	box-shadow: 0 2px 8px rgba(79, 110, 247, .28);
+}
+
+.cbi-page-actions .btn,
+.cbi-page-actions .cbi-button {
+	min-height: 34px;
+}
+
+.mz-card-title,
+.cbi-section > h3,
+#view h2,
+.mz-view h2 {
+	letter-spacing: .01em;
+}
+
+/* ================================================================
+ * Compact form rows on small screens ("options spaced far apart")
+ * ================================================================ */
+@media (max-width: 640px) {
+	.cbi-value {
+		padding: 6px 0;
+		gap: 4px 12px;
+	}
+
+	.cbi-value-title {
+		padding-top: 2px;
+	}
+
+	.cbi-value-description {
+		margin-top: 2px;
+		line-height: 1.45;
+	}
+
+	.cbi-tab-descr {
+		margin-bottom: var(--mz-spacing-sm);
+	}
+
+	.mz-view {
+		padding: var(--mz-spacing-sm) var(--mz-spacing-sm) 24px;
+	}
+
+	.cbi-section {
+		padding: var(--mz-spacing-sm);
+	}
+}
+
+
+
+
+/* ================================================================
+ * Compact, consistent page-action buttons (apply/save/reset)
+ * ================================================================ */
+.cbi-page-actions .btn,
+.cbi-page-actions .cbi-button,
+.cbi-page-actions .cbi-dropdown.cbi-button {
+	width: auto;
+	min-width: 0;
+	min-height: 34px;
+	padding: 6px 14px;
+	font-size: .88rem;
+	line-height: 1.3;
+}
+
+.cbi-page-actions .cbi-dropdown.cbi-button {
+	padding: 0;
+}
+
+.cbi-page-actions .cbi-dropdown.cbi-button > ul {
+	padding: 0;
+	margin: 0;
+}
+
+.cbi-page-actions .cbi-dropdown.cbi-button > ul > li {
+	min-height: 32px;
+	padding: 6px 12px;
+	font-size: .88rem;
+	display: flex;
+	align-items: center;
+}
+
+.cbi-page-actions .cbi-dropdown.cbi-button .more,
+.cbi-page-actions .cbi-dropdown.cbi-button .toggle {
+	display: inline-flex;
+	align-items: center;
+	padding: 0 8px;
+	font-size: .8rem;
+}
+
+@media (max-width: 640px) {
+	.cbi-page-actions {
+		flex-direction: row;
+		flex-wrap: wrap;
+		justify-content: flex-start;
+		gap: 6px;
+	}
+
+	.cbi-page-actions .btn,
+	.cbi-page-actions .cbi-button,
+	.cbi-page-actions .cbi-dropdown.cbi-button {
+		width: auto;
+		flex: 0 1 auto;
+		min-height: 32px;
+		padding: 4px 12px;
+		font-size: .84rem;
+	}
+
+	.cbi-page-actions .cbi-dropdown.cbi-button > ul > li {
+		min-height: 30px;
+		padding: 4px 10px;
+		font-size: .84rem;
+	}
+}
+
+/* cbi-dropdown closed state: hide non-selected options (otherwise the
+   apply split button renders every option stacked and grows huge) */
+.cbi-dropdown:not(.open) > ul > li:not([selected]):not(.hidden) {
+	display: none !important;
+}
+
+/* Mobile: flex-basis 300px becomes HEIGHT in column direction, which
+   used to force every form row to ~340px tall (options spaced far
+   apart). Neutralize the basis on stacked layouts. */
+@media (max-width: 768px) {
+	.cbi-value-field {
+		flex: 1 1 auto;
+		min-height: 0;
+		width: 100%;
+	}
+}
+
+/* Keep the apply split button exactly as tall as the save/reset
+   buttons next to it (dropdown internals previously inflated it). */
+.cbi-page-actions .cbi-dropdown.cbi-button {
+	height: 34px;
+	overflow: hidden;
+}
+
+.cbi-page-actions .cbi-dropdown.cbi-button > ul > li {
+	height: 100%;
+	min-height: 0;
+	max-height: 100%;
+	padding-top: 0;
+	padding-bottom: 0;
+	line-height: 32px;
+}
+
+@media (max-width: 640px) {
+	.cbi-page-actions .cbi-dropdown.cbi-button {
+		height: 32px;
+	}
+
+	.cbi-page-actions .cbi-dropdown.cbi-button > ul > li {
+		line-height: 30px;
+	}
+}

@@ -24,7 +24,7 @@
 
 'use strict';
 
-import { readfile, writefile, popen, stat, mkdir } from 'fs';
+import { readfile, writefile, popen, stat, mkdir, unlink } from 'fs';
 import { cursor } from 'uci';
 
 const BING_API_BASE = 'https://www.bing.com/HPImageArchive.aspx';
@@ -35,8 +35,13 @@ const CACHE_RAW = CACHE_DIR + '/bing-raw.json';
 const LOCK_FILE = CACHE_DIR + '/refresh.lock';
 const LOCK_TTL = 60;
 
+// User-provided custom wallpaper, served statically by uhttpd (no auth
+// needed: the login page is pre-authentication).
+const CUSTOM_PATH = '/www/luci-static/mintzero/custom.jpg';
+
 const DEFAULTS = {
 	enabled: '1',
+	mode: 'bing',
 	market: 'zh-CN',
 	count: 8,
 	cache_ttl: 86400
@@ -69,10 +74,34 @@ function inList(v, list) {
 	return false;
 }
 
+// A custom URL is embedded into login-page markup/CSS, so restrict it to
+// a safe http(s) absolute URL with no shell/HTML metacharacters.
+// NOTE: must be defined before loadConfig(), which calls it - ucode
+// (libucode 20230711 era) does not hoist function declarations.
+function validCustomUrl(u) {
+	if (type(u) != 'string' || length(u) == 0)
+		return null;
+
+	if (substr(u, 0, 8) != 'https://' && substr(u, 0, 7) != 'http://')
+		return null;
+
+	const bad = ['"', "'", ' ', '\\', '<', '>', '`', '\n', '\r'];
+	let i;
+
+	for (i = 0; i < length(bad); i++) {
+		if (index(u, bad[i]) > -1)
+			return null;
+	}
+
+	return u;
+}
+
 function loadConfig() {
 	const wp = cursor().get_all('mintzero', 'wallpaper') ?? {};
 	return {
 		enabled: wp.enabled ?? DEFAULTS.enabled,
+		mode: (wp.mode == 'custom') ? 'custom' : 'bing',
+		custom_url: validCustomUrl(wp.custom_url ?? ''),
 		market: inList(wp.market ?? '', ALLOWED_MARKETS) ? wp.market : DEFAULTS.market,
 		count: clampInt(wp.count, 1, 8, DEFAULTS.count),
 		cache_ttl: clampInt(wp.cache_ttl, 300, 604800, DEFAULTS.cache_ttl)
@@ -180,6 +209,20 @@ function spawnRefresh(cfg) {
 	p?.close();
 }
 
+// Custom wallpaper resolution: local uploaded file wins over a remote
+// direct link. Both are served without authentication (the login page
+// is pre-auth), so the upload path lives under /www.
+function getCustomImage(cfg) {
+	if (cfg.enabled == '0')
+		return null;
+
+	const st = stat(CUSTOM_PATH);
+	if (st && st.type == 'file' && st.size)
+		return '/luci-static/mintzero/custom.jpg';
+
+	return cfg.custom_url;
+}
+
 export function getWallpapers() {
 	const cfg = loadConfig();
 
@@ -188,6 +231,21 @@ export function getWallpapers() {
 			enabled: false,
 			images: [],
 			source: 'disabled'
+		};
+	}
+
+	if (cfg.mode == 'custom') {
+		const url = getCustomImage(cfg);
+		return {
+			enabled: true,
+			images: url ? [ {
+				url: url,
+				urlbase: url,
+				title: '',
+				copyright: '',
+				startdate: ''
+			} ] : [],
+			source: url ? 'custom' : 'none'
 		};
 	}
 
@@ -206,4 +264,33 @@ export function getWallpapers() {
 
 	// 4. Nothing yet - frontend falls back to CSS gradient
 	return { enabled: true, images: [], source: 'none' };
+}
+
+// Manual refresh: drop the cache and the throttle lock so the next
+// spawn happens immediately, then kick it off. Returns true when a
+// fetch was spawned, false when it was throttled.
+export function refreshWallpapers() {
+	const cfg = loadConfig();
+
+	if (cfg.mode == 'custom')
+		return { spawned: false, mode: 'custom' };
+
+	unlink(CACHE_RAW);
+	unlink(LOCK_FILE);
+
+	mkdir(CACHE_DIR);
+	writefile(LOCK_FILE, sprintf('%d', time()));
+
+	const url = sprintf('%s?format=js&idx=0&n=%d&mkt=%s',
+		BING_API_BASE, cfg.count, cfg.market);
+
+	const cmd = sprintf(
+		'( wget -q -O %s -T 8 -U "mintzero-wallpaper/1.0" %s ) >/dev/null 2>&1 &',
+		shellquote(CACHE_RAW), shellquote(url)
+	);
+
+	const p = popen(cmd, 'r');
+	p?.close();
+
+	return { spawned: true, mode: 'bing' };
 }

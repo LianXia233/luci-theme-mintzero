@@ -1,0 +1,16 @@
+{#
+ mintzero - wallpaper cache refresh endpoint
+ Copyright (C) 2026 LianXia233
+ Licensed to the public under the Apache License 2.0.
+
+ Rendered as a page action under admin/mintzero/wallpaper/refresh.
+ Forces the Bing metadata cache to be dropped and re-fetched (custom
+ image mode is a no-op). Returns a small JSON status object.
+-#}
+{%
+	import { refreshWallpapers } from 'luci.mintzero.wallpaper';
+
+	http.prepare_content('application/json');
+	let local_result = refreshWallpapers();
+-%}
+{"spawned": {{ local_result.spawned ? 'true' : 'false' }}, "mode": "{{ local_result.mode }}"}
