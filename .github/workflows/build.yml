@@ -84,6 +84,7 @@ jobs:
           mkdir -p feeds/luci/themes/luci-theme-mintzero
           cp -a "$GITHUB_WORKSPACE"/theme/* feeds/luci/themes/luci-theme-mintzero/
           ./scripts/feeds install -a
+          ./scripts/feeds install luci-theme-mintzero || { echo "::error::Failed to install luci-theme-mintzero feed"; exit 1; }
 
       - name: Configure
         run: |
