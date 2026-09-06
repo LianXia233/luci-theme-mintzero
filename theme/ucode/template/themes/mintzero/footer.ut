@@ -93,10 +93,16 @@
   /* ==== Overview page: circular gauges + info cards ==== */
   function initOverview() {
     if (document.body.getAttribute('data-page') !== 'admin-status-overview') return;
-    if (document.querySelector('.mz-overview-panel')) return;
 
     var tables = document.querySelectorAll('#mz-view table.table');
     if (tables.length < 3) return;
+
+    /* Rebuild-friendly: LuCI's poll keeps updating the hidden original
+       tables, so dropping and recreating the panels on an interval
+       keeps the visible data fresh. */
+    document.querySelectorAll('.mz-overview-panel, .mz-port-panel, .mz-net-panel, .mz-sys-panel, .mz-dhcp-panel, .mz-wifi-panel, .mz-upnp-panel').forEach(function (p) {
+      p.remove();
+    });
 
     var t0 = tables[0].innerText;
     function grab(re) { var m = t0.match(re); return m ? m[1].trim() : ''; }
@@ -493,6 +499,11 @@
     if (tables.length >= 3) {
       overviewDone = true;
       try { initOverview(); } catch (err) {}
+      /* LuCI's poll refreshes the hidden original tables; rebuild the
+         overview panels on an interval so visible data stays live. */
+      setInterval(function () {
+        try { initOverview(); } catch (err) {}
+      }, 5000);
     }
   }
 
