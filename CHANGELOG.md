@@ -58,6 +58,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - P2：SVG 圆环 `transform-origin` 重复声明 → 收敛为 `transform-box: fill-box; transform-origin: center`
 - P2：`htdocs/luci-static/mintzero/menu-mintzero.js` 死代码副本与 `resources/` 版本冲突 → 删除
 
+### Added (2026-09-07 第三轮修复)
+- 全站弹窗系统样式（`#modal_overlay` fixed 全屏 + z-index 2000 + 半透明背景，`.modal` 居中 720px/90vh 内部滚动，640px 以下窄屏适配）
+- 保存/应用操作栏吸底（`.cbi-page-actions` sticky bottom），滚动时始终可见
+- 「保存并应用」统一主色（蓝底白字 + hover 提亮），样式一致不再丑
+- 表单控件全局 `box-sizing: border-box`，修复 system 页输入框溢出字段容器 26px
+- 表格操作列相邻按钮间距 + 单元格 `overflow-wrap`
+
+### Fixed (2026-09-07 第三轮修复)
+- P0：LuCI 动态弹窗（无线编辑、上传、保存并应用进度等）完全无样式——`#modal_overlay` 为 body 末尾静态透明 div（实测 1600×10177px、y=-4639），被 z-40 侧栏遮挡且进度弹窗不可见（用户误以为卡死）→ 弹窗层修复后全部正常居中显示
+- P1：`#modal_overlay` 初版无条件显示暗色背景与空弹窗白块 → 改为仅 `body.modal-overlay-active` 时显示背景/弹窗，默认 `pointer-events: none` 不再拦截登录页点击
+- P1：syslog/dmesg 日志输出为裸 `<textarea>`，浏览器默认宽约 163px，日志被压成窄条 → `#maincontent textarea` 全宽 + 等宽字体，PC/手机验证正常
+- P1：日志页筛选行 label 中途折行、控件溢出（手机端）→ 筛选行 flex 换行 + label 禁止折行
+- P2：`.mz-view` 横向溢出护栏（`overflow-x: clip`），网络页表格轻微出血不再撑开页面
+
 ---
 
 ## [0.2.0] - 2026-09-06
