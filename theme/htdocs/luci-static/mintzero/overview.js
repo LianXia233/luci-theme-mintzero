@@ -783,4 +783,46 @@
 		document.addEventListener('DOMContentLoaded', function () { setTimeout(boot, 800); });
 	else
 		setTimeout(boot, 800);
+
+	/* ==== Apply feedback: success / revert notifications ====
+	   LuCSI closes the apply modal without any success message; listen
+	   for the uci-applied / uci-reverted events and surface one. */
+	function mzNotify(msg, cls) {
+		try {
+			var box = document.createElement('div');
+			box.className = 'alert-message mz-apply-success ' + (cls || 'success');
+			box.setAttribute('role', 'alert');
+			var p = document.createElement('p');
+			p.style.margin = '0';
+			p.textContent = msg;
+			box.appendChild(p);
+			var main = document.getElementById('maincontent') || document.body;
+			main.insertBefore(box, main.firstChild);
+			box.classList.add('fade-in');
+			setTimeout(function () {
+				box.style.transition = 'opacity .4s';
+				box.style.opacity = '0';
+				setTimeout(function () { if (box.parentNode) box.parentNode.removeChild(box); }, 450);
+			}, 6000);
+		} catch (err) {}
+	}
+
+	document.addEventListener('uci-applied', function () {
+		try { sessionStorage.setItem('mz-apply-ok', String(Date.now())); } catch (err) {}
+		mzNotify('配置已成功应用。', 'success');
+	});
+
+	document.addEventListener('uci-reverted', function () {
+		mzNotify('已回滚到最近保存的配置。', 'notice');
+	});
+
+	/* LuCSI reloads the page right after a successful apply, which would
+	   swallow the notification - replay it once on the fresh page. */
+	try {
+		var ts = parseInt(sessionStorage.getItem('mz-apply-ok'), 10);
+		if (ts && (Date.now() - ts) < 30000) {
+			sessionStorage.removeItem('mz-apply-ok');
+			setTimeout(function () { mzNotify('配置已成功应用。', 'success'); }, 600);
+		}
+	} catch (err) {}
 })();
