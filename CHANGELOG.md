@@ -44,6 +44,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 全页面排版混乱 / 按钮样式错误 / 响应式缺失 → 全面补充 LuCI 组件样式
 - 保存并应用下拉按钮显示为蓝色块 + 项目符号列表 → 补充 `.cbi-dropdown` 系列样式
 
+### Added (2026-09-07 第二轮修复)
+- 顶栏面包屑导航（`renderBreadcrumb`，基于 `L.env.dispatchpath` 逐级显示当前页面路径）
+- Dashboard 视图完整样式（`.mz-dash-grid` 自适应网格 + `.mz-card` 卡片 + 流量行 + 迷你图容器，640px 以下单列）
+- 主题切换按钮选择持久化到 localStorage（`mz-theme`），刷新后不再回退
+- 端口/网络/系统/DHCP/无线/UPnP 区块识别改为中英文双语匹配，兼容英文界面
+- postrm 卸载时同时清理 `/usr/share/luci/acl.d/` 与 `/usr/share/rpcd/acl.d/` 两处 ACL 及主题 uci 变体
+
+### Fixed (2026-09-07 第二轮修复)
+- P0：ACL 只安装到 `/usr/share/luci/acl.d/` 而 rpcd 只读 `/usr/share/rpcd/acl.d/`，致 `wallpaper` 授权组缺失、`admin/mintzero` 菜单整体消失 → 新增 `theme/root/usr/share/rpcd/acl.d/luci-theme-mintzero.json`，实机验证菜单恢复
+- P1：暗色模式下 `warningbox`/`alert-message`/`infobox`/`cbi-change-list`/`#xhr_poll_status` 硬编码浅色背景刺眼 → 追加 `html[data-theme="dark"]` 覆盖改用 token 颜色
+- P1：footer.ut 隐藏条件表达式缺少右括号（`>= 0` 后语法错误）致整个内联脚本失效 → 补全括号，`node --check` 通过
+- P2：SVG 圆环 `transform-origin` 重复声明 → 收敛为 `transform-box: fill-box; transform-origin: center`
+- P2：`htdocs/luci-static/mintzero/menu-mintzero.js` 死代码副本与 `resources/` 版本冲突 → 删除
+
 ---
 
 ## [0.2.0] - 2026-09-06
