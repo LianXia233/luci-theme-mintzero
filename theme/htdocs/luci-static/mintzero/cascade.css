@@ -3523,3 +3523,39 @@ html[data-theme="dark"] {
 	font-size: 1.05rem;
 	line-height: 1;
 }
+
+/* dynlist edit/delete affordances injected by overview.js */
+.cbi-dynlist > .item .mz-dl-actions {
+	display: flex;
+	gap: 2px;
+	flex-shrink: 0;
+}
+
+.cbi-dynlist > .item .mz-dl-btn {
+	border: none;
+	background: transparent;
+	color: var(--mz-color-text-muted);
+	cursor: pointer;
+	padding: 2px 6px;
+	font-size: .92rem;
+	line-height: 1;
+	border-radius: 6px;
+	transition: color .15s, background .15s;
+}
+
+.cbi-dynlist > .item .mz-dl-btn:hover {
+	color: var(--mz-color-primary);
+	background: var(--mz-color-primary-soft);
+}
+
+.cbi-dynlist > .item .mz-dl-btn.mz-dl-del:hover {
+	color: var(--mz-color-danger);
+	background: var(--mz-color-danger-soft);
+}
+
+.cbi-dynlist > .item .mz-dl-edit-input {
+	flex: 1 1 auto;
+	min-width: 0;
+	min-height: 30px;
+	padding: 4px 8px;
+}

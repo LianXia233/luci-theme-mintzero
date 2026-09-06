@@ -825,4 +825,120 @@
 			setTimeout(function () { mzNotify('配置已成功应用。', 'success'); }, 600);
 		}
 	} catch (err) {}
+
+	/* ==== cbi-dynlist edit/delete affordances ====
+	   LuCSI dynlists have no visible edit or delete controls: delete is
+	   bound to an invisible ::after hotspot and in-place editing does
+	   not exist. Inject explicit edit/delete buttons per item. */
+	function mzDlFireChange(dl) {
+		dl.dispatchEvent(new CustomEvent('cbi-dynlist-change', {
+			bubbles: true,
+			detail: { value: '', add: true }
+		}));
+	}
+
+	function mzDlStartEdit(item) {
+		if (item.querySelector('.mz-dl-edit-input'))
+			return;
+		var hidden = item.querySelector('input[type="hidden"]');
+		var span = item.querySelector('span');
+		if (!hidden || !span)
+			return;
+		var old = hidden.value;
+		var input = document.createElement('input');
+		input.type = 'text';
+		input.className = 'cbi-input-text mz-dl-edit-input';
+		input.value = old;
+		span.style.display = 'none';
+		item.insertBefore(input, span);
+
+		var commit = function () {
+			var v = input.value.trim();
+			input.parentNode.removeChild(input);
+			span.style.display = '';
+			if (!v || v === old)
+				return;
+			var dl = item.closest('.cbi-dynlist');
+			var inst = null;
+			try { inst = L.dom.findClassInstance(dl); } catch (err) {}
+			if (inst && typeof inst.removeItem === 'function' && typeof inst.addItem === 'function') {
+				inst.removeItem(dl, item);
+				inst.addItem(dl, v, null, true);
+			} else {
+				span.textContent = v;
+				hidden.value = v;
+				if (dl)
+					mzDlFireChange(dl);
+			}
+		};
+
+		input.addEventListener('keydown', function (ev) {
+			if (ev.key === 'Enter') {
+				ev.preventDefault();
+				commit();
+			} else if (ev.key === 'Escape') {
+				input.parentNode.removeChild(input);
+				span.style.display = '';
+			}
+		});
+		input.addEventListener('blur', commit);
+		input.focus();
+		input.select();
+	}
+
+	function mzDlAttach(item) {
+		if (item.querySelector('.mz-dl-actions'))
+			return;
+		var actions = document.createElement('div');
+		actions.className = 'mz-dl-actions';
+
+		var edit = document.createElement('button');
+		edit.type = 'button';
+		edit.className = 'mz-dl-btn mz-dl-edit';
+		edit.textContent = '✎';
+		edit.setAttribute('aria-label', '编辑');
+		edit.addEventListener('click', function (ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			mzDlStartEdit(item);
+		});
+
+		var del = document.createElement('button');
+		del.type = 'button';
+		del.className = 'mz-dl-btn mz-dl-del';
+		del.textContent = '✕';
+		del.setAttribute('aria-label', '删除');
+		del.addEventListener('click', function (ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			var dl = item.closest('.cbi-dynlist');
+			var inst = null;
+			try { inst = L.dom.findClassInstance(dl); } catch (err) {}
+			if (inst && typeof inst.removeItem === 'function') {
+				inst.removeItem(dl, item);
+			} else {
+				item.parentNode.removeChild(item);
+				if (dl)
+					mzDlFireChange(dl);
+			}
+		});
+
+		actions.appendChild(edit);
+		actions.appendChild(del);
+		item.appendChild(actions);
+	}
+
+	function mzDlEnhance(root) {
+		(root || document).querySelectorAll('.cbi-dynlist').forEach(function (dl) {
+			dl.querySelectorAll(':scope > .item').forEach(mzDlAttach);
+		});
+	}
+
+	var mzDlObserver = new MutationObserver(function () {
+		mzDlEnhance(document);
+	});
+	document.addEventListener('DOMContentLoaded', function () {
+		mzDlEnhance(document);
+		mzDlObserver.observe(document.body, { childList: true, subtree: true });
+	});
 })();

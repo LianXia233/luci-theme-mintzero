@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added (2026-09-07 随机壁纸按设备切换 + NTP 列表样式)
 - 随机壁纸改为按访问设备类型自动选择第三方 API：桌面端 `api.paugram.com/wallpaper/`，移动端（UA 检测）`uapis.cn/api/v1/random/image?category=acg&type=mb`；带时间戳防缓存，API 加载失败自动回退本地 Bing 壁纸池，再失败回退渐变兜底（原流程不受影响）
 - 候选 NTP 服务器等 cbi-dynlist 动态列表主题化：条目卡片化（浅灰底、圆角、悬停描边）、新增输入行与 + 按钮对齐排版，宽度收敛至 480px
+- cbi-dynlist 条目注入可见的「编辑 ✎ / 删除 ✕」按钮：LuCSI 原生删除热区是不可见的 ::after 伪元素（本主题无样式导致热区为 0 宽，无法删除），且原生无就地编辑；通过 `L.dom.findClassInstance` 调用 DynamicList 组件原生 removeItem/addItem，保证与 uci staging 正确同步（实测编辑/删除/保存并应用后 /etc/config/system 生效）
 
 - P1：手机端保存/应用/重置按钮全宽——480/768px 断点把操作栏堆叠并把所有按钮拉伸到 100% 宽 → 恢复行内排列、内容自适应宽度（32px 高）
 - P1：应用成功后无任何提示（LuCSI 应用完成仅关闭弹窗）——主题监听 `uci-applied` / `uci-reverted` 事件弹出成功/回滚通知；因应用成功后页面会重载，通知通过 sessionStorage 标记在重载后的页面上补显
