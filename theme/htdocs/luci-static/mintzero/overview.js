@@ -205,13 +205,24 @@
 			var bodies = box.querySelectorAll('.ifacebox-body');
 			var name = heads[0] ? heads[0].textContent.trim() : '';
 			var statusText = bodies[0] ? bodies[0].textContent.trim() : '';
-			var isUp = statusText.indexOf('未连接') < 0 && statusText.length > 0;
-			var speed = isUp ? statusText : '未连接';
+			var statusLower = statusText.toLowerCase();
+			var isDown = !statusText ||
+				statusText.indexOf('未连接') >= 0 ||
+				statusLower.indexOf('no link') >= 0 ||
+				statusLower.indexOf('not connected') >= 0 ||
+				statusLower.indexOf('disconnected') >= 0 ||
+				statusLower === 'down' ||
+				statusLower.indexOf(' link down') >= 0;
+			var isUp = !isDown;
+			var speed = statusText || 'no link';
 			var tx = '', rx = '';
 			if (bodies[1]) {
-				var t = bodies[1].innerText;
+				/* textContent works on display:none nodes; innerText does not */
+				var t = bodies[1].textContent;
 				var txm = t.match(/\u25b2\s*([\d.]+\s*[A-Za-z]+)/);
 				var rxm = t.match(/\u25bc\s*([\d.]+\s*[A-Za-z]+)/);
+				if (!txm) txm = t.match(/TX[:\s]*([\d.]+\s*[A-Za-z\/]+)/i);
+				if (!rxm) rxm = t.match(/RX[:\s]*([\d.]+\s*[A-Za-z\/]+)/i);
 				if (txm) tx = txm[1].trim();
 				if (rxm) rx = rxm[1].trim();
 			}
