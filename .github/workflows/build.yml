@@ -71,7 +71,9 @@ jobs:
           fi
           echo "Renaming extracted directory..."
           ls -la | grep openwrt-sdk || { echo "::error::No openwrt-sdk directory found after extraction"; exit 1; }
-          mv openwrt-sdk-* sdk
+          sdk_dir=$(ls -d openwrt-sdk-*/ 2>/dev/null | head -n1)
+          [ -n "$sdk_dir" ] || { echo "::error::No openwrt-sdk directory found"; exit 1; }
+          mv "$sdk_dir" sdk
 
       - name: Set up LuCI feed (luci only, no -a over all feeds)
         run: |
