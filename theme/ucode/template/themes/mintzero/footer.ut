@@ -104,15 +104,49 @@
       p.remove();
     });
 
-    var t0 = tables[0].innerText;
-    function grab(re) { var m = t0.match(re); return m ? m[1].trim() : ''; }
+    /* Parse the info table cell-by-cell: innerText-based regex grabs
+       leaked into neighbouring labels (e.g. "OWRT型号Hiveton ..."). */
+    function tableMap(tbl) {
+      var map = {};
+      tbl.querySelectorAll('tr').forEach(function (row) {
+        var cells = row.querySelectorAll('td, th');
+        if (cells.length < 2) return;
+        var label = cells[0].textContent.trim();
+        if (!label || (label in map)) return;
+        var bar = cells[1].querySelector('.cbi-progressbar[title]');
+        var val;
+        if (bar) {
+          val = bar.getAttribute('title');
+        } else {
+          var parts = [];
+          for (var ci = 1; ci < cells.length; ci++) parts.push(cells[ci].textContent.trim());
+          val = parts.join(' ');
+        }
+        map[label] = val.replace(/\s+/g, ' ').trim();
+      });
+      return map;
+    }
 
-    var cpu = grab(/CPU\s*使用率[（(]?\s*%?[）)]?\s*(\d+)/) || '0';
-    var temp = grab(/温度\s*CPU:\s*([\d.]+)/) || '';
-    var hostname = grab(/主机名\s*([^\n]+)/) || '';
-    var uptime = grab(/运行时间\s*([^\n]+)/) || '';
-    var load = grab(/平均负载\s*([^\n]+)/) || '';
-    var model = grab(/型号\s*([^\n]+)/) || '';
+    function pick(map) {
+      for (var i = 1; i < arguments.length; i++) {
+        var k = arguments[i];
+        if (map[k]) return map[k];
+      }
+      return '';
+    }
+
+    var info = tableMap(tables[0]);
+
+    var cpuRaw = pick(info, 'CPU 使用率（%）', 'CPU 使用率', 'CPU usage');
+    var cpuM = cpuRaw.match(/(\d+)/);
+    var cpu = cpuM ? cpuM[1] : '0';
+    var tempRaw = pick(info, '温度', 'Temperature');
+    var tempM = tempRaw.match(/CPU:\s*([\d.]+)/);
+    var temp = tempM ? tempM[1] : '';
+    var hostname = pick(info, '主机名', 'Hostname');
+    var uptime = pick(info, '运行时间', 'Uptime');
+    var load = pick(info, '平均负载', 'Load Average', 'Load');
+    var model = pick(info, '型号', 'Model');
 
     function parseBar(tableIdx) {
       var bars = tables[tableIdx].querySelectorAll('.cbi-progressbar[title]');
