@@ -100,7 +100,7 @@ function loadConfig() {
 	const wp = cursor().get_all('mintzero', 'wallpaper') ?? {};
 	return {
 		enabled: wp.enabled ?? DEFAULTS.enabled,
-		mode: (wp.mode == 'custom') ? 'custom' : 'bing',
+		mode: (wp.mode == 'custom' || wp.mode == 'paugram' || wp.mode == 'uapis') ? wp.mode : 'bing',
 		custom_url: validCustomUrl(wp.custom_url ?? ''),
 		market: inList(wp.market ?? '', ALLOWED_MARKETS) ? wp.market : DEFAULTS.market,
 		count: clampInt(wp.count, 1, 8, DEFAULTS.count),

@@ -30,6 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 刷新端点从页面路由改为 **rpcd ubus 服务**（`/usr/libexec/rpcd/mintzero`，方法 `mintzero refresh`）：不再注册菜单/tab，点击按钮不再跳出后台 JSON 页面，改由 ubus RPC 原地返回状态
 - 部署设置 `luci.main.resource_version=mz20260907f` 强制所有客户端浏览器刷新静态资源缓存（解决 view JS 缓存导致按钮/选项不显示的问题）
 - 清理 po 中 Dashboard 遗留条目，新增迁移后文案的简体中文翻译
+- 登录页顶部移除 mintzero 文字，改用方形像素头像图（login-logo.png，泛洪抠白保透明、88px 圆角展示）
+- 壁纸来源新增两个随机源选项：「随机壁纸（Paugram）」「随机 ACG（Uapis）」，选择后登录页直接从对应 API 拉图（模式经 header.ut 嵌入前端）；随机壁纸开关仅在每日壁纸模式下作为兼容开关
 
 ### Changed (2026-09-07 品牌形象更新)
 - 全新像素风品牌 logo：侧栏品牌、登录页 logo、favicon（svg/48/180）全部替换为像素猫娘头像

@@ -16,8 +16,7 @@
 	<div class="mz-login-overlay" aria-hidden="true"></div>
 
 	<div class="mz-login-card" role="main">
-		<img src="{{ media }}/logo.svg" alt="" class="mz-login-logo">
-		<h1 class="mz-login-title">mintzero</h1>
+		<img src="{{ media }}/login-logo.png" alt="" class="mz-login-logo">
 		<p class="mz-login-welcome">{{ _('Welcome back! Log in to manage your network.') }}</p>
 
 		{% if (auth_message): %}

@@ -103,9 +103,16 @@ return view.extend({
 	}
 
 	function randomApiUrl() {
-		const api = isMobileUA()
-			? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
-			: 'https://api.paugram.com/wallpaper/';
+		const mode = cfg.mode;
+		let api;
+		if (mode === 'paugram')
+			api = 'https://api.paugram.com/wallpaper/';
+		else if (mode === 'uapis')
+			api = 'https://uapis.cn/api/v1/random/image?category=acg&type=mb';
+		else
+			api = isMobileUA()
+				? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
+				: 'https://api.paugram.com/wallpaper/';
 		return api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
 	}
 

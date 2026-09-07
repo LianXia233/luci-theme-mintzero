@@ -87,6 +87,7 @@
 				overlay: {{ sprintf('%J', wp.overlay ?? '0.45') }},
 				blur: {{ sprintf('%J', wp.blur ?? '0') }},
 				random: {{ wp.random == '0' ? 'false' : 'true' }},
+				mode: {{ sprintf('%J', (wp.mode == 'custom' || wp.mode == 'paugram' || wp.mode == 'uapis') ? wp.mode : 'bing') }},
 				images: {{ sprintf('%J', wallpaper.images ?? []) }},
 				source: {{ sprintf('%J', wallpaper.source ?? 'embedded') }}
 			};

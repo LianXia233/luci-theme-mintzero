@@ -982,9 +982,10 @@ th {
 }
 
 .mz-login-logo {
-	width: 56px;
-	height: 56px;
+	width: 88px;
+	height: 88px;
 	margin-bottom: var(--mz-spacing-sm);
+	border-radius: 18px;
 }
 
 .mz-login-title {

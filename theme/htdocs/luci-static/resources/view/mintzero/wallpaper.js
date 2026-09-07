@@ -37,6 +37,8 @@ var callFileWrite = rpc.declare({
 
 		const mode = s.option(form.ListValue, 'mode', _('Wallpaper source'));
 		mode.value('bing', _('Daily wallpaper (Bing pool)'));
+		mode.value('paugram', _('Random (Paugram)'));
+		mode.value('uapis', _('Random ACG (Uapis)'));
 		mode.value('custom', _('Custom image'));
 		mode.default = 'bing';
 

@@ -242,6 +242,12 @@ msgstr "壁纸市场（每日模式）"
 msgid "Refresh wallpaper cache"
 msgstr "刷新壁纸缓存"
 
+msgid "Random (Paugram)"
+msgstr "随机壁纸（Paugram）"
+
+msgid "Random ACG (Uapis)"
+msgstr "随机 ACG（Uapis）"
+
 msgid "Pick a random image from the last fetched pool on each login page load."
 msgstr "每次进入登录页时从最近获取的壁纸池中随机选择一张。"
 
