@@ -83,13 +83,16 @@
 			   no extra request). */
 			window.mintzeroWallpaper = {
 				enabled: {{ (wp.enabled == '0' || wallpaper.enabled == false) ? 'false' : 'true' }},
-				market: {{ sprintf('%J', wp.market ?? 'zh-CN') }},
-				overlay: {{ sprintf('%J', wp.overlay ?? '0.45') }},
-				blur: {{ sprintf('%J', wp.blur ?? '0') }},
-				random: {{ wp.random == '0' ? 'false' : 'true' }},
-				mode: {{ sprintf('%J', (wp.mode == 'custom' || wp.mode == 'paugram' || wp.mode == 'uapis') ? wp.mode : 'bing') }},
-				images: {{ sprintf('%J', wallpaper.images ?? []) }},
-				source: {{ sprintf('%J', wallpaper.source ?? 'embedded') }}
+				overlay: {{ sprintf('%J', wallpaper.overlay ?? '0.45') }},
+				blur: {{ sprintf('%J', wallpaper.blur ?? '0') }},
+				pc: {
+					mode: {{ sprintf('%J', wallpaper.pc?.mode ?? 'random') }},
+					url: {{ sprintf('%J', wallpaper.pc?.url ?? '') }}
+				},
+				mobile: {
+					mode: {{ sprintf('%J', wallpaper.mobile?.mode ?? 'random') }},
+					url: {{ sprintf('%J', wallpaper.mobile?.url ?? '') }}
+				}
 			};
 		</script>
 	</head>
@@ -106,7 +109,7 @@
 		<aside id="mz-sidebar" class="mz-sidebar" aria-label="{{ _('Main navigation') }}">
 			<div class="mz-brand">
 				<a href="/" class="mz-brand-link">
-					<img src="{{ media }}/logo.svg" alt="mintzero" class="mz-brand-logo">
+					<img src="{{ media }}/overview-banner.png" alt="mintzero" class="mz-brand-logo">
 				</a>
 			</div>
 

@@ -248,6 +248,42 @@ msgstr "随机壁纸（Paugram）"
 msgid "Random ACG (Uapis)"
 msgstr "随机 ACG（Uapis）"
 
+msgid "Desktop source"
+msgstr "桌面端来源"
+
+msgid "Mobile source"
+msgstr "手机端来源"
+
+msgid "Random (Paugram)"
+msgstr "随机壁纸（Paugram）"
+
+msgid "Random ACG (Uapis)"
+msgstr "随机 ACG（Uapis）"
+
+msgid "Desktop custom image URL"
+msgstr "桌面端自定义图片直链"
+
+msgid "Mobile custom image URL"
+msgstr "手机端自定义图片直链"
+
+msgid "Upload desktop image…"
+msgstr "上传桌面端图片…"
+
+msgid "Upload mobile image…"
+msgstr "上传手机端图片…"
+
+msgid "Login page background image. Configure separate sources for desktop and mobile visitors."
+msgstr "登录页背景图。可为桌面与手机访客分别配置来源。"
+
+msgid "Direct http(s) link to an image. Used when no desktop image has been uploaded."
+msgstr "图片的 http(s) 直链。未上传桌面端图片时使用。"
+
+msgid "Direct http(s) link to an image. Used when no mobile image has been uploaded."
+msgstr "图片的 http(s) 直链。未上传手机端图片时使用。"
+
+msgid "Image uploaded. Set the matching source to \"Custom image\" to use it."
+msgstr "上传成功。将对应来源设为「自定义图片」即可使用。"
+
 msgid "Pick a random image from the last fetched pool on each login page load."
 msgstr "每次进入登录页时从最近获取的壁纸池中随机选择一张。"
 

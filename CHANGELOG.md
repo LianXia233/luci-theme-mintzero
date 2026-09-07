@@ -30,6 +30,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 刷新端点从页面路由改为 **rpcd ubus 服务**（`/usr/libexec/rpcd/mintzero`，方法 `mintzero refresh`）：不再注册菜单/tab，点击按钮不再跳出后台 JSON 页面，改由 ubus RPC 原地返回状态
 - 部署设置 `luci.main.resource_version=mz20260907f` 强制所有客户端浏览器刷新静态资源缓存（解决 view JS 缓存导致按钮/选项不显示的问题）
 - 清理 po 中 Dashboard 遗留条目，新增迁移后文案的简体中文翻译
+
+### Changed (2026-09-07 双端独立壁纸源)
+- 壁纸来源重构为**桌面端 / 手机端双组独立配置**：各组可选「随机 API（桌面 Paugram / 手机 Uapis ACG）」或「自定义图片」
+- 自定义支持直链或上传（分别写入 custom-pc.jpg / custom-mobile.jpg，3MB 上限）
+- 登录页按访问设备 UA 自动使用对应组的配置，失败保持渐变兜底
+- 移除 Bing 每日壁纸模式及市场/缓存期选项，上传后端服务改经 rpcd ubus
 - 登录页顶部移除 mintzero 文字，改用方形像素头像图（login-logo.png，泛洪抠白保透明、88px 圆角展示）
 - 登录页 logo 改用圆形像素头像（login-logo.png 换为圆形透明版）
 - 状态概览页信息卡上方新增方形像素头像 banner（overview-banner.png，96px 居中，随面板惰性创建）

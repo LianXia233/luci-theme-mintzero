@@ -609,45 +609,6 @@
 			panel.className = 'mz-overview-panel';
 			panel.innerHTML = buildCoreHtml(core);
 			view.insertBefore(panel, view.firstChild);
-			/* pixel avatar banner above the status panels */
-			if (!view.querySelector('.mz-overview-banner')) {
-				var banner = document.createElement('img');
-				banner.className = 'mz-overview-banner';
-				banner.src = '/luci-static/mintzero/overview-banner.png';
-				banner.alt = '';
-				view.insertBefore(banner, panel);
-			}
-		} else {
-			patchCore(panel, core);
-		}
-
-		var cursor = panel;
-		var ports = collectPorts(findSection(['端口状态', 'Ports', 'Switch']));
-		if (ports.length) {
-			var portPanel = ensurePanel(view, 'mz-port-panel', cursor);
-			patchPanel(portPanel, portsHtml(ports));
-			cursor = portPanel;
-		} else {
-			removePanel(view, 'mz-port-panel');
-		}
-
-		var nets = collectNet(findSection(['网络', 'Network']));
-		if (nets.length) {
-			var netPanel = ensurePanel(view, 'mz-net-panel', cursor);
-			patchPanel(netPanel, netHtml(nets));
-			cursor = netPanel;
-		} else {
-			removePanel(view, 'mz-net-panel');
-		}
-
-		var sysSec = null;
-		document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
-			var h = sec.querySelector('h2, h3');
-			var st = h ? h.textContent.trim() : '';
-			if (h && titleStarts(h, ['系统', 'System']) &&
-				st.indexOf('端口') < 0 && st.indexOf('Ports') < 0)
-				sysSec = sec;
-		});
 		var sysItems = collectSys(sysSec);
 		if (sysItems.length) {
 			var sysPanel = ensurePanel(view, 'mz-sys-panel', cursor);

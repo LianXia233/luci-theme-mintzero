@@ -128,42 +128,24 @@ return view.extend({
 				window.clearTimeout(timer);
 				document.documentElement.style.setProperty('--mz-wallpaper', `url("${url}")`);
 				bg.classList.add('is-loaded');
-
-				if (copyright && meta && (meta.title || meta.copyright)) {
-					copyright.textContent = [meta.title, meta.copyright]
-						.filter(Boolean).join(' - ');
-					copyright.removeAttribute('aria-hidden');
-				}
 			};
 
 			img.onerror = () => window.clearTimeout(timer);
 			img.src = url;
 		};
 
-		const loadFromPool = () => {
-			const pick = pickWallpaper(cfg.images, cfg.random !== false);
-			if (pick)
-				showWallpaper(pick.url, pick);
-		};
+		/* Per-device source: desktop and mobile visitors get independent
+		   configurations (random API or custom image). No fallback to
+		   other sources - the CSS gradient stays as the only fallback. */
+		const group = isMobileUA() ? (cfg.mobile || {}) : (cfg.pc || {});
 
-		/* Random wallpaper: device-aware third-party APIs only. On
-		   failure the CSS gradient fallback stays in place - the Bing
-		   pool is intentionally NOT used for random mode. */
-		if (cfg.random !== false) {
-			const img = new Image();
-			const timer = window.setTimeout(() => { img.src = ''; }, 12000);
-
-			img.onload = () => {
-				window.clearTimeout(timer);
-				showWallpaper(img.src, null);
-			};
-			img.onerror = () => {
-				window.clearTimeout(timer);
-				/* keep gradient fallback; no Bing pool fallback here */
-			};
-			img.src = randomApiUrl();
+		if (group.mode === 'custom' && group.url) {
+			showWallpaper(group.url, null);
 		} else {
-			loadFromPool();
+			const api = isMobileUA()
+				? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
+				: 'https://api.paugram.com/wallpaper/';
+			showWallpaper(api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now(), null);
 		}
 	}
 

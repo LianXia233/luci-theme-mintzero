@@ -9,12 +9,6 @@
 'require uci';
 'require ui';
 
-var callRefresh = rpc.declare({
-	object: 'mintzero',
-	method: 'refresh',
-	expect: { '': {} }
-});
-
 var callFileWrite = rpc.declare({
 	object: 'file',
 	method: 'write',
@@ -22,11 +16,14 @@ var callFileWrite = rpc.declare({
 	expect: { code: 0 }
 });
 
-	return view.extend({
-		render() {
-			const self = this;
-			const m = new form.Map('mintzero', _('Mint Wallpaper'),
-			_('Login page background image settings. Random mode uses device-aware wallpaper APIs; the daily mode fetches a Bing photo pool server-side.'));
+var PC_CUSTOM = '/www/luci-static/mintzero/custom-pc.jpg';
+var MOBILE_CUSTOM = '/www/luci-static/mintzero/custom-mobile.jpg';
+
+return view.extend({
+	render() {
+		const self = this;
+		const m = new form.Map('mintzero', _('Mint Wallpaper'),
+			_('Login page background image. Configure separate sources for desktop and mobile visitors.'));
 
 		const s = m.section(form.TypedSection, 'wallpaper', null, _('Settings'));
 		s.addremove = false;
@@ -35,30 +32,29 @@ var callFileWrite = rpc.declare({
 		s.option(form.Flag, 'enabled', _('Enabled'),
 			_('When disabled, the login page uses the built-in gradient fallback.'));
 
-		const mode = s.option(form.ListValue, 'mode', _('Wallpaper source'));
-		mode.value('bing', _('Daily wallpaper (Bing pool)'));
-		mode.value('paugram', _('Random (Paugram)'));
-		mode.value('uapis', _('Random ACG (Uapis)'));
-		mode.value('custom', _('Custom image'));
-		mode.default = 'bing';
+		/* ---- PC source ---- */
+		const pcMode = s.option(form.ListValue, 'pc_mode', _('Desktop source'));
+		pcMode.value('random', _('Random (Paugram)'));
+		pcMode.value('custom', _('Custom image'));
+		pcMode.default = 'random';
 
-		const url = s.option(form.Value, 'custom_url', _('Custom image URL'),
-			_('Direct http(s) link to an image. Used in "Custom image" mode when no image has been uploaded.'));
-		url.rmempty = true;
-		url.depends('mode', 'custom');
+		const pcUrl = s.option(form.Value, 'pc_url', _('Desktop custom image URL'),
+			_('Direct http(s) link to an image. Used when no desktop image has been uploaded.'));
+		pcUrl.rmempty = true;
+		pcUrl.depends('pc_mode', 'custom');
 
-		const market = s.option(form.ListValue, 'market', _('Wallpaper market (daily mode)'));
-		market.value('zh-CN', 'zh-CN');
-		market.value('en-US', 'en-US');
-		market.value('ja-JP', 'ja-JP');
-		market.value('zh-TW', 'zh-TW');
-		market.depends('mode', 'bing');
+		/* ---- Mobile source ---- */
+		const mMode = s.option(form.ListValue, 'mobile_mode', _('Mobile source'));
+		mMode.value('random', _('Random ACG (Uapis)'));
+		mMode.value('custom', _('Custom image'));
+		mMode.default = 'random';
 
-		const ttl = s.option(form.Value, 'cache_ttl', _('Cache TTL (seconds)'));
-		ttl.datatype = 'range(300,604800)';
-		ttl.default = '86400';
-		ttl.depends('mode', 'bing');
+		const mUrl = s.option(form.Value, 'mobile_url', _('Mobile custom image URL'),
+			_('Direct http(s) link to an image. Used when no mobile image has been uploaded.'));
+		mUrl.rmempty = true;
+		mUrl.depends('mobile_mode', 'custom');
 
+		/* ---- Global ---- */
 		const overlay = s.option(form.Value, 'overlay', _('Overlay opacity'),
 			_('Dark overlay strength over the wallpaper (0.0 - 1.0).'));
 		overlay.datatype = 'ufloat';
@@ -69,26 +65,44 @@ var callFileWrite = rpc.declare({
 		blur.datatype = 'uinteger';
 		blur.default = '0';
 
-		s.option(form.Flag, 'random', _('Random wallpaper'),
-			_('Pick a random image from the last fetched pool on each login page load.'));
-
 		return m.render().then((nodes) => {
+			const mkUpload = function (fileId, labelText) {
+				return [
+					E('input', {
+						'type': 'file',
+						'id': fileId,
+						'style': 'display:none',
+						'accept': 'image/jpeg,image/png,image/webp',
+						'change': ui.createHandlerFn(self, 'handleUpload', fileId)
+					}),
+					E('button', {
+						'type': 'button',
+						'class': 'btn cbi-button',
+						'click': function(ev) {
+							ev.preventDefault();
+							ev.stopPropagation();
+							document.getElementById(fileId).click();
+						}
+					}, [ labelText ])
+				];
+			};
+
 			const btnRow = E('div', { 'class': 'cbi-page-actions mz-wp-actions' }, [
 				E('button', {
 					'type': 'button',
-					'class': 'btn cbi-button cbi-button-edit',
+					'class': 'btn cbi-button',
 					'click': function(ev) {
 						ev.preventDefault();
 						ev.stopPropagation();
-						self.handleRefresh(ev);
+						document.getElementById('mz-wp-file-pc').click();
 					}
-				}, [ _('Refresh wallpaper cache') ]),
+				}, [ _('Upload desktop image…') ]),
 				E('input', {
 					'type': 'file',
-					'id': 'mz-wp-file',
+					'id': 'mz-wp-file-pc',
 					'style': 'display:none',
 					'accept': 'image/jpeg,image/png,image/webp',
-					'change': ui.createHandlerFn(self, 'handleUpload')
+					'change': ui.createHandlerFn(self, 'handleUpload', 'pc')
 				}),
 				E('button', {
 					'type': 'button',
@@ -96,14 +110,18 @@ var callFileWrite = rpc.declare({
 					'click': function(ev) {
 						ev.preventDefault();
 						ev.stopPropagation();
-						document.getElementById('mz-wp-file').click();
+						document.getElementById('mz-wp-file-mobile').click();
 					}
-				}, [ _('Upload custom image…') ])
+				}, [ _('Upload mobile image…') ]),
+				E('input', {
+					'type': 'file',
+					'id': 'mz-wp-file-mobile',
+					'style': 'display:none',
+					'accept': 'image/jpeg,image/png,image/webp',
+					'change': ui.createHandlerFn(self, 'handleUpload', 'mobile')
+				})
 			]);
 
-			/* Attach to the map's own action bar (next to 保存/重置);
-			   fall back to prepending at the top of the map if the bar
-			   has not been rendered yet. */
 			const bar = nodes.querySelector('.cbi-page-actions');
 			if (bar)
 				bar.insertBefore(btnRow, bar.firstChild);
@@ -114,22 +132,7 @@ var callFileWrite = rpc.declare({
 		});
 	},
 
-	handleRefresh(ev) {
-		if (ev) {
-			ev.preventDefault();
-			ev.stopPropagation();
-		}
-		return callRefresh().then((data) => {
-			if (data && data.spawned)
-				ui.addNotification(null, E('p', _('Refresh triggered. The new wallpaper pool loads in the background and appears after the cache reloads.')), 'info');
-			else
-				ui.addNotification(null, E('p', _('Custom image mode is active - nothing to refresh.')), 'notice');
-		}).catch((e) => {
-			ui.addNotification(null, E('p', _('Refresh failed: %s').format(e.message)), 'error');
-		});
-	},
-
-	handleUpload(ev) {
+	handleUpload(kind, ev) {
 		const file = ev.target.files[0];
 		if (!file)
 			return;
@@ -139,15 +142,17 @@ var callFileWrite = rpc.declare({
 			return;
 		}
 
+		const target = (kind === 'mobile') ? MOBILE_CUSTOM : PC_CUSTOM;
+
 		return file.arrayBuffer().then((buf) => {
 			let bin = '';
 			const bytes = new Uint8Array(buf);
 			for (let i = 0; i < bytes.length; i++)
 				bin += String.fromCharCode(bytes[i]);
 
-			return callFileWrite('/www/luci-static/mintzero/custom.jpg', btoa(bin));
+			return callFileWrite(target, btoa(bin));
 		}).then(() => {
-			ui.addNotification(null, E('p', _('Image uploaded. It is used when "Wallpaper source" is set to "Custom image".')), 'info');
+			ui.addNotification(null, E('p', _('Image uploaded. Set the matching source to "Custom image" to use it.')), 'info');
 		}).catch((e) => {
 			ui.addNotification(null, E('p', _('Upload failed: %s').format(e.message)), 'error');
 		});

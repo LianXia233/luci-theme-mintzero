@@ -32,7 +32,10 @@
 				]
 			},
 			"file": {
-				"/www/luci-static/mintzero/custom.jpg": [
+				"/www/luci-static/mintzero/custom-pc.jpg": [
+					"write"
+				],
+				"/www/luci-static/mintzero/custom-mobile.jpg": [
 					"write"
 				]
 			}

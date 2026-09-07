@@ -3644,3 +3644,14 @@ html[data-theme="dark"] {
 .mz-brand-link {
 	justify-content: center;
 }
+
+/* Sidebar brand: square pixel avatar, centered */
+.mz-brand-link {
+	justify-content: center;
+}
+
+.mz-brand-logo {
+	width: 56px;
+	height: 56px;
+	border-radius: 14px;
+}
