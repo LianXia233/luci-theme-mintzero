@@ -1,8 +1,14 @@
 # Mint (luci-theme-mint)
 
+<p align="center"><img src="assets/logo.png" width="200" alt="Mint logo — 像素猫娘"></p>
+
 **Mint** —— 现代化 LuCI 主题（包名/路径随 2026-09-07 更名统一为 mint），面向 OpenWrt main / LuCI master（ucode 模板引擎）。
 
 设计方向：现代总览页、卡片式 UI、高信息密度与大量留白，Apple/Linear 风格的克制视觉。不是对其他主题的 CSS 换肤——模板与菜单渲染均基于当前 LuCI master 主题接口实现。
+
+## 预览
+
+<p align="center"><img src="assets/mascot.png" width="220" alt="Mint 主题吉祥物"></p>
 
 ## 功能特性
 
