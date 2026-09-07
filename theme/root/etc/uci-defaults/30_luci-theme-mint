@@ -18,6 +18,22 @@ uci set luci.themes.mint=/luci-static/mint
 uci set luci.themes.MintLight=/luci-static/mint-light
 uci set luci.themes.MintDark=/luci-static/mint-dark
 
+# Migrate the pre-rename (luci-theme-mintzero) wallpaper configuration so
+# upgrades keep their custom images/URLs. The old section is only moved
+# when no new 'mint' section exists yet, so a fresh config is never
+# overwritten. Uploaded images are moved along (if still present).
+if uci -q get mintzero.wallpaper >/dev/null 2>&1 && ! uci -q get mint.wallpaper >/dev/null 2>&1; then
+	for _opt in enabled ui_random pc_mode pc_url mobile_mode mobile_url overlay blur; do
+		_val=$(uci -q get mintzero.wallpaper.$_opt 2>/dev/null)
+		[ -n "$_val" ] && uci -q set mint.wallpaper.$_opt="$_val"
+	done
+	uci -q delete mintzero.wallpaper
+	rm -f /etc/config/mintzero
+	for _img in custom-pc.jpg custom-mobile.jpg; do
+		[ -f "/www/luci-static/mintzero/$_img" ] && mv -f "/www/luci-static/mintzero/$_img" "/www/luci-static/mint/$_img"
+	done
+fi
+
 # Wallpaper defaults for the mint UCI section. Only written when the
 # section does not exist yet, so user config survives upgrades.
 if ! uci -q get mint.wallpaper 2>/dev/null; then
@@ -42,6 +58,16 @@ done
 if [ "$PKG_UPGRADE" != 1 ]; then
 	uci -q set luci.main.mediaurlbase=/luci-static/mint
 fi
+
+# Rename fallback: a stale mintzero mediaurlbase (left over from the
+# pre-rename package) points at a path that no longer exists, which makes
+# CSS/JS 404 and the theme fall back. Rewrite it to the new path.
+_mzbase=$(uci -q get luci.main.mediaurlbase 2>/dev/null)
+case "$_mzbase" in
+	*/mintzero-dark)  uci -q set luci.main.mediaurlbase=/luci-static/mint-dark ;;
+	*/mintzero-light) uci -q set luci.main.mediaurlbase=/luci-static/mint-light ;;
+	*/mintzero)       uci -q set luci.main.mediaurlbase=/luci-static/mint ;;
+esac
 
 uci commit luci
 uci commit mint
