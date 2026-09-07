@@ -73,6 +73,9 @@
 
 			<button type="submit" class="btn mz-btn-primary mz-btn-block">{{ _('Log in') }}</button>
 
+			{# Passkey contract (OT-31): the theme ships no WebAuthn logic. An
+			   auth plugin enables this button from its auth_assets script by
+			   clearing [hidden]/[disabled] and binding the ceremony. #}
 			<p class="mz-login-hint mz-passkey-hint" hidden>
 				<button type="button" class="btn mz-btn-ghost mz-btn-block" id="mz-passkey-btn" disabled title="{{ _('Passkeys are not configured on this system') }}">{{ _('Sign in with Passkey') }}</button>
 			</p>

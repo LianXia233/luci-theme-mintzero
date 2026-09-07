@@ -19,29 +19,25 @@
 
 const REMEMBER_KEY = 'mz-username';
 
-function pickWallpaper(images, random) {
-	if (!images || !images.length)
-		return null;
-
-	if (!random || images.length == 1)
-		return images[0];
-
-	/* Avoid repeating the last shown wallpaper when possible */
-	let last = null;
-	try { last = sessionStorage.getItem('mz-last-wallpaper'); } catch (e) {}
-
-	let pick = images[Math.floor(Math.random() * images.length)];
-	if (images.length > 1 && last !== null) {
-		let guard = 0;
-		while (pick.url === last && guard++ < 4)
-			pick = images[Math.floor(Math.random() * images.length)];
-	}
-
-	try { sessionStorage.setItem('mz-last-wallpaper', pick.url); } catch (e) {}
-	return pick;
+/* Shared helper (review TZ-14): header.ut defines window.mzWpUtil so the
+   login page and admin pages share ONE UA/API definition. */
+function mzWp() {
+	if (typeof window !== 'undefined' && window.mzWpUtil)
+		return window.mzWpUtil;
+	return {
+		isMobileUA() {
+			return /Android|iPhone|iPad|iPod|Mobile|Windows Phone|WebOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || '');
+		},
+		randomUrl(mobile) {
+			const api = mobile
+				? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
+				: 'https://api.paugram.com/wallpaper/';
+			return api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
+		}
+	};
 }
 
-function applyWallpaperSettings(card, wp) {
+function applyWallpaperSettings(wp) {
 	if (!wp)
 		return;
 
@@ -56,28 +52,26 @@ function setupRemember() {
 	const user = document.querySelector('#luci_username');
 	const remember = document.querySelector('#mz-remember');
 	if (!user || !remember)
-		return;
+		return false;
 
 	try {
 		const saved = localStorage.getItem(REMEMBER_KEY);
-		if (saved) {
+		if (saved)
 			user.value = saved;
-			document.querySelector('#luci_password')?.focus();
-		}
 
 		remember.checked = !!saved;
+		return !!saved;
 	} catch (e) { /* storage unavailable */ }
+	return false;
 }
 
 return view.extend({
 	render() {
-		const root = document.getElementById('mz-login');
-		const card = root?.querySelector('.mz-login-card');
 		const bg = document.getElementById('mz-login-bg');
 		const copyright = document.getElementById('mz-login-copyright');
 		const form = document.getElementById('mz-login-form');
 
-		setupRemember();
+		const remembered = setupRemember();
 
 		/* Persist the remembered username when the native form is submitted.
 		   The form posts by itself; JS must not interfere with the flow. */
@@ -98,54 +92,60 @@ return view.extend({
 		}
 
 		/* Wallpaper: data embedded server-side; local UI first, image later */
-	function isMobileUA() {
-		return /Android|iPhone|iPad|iPod|Mobile|Windows Phone|WebOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || '');
-	}
+		const wp = mzWp();
+		const mobile = wp.isMobileUA();
 
-	function wallpaperSourceUrl() {
-		const grp = isMobileUA() ? (cfg.mobile || {}) : (cfg.pc || {});
-		if (grp.mode === 'custom' && grp.url)
-			return grp.url;
-		const api = isMobileUA()
-			? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
-			: 'https://api.paugram.com/wallpaper/';
-		return api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
-	}
+		const cfg = window.mintzeroWallpaper ?? {};
+		if (cfg.enabled !== false && bg) {
+			applyWallpaperSettings(cfg);
 
-	const cfg = window.mintzeroWallpaper ?? {};
-	if (cfg.enabled !== false && bg) {
-		applyWallpaperSettings(card, cfg);
+			const showWallpaper = (url, label) => {
+				const img = new Image();
+				img.referrerPolicy = 'no-referrer'; /* TZ-13: don't leak the router URL */
+				const timer = window.setTimeout(() => { img.src = ''; }, 12000);
 
-		const showWallpaper = (url, meta) => {
-			const img = new Image();
-			const timer = window.setTimeout(() => { img.src = ''; }, 12000);
+				img.onload = () => {
+					window.clearTimeout(timer);
+					document.documentElement.style.setProperty('--mz-wallpaper', `url("${url}")`);
+					bg.classList.add('is-loaded');
+					/* OT-16: the copyright corner used to stay empty forever. */
+					if (copyright && label)
+						copyright.textContent = label;
+				};
 
-			img.onload = () => {
-				window.clearTimeout(timer);
-				document.documentElement.style.setProperty('--mz-wallpaper', `url("${url}")`);
-				bg.classList.add('is-loaded');
+				img.onerror = () => window.clearTimeout(timer);
+				img.src = url;
 			};
 
-			img.onerror = () => window.clearTimeout(timer);
-			img.src = url;
-		};
+			/* Per-device source: desktop and mobile visitors get independent
+			   configurations (random API or custom image). No fallback to
+			   other sources - the CSS gradient stays as the only fallback. */
+			const group = mobile ? (cfg.mobile || {}) : (cfg.pc || {});
 
-		/* Per-device source: desktop and mobile visitors get independent
-		   configurations (random API or custom image). No fallback to
-		   other sources - the CSS gradient stays as the only fallback. */
-		const group = isMobileUA() ? (cfg.mobile || {}) : (cfg.pc || {});
-
-		if (group.mode === 'custom' && group.url) {
-			showWallpaper(group.url, null);
-		} else {
-			const api = isMobileUA()
-				? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
-				: 'https://api.paugram.com/wallpaper/';
-			showWallpaper(api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now(), null);
+			if (group.mode === 'custom' && group.url) {
+				let label;
+				if (group.url.charAt(0) === '/') {
+					label = _('Local custom image');
+				} else {
+					try {
+						label = _('Image source: %s').format(new URL(group.url).hostname);
+					} catch (e) {
+						label = _('Custom image');
+					}
+				}
+				showWallpaper(group.url, label);
+			} else {
+				showWallpaper(wp.randomUrl(mobile),
+					mobile ? _('Random wallpaper · Uapis') : _('Random wallpaper · Paugram'));
+			}
 		}
-	}
 
-		document.querySelector('#luci_password')?.focus();
+		/* OT-32: focus password only when the username is already known,
+		   otherwise focus the username field. */
+		if (remembered)
+			document.querySelector('#luci_password')?.focus();
+		else
+			document.querySelector('#luci_username')?.focus();
 
 		return E([]);
 	},

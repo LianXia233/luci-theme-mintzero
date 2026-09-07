@@ -1,7 +1,12 @@
 #!/bin/sh
-# mintzero ubus service: wallpaper cache refresh
+# mintzero ubus service (compatibility stub)
 # Copyright (C) 2026 LianXia233
 # Licensed to the public under the Apache License 2.0.
+#
+# NOTE (TZ-17, 2026-09-07): random wallpapers are fetched directly by the
+# browser and custom images are local files - no server-side cache exists,
+# so the old Bing prefetch was removed. The `refresh` method is kept as a
+# stub so existing ACL grants and API clients keep working.
 
 case "$1" in
 	list)
@@ -10,22 +15,7 @@ case "$1" in
 	call)
 		case "$2" in
 			refresh)
-				mode="$(uci -q get mintzero.wallpaper.mode || echo bing)"
-				if [ "$mode" = "custom" ]; then
-					echo '{"spawned":false,"mode":"custom"}'
-					exit 0
-				fi
-				# drop cache + throttle lock, then fetch fresh metadata
-				rm -f /tmp/mintzero-wallpaper/bing-raw.json \
-					/tmp/mintzero-wallpaper/refresh.lock
-				mkdir -p /tmp/mintzero-wallpaper
-				mkt="$(uci -q get mintzero.wallpaper.market || echo zh-CN)"
-				cnt="$(uci -q get mintzero.wallpaper.count || echo 8)"
-				wget -q -O /tmp/mintzero-wallpaper/bing-raw.json \
-					-T 8 -U "mintzero-wallpaper/1.0" \
-					"https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=${cnt}&mkt=${mkt}" \
-					>/dev/null 2>&1 &
-				echo '{"spawned":true,"mode":"bing"}'
+				echo '{"spawned":false,"mode":"random"}'
 				;;
 			*)
 				echo '{"error":"invalid method"}'

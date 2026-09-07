@@ -25,6 +25,8 @@ define Package/luci-theme-mintzero/postrm
 	uci commit luci
 	rm -f /usr/share/luci/acl.d/luci-theme-mintzero.json
 	rm -f /usr/share/rpcd/acl.d/luci-theme-mintzero.json
+	rm -f /www/luci-static/mintzero/custom-pc.jpg
+	rm -f /www/luci-static/mintzero/custom-mobile.jpg
 }
 endef
 

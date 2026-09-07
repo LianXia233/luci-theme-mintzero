@@ -26,12 +26,18 @@ if ! uci -q get mintzero.wallpaper 2>/dev/null; then
 		uci set mintzero.wallpaper=wallpaper
 	}
 	uci -q set mintzero.wallpaper.enabled=1
-	uci -q set mintzero.wallpaper.market=zh-CN
-	uci -q set mintzero.wallpaper.cache_ttl=86400
+	uci -q set mintzero.wallpaper.ui_random=1
+	uci -q set mintzero.wallpaper.pc_mode=random
+	uci -q set mintzero.wallpaper.mobile_mode=random
 	uci -q set mintzero.wallpaper.overlay=0.45
 	uci -q set mintzero.wallpaper.blur=0
-	uci -q set mintzero.wallpaper.random=1
 fi
+
+# Drop obsolete pre-2026-09-07 keys (Bing era) so upgrades don't accumulate
+# dead options (review TZ-17 / OT-29).
+for _opt in market cache_ttl random mode count; do
+	uci -q delete mintzero.wallpaper.$_opt
+done
 
 if [ "$PKG_UPGRADE" != 1 ]; then
 	uci -q set luci.main.mediaurlbase=/luci-static/mintzero

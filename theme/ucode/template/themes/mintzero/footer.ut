@@ -21,7 +21,9 @@
 			</span>
 		</footer>
 		<script>L.require('menu-mintzero')</script>
-		<script src="{{ media }}/overview.js?v=mz20260907e" defer></script>
+		{% if (join('-', length(ctx.request_path) ? ctx.request_path : ctx.path) == 'admin-status-overview'): %}
+		<script src="{{ media }}/overview.js?v=mz20260908a" defer></script>
+		{% endif %}
 		{% endif %}
 	</body>
 </html>

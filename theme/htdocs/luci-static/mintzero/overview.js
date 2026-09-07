@@ -9,16 +9,30 @@
 (function () {
 	'use strict';
 
+	/* OT-05: `_` comes from the LuCI translations bundle, which header.ut
+	   loads synchronously in <head> (always before this deferred script).
+	   Fall back to echo so a missing bundle can never break rendering. */
+	var __ = (typeof _ === 'function') ? _ : function (s) { return s; };
+
 	var CIRC = 2 * Math.PI * 52;
 	var REFRESH_MS = 5000;
 	var started = false;
 	var hideObserver = null;
 
-	var HIDE_PREFIXES = [
-		'内存', '存储', '端口状态', '网络', '系统', 'DHCP', '无线', 'DSL',
-		'Memory', 'Storage', 'Ports', 'Switch', 'Network', 'System', 'Wireless',
-		'UPnP', '端口映射', 'Active Connections'
-	];
+	/* OT-11: prefixes grouped by panel category - a native section is only
+	   hidden when its replacement panel actually rendered. (The orphan
+	   'DSL' entry was dropped: no DSL panel exists, so hiding it only
+	   deleted information.) */
+	var CAT_PREFIXES = {
+		core: ['内存', '存储', 'Memory', 'Storage'],
+		ports: ['端口状态', 'Ports', 'Switch'],
+		net: ['网络', 'Network'],
+		sys: ['系统', 'System'],
+		dhcp: ['DHCP'],
+		wifi: ['无线', 'Wireless'],
+		upnp: ['UPnP', '端口映射', 'Active Connections']
+	};
+	var renderedCats = {};
 
 	function esc(s) {
 		return String(s == null ? '' : s)
@@ -106,6 +120,53 @@
 			totalUnit: m[4],
 			pct: parseInt(m[5], 10)
 		};
+	}
+
+	/* OT-10: locate the system/memory/storage tables by content markers
+	   instead of blind position, and keep the last good readings when a
+	   poll cannot be parsed (never flash 0% on a transient failure). */
+	var lastCore = null;
+
+	function scoreTable(tbl, marks) {
+		var text = tbl.textContent || '';
+		var score = 0;
+		for (var i = 0; i < marks.length; i++)
+			if (text.indexOf(marks[i]) >= 0) score++;
+		return score;
+	}
+
+	function findCoreTables(tables) {
+		var arr = Array.prototype.slice.call(tables);
+		var sysMarks = ['主机名', 'Hostname', '运行时间', 'Uptime', '平均负载', 'Load Average', 'Load'];
+		var best = arr[0], bestScore = 0, i;
+		for (i = 0; i < arr.length; i++) {
+			var sc = scoreTable(arr[i], sysMarks);
+			if (sc > bestScore) { bestScore = sc; best = arr[i]; }
+		}
+		var bars = arr.filter(function (t) {
+			return t.querySelector('.cbi-progressbar[title]');
+		});
+		return {
+			sys: (bestScore >= 2) ? best : arr[0],
+			mem: bars[0] || arr[1],
+			storage: bars[1] || arr[2]
+		};
+	}
+
+	function mergeCore(core) {
+		if (!lastCore) { lastCore = core; return core; }
+		var prev = lastCore;
+		['hostname', 'uptime', 'load', 'model'].forEach(function (k) {
+			if (!core[k] && prev[k]) core[k] = prev[k];
+		});
+		if (core.cpu === '0' && prev.cpu !== '0') core.cpu = prev.cpu;
+		if (!core.temp && prev.temp) core.temp = prev.temp;
+		if (!core.tempInfo && prev.tempInfo) core.tempInfo = prev.tempInfo;
+		['mem', 'storage'].forEach(function (k) {
+			if (core[k].pct === 0 && prev[k].pct !== 0) core[k] = prev[k];
+		});
+		lastCore = core;
+		return core;
 	}
 
 	function ringHtml(pct, cls, id) {
@@ -208,13 +269,18 @@
 			var statusLower = statusText.toLowerCase();
 			var isDown = !statusText ||
 				statusText.indexOf('未连接') >= 0 ||
+				statusText.indexOf('Nicht verbunden') >= 0 ||
+				statusText.indexOf('Keine Verbindung') >= 0 ||
+				statusText.indexOf('Sin conex') >= 0 ||
+				statusText.indexOf('Non connect') >= 0 ||
+				statusText.indexOf('sem conex') >= 0 ||
 				statusLower.indexOf('no link') >= 0 ||
 				statusLower.indexOf('not connected') >= 0 ||
 				statusLower.indexOf('disconnected') >= 0 ||
 				statusLower === 'down' ||
 				statusLower.indexOf(' link down') >= 0;
 			var isUp = !isDown;
-			var speed = statusText || 'no link';
+			var speed = statusText || __('no link');
 			var tx = '', rx = '';
 			if (bodies[1]) {
 				/* textContent works on display:none nodes; innerText does not */
@@ -305,7 +371,7 @@
 		section.querySelectorAll('table').forEach(function (t, ti) {
 			var rows = t.querySelectorAll('tr');
 			if (rows.length <= 1) {
-				tables.push({ empty: ti === 0 ? '暂无 IPv4 租约' : '暂无 IPv6 租约' });
+				tables.push({ empty: ti === 0 ? __('No IPv4 leases yet') : __('No IPv6 leases yet') });
 				return;
 			}
 			var headers = [];
@@ -407,7 +473,7 @@
 	}
 
 	function portsHtml(cards) {
-		return '<h3 class="mz-section-title">端口状态</h3><div class="mz-port-grid">' +
+		return '<h3 class="mz-section-title">' + __('Port status') + '</h3><div class="mz-port-grid">' +
 			cards.map(function (p) {
 				return '<div class="mz-port-card' + (p.isUp ? ' up' : ' down') + '">' +
 					'<div class="mz-port-name">' + esc(p.name) + '</div>' +
@@ -430,7 +496,7 @@
 	}
 
 	function netHtml(cards) {
-		return '<h3 class="mz-section-title">网络</h3><div class="mz-net-grid">' +
+		return '<h3 class="mz-section-title">' + __('Network') + '</h3><div class="mz-net-grid">' +
 			cards.map(function (n) {
 				return '<div class="mz-net-card">' +
 					'<div class="mz-net-header">' + esc(n.title) + '</div>' +
@@ -445,7 +511,7 @@
 	}
 
 	function sysHtml(items) {
-		return '<h3 class="mz-section-title">系统信息</h3><div class="mz-sys-grid">' +
+		return '<h3 class="mz-section-title">' + __('System information') + '</h3><div class="mz-sys-grid">' +
 			items.map(function (it) {
 				return '<div class="mz-sys-item"><span class="mz-sys-label">' +
 					esc(it.label) + '</span><span class="mz-sys-value">' +
@@ -454,7 +520,7 @@
 	}
 
 	function dhcpHtml(tables) {
-		var html = '<h3 class="mz-section-title">DHCP 租约</h3>';
+		var html = '<h3 class="mz-section-title">' + __('DHCP leases') + '</h3>';
 		tables.forEach(function (t) {
 			if (t.empty) {
 				html += '<div class="mz-empty-state">' + esc(t.empty) + '</div>';
@@ -466,30 +532,33 @@
 	}
 
 	function wifiHtml(data) {
-		var html = '<h3 class="mz-section-title">无线</h3><div class="mz-wifi-radios">';
+		var html = '<h3 class="mz-section-title">' + __('Wireless') + '</h3><div class="mz-wifi-radios">';
 		data.radios.forEach(function (r) {
-			var enc = r.info['加密'] ? String(r.info['加密']).substring(0, 15) : '-';
+			var info = r.info;
+			var encRaw = info['加密'] || info['Encryption'] || '';
+			var enc = encRaw ? String(encRaw).substring(0, 15) : '-';
 			html += '<div class="mz-wifi-card">' +
-				'<div class="mz-wifi-name">' + esc(r.info['SSID'] || r.name) + '</div>' +
+				'<div class="mz-wifi-name">' + esc(info['SSID'] || r.name) + '</div>' +
 				'<div class="mz-wifi-sub">' + esc(r.name) + ' · ' +
-				esc(r.info['信道'] || '') + ' · ' + esc(r.info['速率'] || '') + '</div>' +
+				esc(info['信道'] || info['Channel'] || '') + ' · ' +
+				esc(info['速率'] || info['Bitrate'] || info['Rate'] || '') + '</div>' +
 				'<div class="mz-wifi-stats">' +
-				'<span><strong>' + esc(r.info['关联数'] || '0') + '</strong> 已连接</span>' +
+				'<span><strong>' + esc(info['关联数'] || info['Associations'] || '0') + '</strong> ' + __('associated') + '</span>' +
 				'<span><strong>' + esc(enc) + '</strong></span>' +
 				'</div></div>';
 		});
 		html += '</div>';
 		if (data.stations) {
-			html += '<h4 class="mz-subtitle">已连接站点</h4>' +
+			html += '<h4 class="mz-subtitle">' + __('Associated stations') + '</h4>' +
 				dataTableHtml(data.stations.headers, data.stations.rows);
 		}
 		return html;
 	}
 
 	function upnpHtml(data) {
-		var html = '<h3 class="mz-section-title">UPnP 端口映射</h3>';
+		var html = '<h3 class="mz-section-title">' + __('UPnP port mappings') + '</h3>';
 		if (data.empty)
-			return html + '<div class="mz-empty-state">当前没有生效的端口映射</div>';
+			return html + '<div class="mz-empty-state">' + __('No active port mappings') + '</div>';
 		return html + dataTableHtml(data.headers, data.rows);
 	}
 
@@ -530,22 +599,22 @@
 			'</div>' +
 			'<div class="mz-rings">' +
 			'<div class="mz-ring-card">' + ringHtml(core.cpu, 'mz-ring-cpu', 'cpu') +
-			'<div class="mz-ring-info"><div class="mz-ring-title">CPU</div>' +
+			'<div class="mz-ring-meta"><div class="mz-ring-label">CPU</div>' +
 			'<div class="mz-ring-sub" data-mz-id="temp"' + (core.temp ? '' : ' hidden') + '>' +
-			(core.temp ? ('温度 ' + esc(core.temp) + '°C') : '') + '</div></div></div>' +
+			(core.temp ? (__('Temperature') + ' ' + esc(core.temp) + '°C') : '') + '</div></div></div>' +
 			'<div class="mz-ring-card">' + ringHtml(core.mem.pct, 'mz-ring-mem', 'mem') +
-			'<div class="mz-ring-info"><div class="mz-ring-title">内存</div>' +
+			'<div class="mz-ring-meta"><div class="mz-ring-label">' + __('Memory') + '</div>' +
 			'<div class="mz-ring-pct" data-mz-id="mem-pct">' +
 			esc(core.mem.used) + ' / ' + esc(core.mem.total) + ' ' + esc(core.mem.totalUnit) +
 			'</div>' +
 			'</div></div>' +
 			'<div class="mz-ring-card">' + ringHtml(core.storage.pct, 'mz-ring-storage', 'storage') +
-			'<div class="mz-ring-info"><div class="mz-ring-title">存储</div>' +
+			'<div class="mz-ring-meta"><div class="mz-ring-label">' + __('Storage') + '</div>' +
 			'<div class="mz-ring-pct" data-mz-id="storage-pct">' +
 			esc(core.storage.used) + ' / ' + esc(core.storage.total) + ' ' + esc(core.storage.totalUnit) +
 			'</div>' +
 			'<div class="mz-ring-sub" data-mz-id="temp-info"' + (core.tempInfo ? '' : ' hidden') + '>' +
-			(core.tempInfo ? ('临时 ' + esc(core.tempInfo)) : '') + '</div></div></div>' +
+			(core.tempInfo ? (__('Temp') + ' ' + esc(core.tempInfo)) : '') + '</div></div></div>' +
 			'</div>';
 	}
 
@@ -566,7 +635,7 @@
 		if (tempEl) {
 			if (core.temp) {
 				tempEl.hidden = false;
-				tempEl.textContent = '温度 ' + core.temp + '°C';
+				tempEl.textContent = __('Temperature') + ' ' + core.temp + '°C';
 			} else {
 				tempEl.hidden = true;
 				tempEl.textContent = '';
@@ -577,7 +646,7 @@
 		if (tempInfoEl) {
 			if (core.tempInfo) {
 				tempInfoEl.hidden = false;
-				tempInfoEl.textContent = '临时 ' + core.tempInfo;
+				tempInfoEl.textContent = __('Temp') + ' ' + core.tempInfo;
 			} else {
 				tempInfoEl.hidden = true;
 				tempInfoEl.textContent = '';
@@ -586,16 +655,26 @@
 
 	}
 
-	function hideOriginalSections() {
+	function hideOriginalSections(cats) {
+		cats = cats || renderedCats;
+		var prefixes = [];
+		Object.keys(cats).forEach(function (c) {
+			if (cats[c] && CAT_PREFIXES[c])
+				prefixes = prefixes.concat(CAT_PREFIXES[c]);
+		});
+		if (!prefixes.length) return;
 		document.querySelectorAll('#mz-view .cbi-section').forEach(function (sec) {
 			if (sec.classList.contains('mz-hidden-section')) return;
 			var h = sec.querySelector('h2, h3, .cbi-section-title');
 			if (!h) return;
 			var txt = h.textContent.trim();
-			for (var i = 0; i < HIDE_PREFIXES.length; i++) {
-				var p = HIDE_PREFIXES[i];
+			for (var i = 0; i < prefixes.length; i++) {
+				var p = prefixes[i];
 				if (txt.indexOf(p) === 0 || (p.length > 3 && txt.indexOf(p) >= 0 &&
 					(p === 'UPnP' || p === '端口映射' || p === 'Active Connections'))) {
+					if ((p === '系统' || p === 'System') &&
+						(txt.indexOf('端口') >= 0 || txt.indexOf('Ports') >= 0))
+						continue;
 					sec.classList.add('mz-hidden-section');
 					return;
 				}
@@ -613,7 +692,8 @@
 		var tables = view.querySelectorAll('table.table');
 		if (tables.length < 3) return false;
 
-		var core = collectCore(tables);
+		var picked = findCoreTables(tables);
+		var core = mergeCore(collectCore([picked.sys, picked.mem, picked.storage]));
 		var panel = view.querySelector('.mz-overview-panel');
 		if (!panel) {
 			panel = document.createElement('div');
@@ -625,8 +705,10 @@
 		}
 
 		var cursor = panel;
+		var cats = { core: true };
 		var ports = collectPorts(findSection(['端口状态', 'Ports', 'Switch']));
 		if (ports.length) {
+			cats.ports = true;
 			var portPanel = ensurePanel(view, 'mz-port-panel', cursor);
 			patchPanel(portPanel, portsHtml(ports));
 			cursor = portPanel;
@@ -636,6 +718,7 @@
 
 		var nets = collectNet(findSection(['网络', 'Network']));
 		if (nets.length) {
+			cats.net = true;
 			var netPanel = ensurePanel(view, 'mz-net-panel', cursor);
 			patchPanel(netPanel, netHtml(nets));
 			cursor = netPanel;
@@ -653,6 +736,7 @@
 		});
 		var sysItems = collectSys(sysSec);
 		if (sysItems.length) {
+			cats.sys = true;
 			var sysPanel = ensurePanel(view, 'mz-sys-panel', cursor);
 			patchPanel(sysPanel, sysHtml(sysItems));
 			cursor = sysPanel;
@@ -662,6 +746,7 @@
 
 		var dhcp = collectDhcp(findSection(['DHCP']));
 		if (dhcp.length) {
+			cats.dhcp = true;
 			var dhcpPanel = ensurePanel(view, 'mz-dhcp-panel', cursor);
 			patchPanel(dhcpPanel, dhcpHtml(dhcp));
 			cursor = dhcpPanel;
@@ -671,6 +756,7 @@
 
 		var wifi = collectWifi(findSection(['无线', 'Wireless']));
 		if (wifi.radios.length || wifi.stations) {
+			cats.wifi = true;
 			var wifiPanel = ensurePanel(view, 'mz-wifi-panel', cursor);
 			patchPanel(wifiPanel, wifiHtml(wifi));
 			cursor = wifiPanel;
@@ -680,13 +766,15 @@
 
 		var upnpSec = findSection(['UPnP', '端口映射', 'Active Connections'], { contains: true });
 		if (upnpSec) {
+			cats.upnp = true;
 			var upnpPanel = ensurePanel(view, 'mz-upnp-panel', cursor);
 			patchPanel(upnpPanel, upnpHtml(collectUpnp(upnpSec)));
 		} else {
 			removePanel(view, 'mz-upnp-panel');
 		}
 
-		hideOriginalSections();
+		renderedCats = cats;
+		hideOriginalSections(cats);
 		return true;
 	}
 
@@ -699,67 +787,17 @@
 		hideObserver.observe(view, { childList: true, subtree: true });
 	}
 
-	function initMenu() {
-		var topLi = document.querySelector('#mainmenu > li');
-		if (topLi) {
-			var topUl = topLi.querySelector(':scope > ul');
-			if (topUl) {
-				while (topUl.firstChild)
-					topLi.parentNode.insertBefore(topUl.firstChild, topLi);
-			}
-			topLi.parentNode.removeChild(topLi);
-		}
-
-		document.querySelectorAll('#mainmenu > li').forEach(function (li) {
-			var sub = li.querySelector(':scope > ul');
-			if (!sub) return;
-			li.classList.add('mz-menu-group');
-			var a = li.querySelector(':scope > a');
-			if (!a) return;
-			var label = a.textContent.trim();
-			var hasActive = sub.querySelector('.active, li.active > a, a.active') !== null;
-			var stored = null;
-			try { stored = localStorage.getItem('mz-nav-' + label); } catch (err) {}
-			var collapsed = stored !== null ? stored === '1' : !hasActive;
-			if (collapsed) {
-				li.classList.add('mz-collapsed');
-				sub.style.display = 'none';
-			}
-			a.addEventListener('click', function (e) {
-				e.preventDefault();
-				var nowCollapsed = li.classList.toggle('mz-collapsed');
-				sub.style.display = nowCollapsed ? 'none' : '';
-				try {
-					localStorage.setItem('mz-nav-' + label, nowCollapsed ? '1' : '0');
-				} catch (err) {}
-			});
-		});
-
-		var mm = document.getElementById('mainmenu');
-		if (mm) mm.classList.add('mz-menu-ready');
-	}
-
 	function boot() {
-		var menuDone = false;
-		var overviewReady = false;
+		/* Menu folding moved to menu-mintzero.js (OT-12); this script only
+		   owns the overview panels (and only loads there, see footer.ut). */
+		var ready = false;
 
-		function tryMenu() {
-			if (menuDone) return;
-			var mm = document.getElementById('mainmenu');
-			if (mm && mm.children.length > 0) {
-				menuDone = true;
-				try { initMenu(); } catch (err) {}
-			}
-		}
-
-		function tryOverview() {
-			if (document.body.getAttribute('data-page') !== 'admin-status-overview') {
-				overviewReady = true;
-				return;
-			}
+		function tick() {
+			if (document.body.getAttribute('data-page') !== 'admin-status-overview')
+				return true;
 			if (refreshOverview()) {
-				if (!overviewReady) {
-					overviewReady = true;
+				if (!ready) {
+					ready = true;
 					watchHiddenSections();
 					if (!started) {
 						started = true;
@@ -768,25 +806,19 @@
 						}, REFRESH_MS);
 					}
 				}
+				return true;
 			}
-		}
-
-		function tick() {
-			tryMenu();
-			tryOverview();
-			if (menuDone && overviewReady) return true;
 			return false;
 		}
 
 		if (tick()) return;
 
+		var view = document.getElementById('mz-view');
+		if (!view) return;
 		var observer = new MutationObserver(function () {
 			if (tick()) observer.disconnect();
 		});
-		var mm = document.getElementById('mainmenu');
-		var view = document.getElementById('mz-view');
-		if (mm) observer.observe(mm, { childList: true, subtree: true });
-		if (view) observer.observe(view, { childList: true, subtree: true });
+		observer.observe(view, { childList: true, subtree: true });
 		setTimeout(function () { observer.disconnect(); }, 20000);
 	}
 
@@ -820,11 +852,11 @@
 
 	document.addEventListener('uci-applied', function () {
 		try { sessionStorage.setItem('mz-apply-ok', String(Date.now())); } catch (err) {}
-		mzNotify('配置已成功应用。', 'success');
+		mzNotify(__('Configuration applied successfully.'), 'success');
 	});
 
 	document.addEventListener('uci-reverted', function () {
-		mzNotify('已回滚到最近保存的配置。', 'notice');
+		mzNotify(__('Reverted to the last saved configuration.'), 'notice');
 	});
 
 	/* LuCSI reloads the page right after a successful apply, which would
@@ -833,7 +865,7 @@
 		var ts = parseInt(sessionStorage.getItem('mz-apply-ok'), 10);
 		if (ts && (Date.now() - ts) < 30000) {
 			sessionStorage.removeItem('mz-apply-ok');
-			setTimeout(function () { mzNotify('配置已成功应用。', 'success'); }, 600);
+			setTimeout(function () { mzNotify(__('Configuration applied successfully.'), 'success'); }, 600);
 		}
 	} catch (err) {}
 
@@ -907,7 +939,7 @@
 		edit.type = 'button';
 		edit.className = 'mz-dl-btn mz-dl-edit';
 		edit.textContent = '✎';
-		edit.setAttribute('aria-label', '编辑');
+		edit.setAttribute('aria-label', __('Edit'));
 		edit.addEventListener('click', function (ev) {
 			ev.preventDefault();
 			ev.stopPropagation();
@@ -918,7 +950,7 @@
 		del.type = 'button';
 		del.className = 'mz-dl-btn mz-dl-del';
 		del.textContent = '✕';
-		del.setAttribute('aria-label', '删除');
+		del.setAttribute('aria-label', __('Delete'));
 		del.addEventListener('click', function (ev) {
 			ev.preventDefault();
 			ev.stopPropagation();

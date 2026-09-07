@@ -16,12 +16,6 @@ var callFileWrite = rpc.declare({
 	expect: { code: 0 }
 });
 
-var callRefresh = rpc.declare({
-	object: 'mintzero',
-	method: 'refresh',
-	expect: { '': {} }
-});
-
 var PC_CUSTOM = '/www/luci-static/mintzero/custom-pc.jpg';
 var MOBILE_CUSTOM = '/www/luci-static/mintzero/custom-mobile.jpg';
 
@@ -40,6 +34,7 @@ return view.extend({
 
 		const uiRandom = s.option(form.Flag, 'ui_random', _('Random wallpaper on admin pages'),
 			_('When enabled, every login page load and every admin page refresh automatically picks a fresh random image for the current device type.'));
+		uiRandom.default = '1'; /* OT-09: match the header.ut default (on when unset) */
 
 		/* ---- PC source ---- */
 		const pcMode = s.option(form.ListValue, 'pc_mode', _('Desktop source'));
@@ -68,44 +63,25 @@ return view.extend({
 			_('Dark overlay strength over the wallpaper (0.0 - 1.0).'));
 		overlay.datatype = 'ufloat';
 		overlay.default = '0.45';
+		overlay.validate = function(sid, v) {
+			const n = parseFloat(v);
+			return (isNaN(n) || n < 0 || n > 1) ? _('Must be a number between 0.0 and 1.0.') : true;
+		};
 
 		const blur = s.option(form.Value, 'blur', _('Blur (px)'),
 			_('Background blur in pixels; 0 disables.'));
 		blur.datatype = 'uinteger';
 		blur.default = '0';
+		blur.validate = function(sid, v) {
+			const n = parseInt(v, 10);
+			return (isNaN(n) || n < 0 || n > 40) ? _('Must be an integer between 0 and 40.') : true;
+		};
 
 		return m.render().then((nodes) => {
-			const mkUpload = function (fileId, labelText) {
-				return [
-					E('input', {
-						'type': 'file',
-						'id': fileId,
-						'style': 'display:none',
-						'accept': 'image/jpeg,image/png,image/webp',
-						'change': ui.createHandlerFn(self, 'handleUpload', fileId)
-					}),
-					E('button', {
-						'type': 'button',
-						'class': 'btn cbi-button',
-						'click': function(ev) {
-							ev.preventDefault();
-							ev.stopPropagation();
-							document.getElementById(fileId).click();
-						}
-					}, [ labelText ])
-				];
-			};
-
+			/* NOTE (TZ-17, 2026-09-07): the "Refresh wallpaper cache" button
+			   was removed - random images come straight from remote APIs and
+			   custom images are local files, so no server-side cache exists. */
 			const btnRow = E('div', { 'class': 'cbi-page-actions mz-wp-actions' }, [
-				E('button', {
-					'type': 'button',
-					'class': 'btn cbi-button cbi-button-edit',
-					'click': function(ev) {
-						ev.preventDefault();
-						ev.stopPropagation();
-						self.handleRefresh(ev);
-					}
-				}, [ _('Refresh wallpaper cache') ]),
 				E('button', {
 					'type': 'button',
 					'class': 'btn cbi-button',
@@ -150,23 +126,9 @@ return view.extend({
 		});
 	},
 
-	handleRefresh(ev) {
-		if (ev) {
-			ev.preventDefault();
-			ev.stopPropagation();
-		}
-		return callRefresh().then((data) => {
-			if (data && data.spawned)
-				ui.addNotification(null, E('p', _('Refresh triggered. The new wallpaper pool loads in the background.')), 'info');
-			else
-				ui.addNotification(null, E('p', _('Random mode is active - nothing to refresh.')), 'notice');
-		}).catch((e) => {
-			ui.addNotification(null, E('p', _('Refresh failed: %s').format(e.message)), 'error');
-		});
-	},
-
 	handleUpload(kind, ev) {
-		const file = ev.target.files[0];
+		const input = ev.target;
+		const file = input.files[0];
 		if (!file)
 			return;
 
@@ -175,18 +137,30 @@ return view.extend({
 			return;
 		}
 
+		/* OT-17: busy guard - the input stays disabled until the write
+		   finishes, so double clicks cannot interleave two uploads. */
+		if (input.disabled)
+			return;
+		input.disabled = true;
+
 		const target = (kind === 'mobile') ? MOBILE_CUSTOM : PC_CUSTOM;
+		const done = () => { input.disabled = false; input.value = ''; };
 
-		return file.arrayBuffer().then((buf) => {
-			let bin = '';
-			const bytes = new Uint8Array(buf);
-			for (let i = 0; i < bytes.length; i++)
-				bin += String.fromCharCode(bytes[i]);
-
-			return callFileWrite(target, btoa(bin));
+		return new Promise((resolve, reject) => {
+			const reader = new FileReader();
+			reader.onload = () => resolve(reader.result);
+			reader.onerror = () => reject(reader.error || new Error('read failed'));
+			reader.readAsDataURL(file);
+		}).then((dataUrl) => {
+			const b64 = String(dataUrl).split(',', 2)[1] || '';
+			if (!b64)
+				throw new Error('empty image');
+			return callFileWrite(target, b64);
 		}).then(() => {
+			done();
 			ui.addNotification(null, E('p', _('Image uploaded. Set the matching source to "Custom image" to use it.')), 'info');
 		}).catch((e) => {
+			done();
 			ui.addNotification(null, E('p', _('Upload failed: %s').format(e.message)), 'error');
 		});
 	}
