@@ -107,7 +107,6 @@
 			<div class="mz-brand">
 				<a href="/" class="mz-brand-link">
 					<img src="{{ media }}/logo.svg" alt="mintzero" class="mz-brand-logo">
-					<span class="mz-brand-name">mintzero</span>
 				</a>
 			</div>
 

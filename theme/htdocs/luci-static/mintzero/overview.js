@@ -609,6 +609,14 @@
 			panel.className = 'mz-overview-panel';
 			panel.innerHTML = buildCoreHtml(core);
 			view.insertBefore(panel, view.firstChild);
+			/* pixel avatar banner above the status panels */
+			if (!view.querySelector('.mz-overview-banner')) {
+				var banner = document.createElement('img');
+				banner.className = 'mz-overview-banner';
+				banner.src = '/luci-static/mintzero/overview-banner.png';
+				banner.alt = '';
+				view.insertBefore(banner, panel);
+			}
 		} else {
 			patchCore(panel, core);
 		}

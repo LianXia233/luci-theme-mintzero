@@ -3630,3 +3630,17 @@ html[data-theme="dark"] {
 		line-height: 28px !important;
 	}
 }
+
+/* Overview banner: pixel avatar above the status panels */
+.mz-overview-banner {
+	display: block;
+	width: 96px;
+	height: 96px;
+	margin: 0 auto var(--mz-spacing-md);
+	border-radius: 22px;
+}
+
+/* brand area without text: keep logo centered */
+.mz-brand-link {
+	justify-content: center;
+}
