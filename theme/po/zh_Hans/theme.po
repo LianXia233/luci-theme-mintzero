@@ -284,6 +284,12 @@ msgstr "图片的 http(s) 直链。未上传手机端图片时使用。"
 msgid "Image uploaded. Set the matching source to \"Custom image\" to use it."
 msgstr "上传成功。将对应来源设为「自定义图片」即可使用。"
 
+msgid "Random wallpaper on admin pages"
+msgstr "后台页面随机壁纸"
+
+msgid "When enabled, every login page load and every admin page refresh automatically picks a fresh random image for the current device type."
+msgstr "开启后，每次打开登录页或刷新后台页面时，都会为当前设备类型自动更换一张随机壁纸。"
+
 msgid "Pick a random image from the last fetched pool on each login page load."
 msgstr "每次进入登录页时从最近获取的壁纸池中随机选择一张。"
 

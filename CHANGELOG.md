@@ -32,6 +32,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 清理 po 中 Dashboard 遗留条目，新增迁移后文案的简体中文翻译
 
 ### Changed (2026-09-07 双端独立壁纸源)
+- 新增「后台页面随机壁纸」开关：开启后随机壁纸**全局覆盖登录后的所有页面**（body 背景 + 可调遮罩 + 面板 86% 半透明，保证文字可读），关闭后仅登录页生效
+- 随机壁纸每次登录/刷新自动更换（时间戳防缓存），加载失败自动回退渐变兜底
 - 壁纸来源重构为**桌面端 / 手机端双组独立配置**：各组可选「随机 API（桌面 Paugram / 手机 Uapis ACG）」或「自定义图片」
 - 自定义支持直链或上传（分别写入 custom-pc.jpg / custom-mobile.jpg，3MB 上限）
 - 登录页按访问设备 UA 自动使用对应组的配置，失败保持渐变兜底

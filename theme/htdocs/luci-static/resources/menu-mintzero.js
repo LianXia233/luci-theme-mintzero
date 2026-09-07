@@ -20,6 +20,48 @@ return baseclass.extend({
 		this.initSidebarToggle();
 		this.initThemeToggle();
 		this.initLogout();
+		this.initGlobalWallpaper();
+	},
+
+	/* ----- Global wallpaper (admin pages) ------------------------ */
+
+	isMobileUA() {
+		return /Android|iPhone|iPad|iPod|Mobile|Windows Phone|WebOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || '');
+	},
+
+	initGlobalWallpaper() {
+		const cfg = window.mintzeroWallpaper;
+		if (!cfg || cfg.enabled === false || cfg.ui_random === false)
+			return;
+		if (document.getElementById('mz-login'))
+			return;
+
+		const grp = this.isMobileUA() ? (cfg.mobile || {}) : (cfg.pc || {});
+		let url;
+		if (grp.mode === 'custom' && grp.url)
+			url = grp.url;
+		else if (grp.mode === 'custom')
+			return;
+		else {
+			const api = this.isMobileUA()
+				? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
+				: 'https://api.paugram.com/wallpaper/';
+			url = api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
+		}
+
+		const img = new Image();
+		const timer = window.setTimeout(() => { img.src = ''; }, 12000);
+		img.onload = () => {
+			window.clearTimeout(timer);
+			document.documentElement.style.setProperty('--mz-wallpaper', 'url("' + url + '")');
+			if (cfg.overlay != null)
+				document.documentElement.style.setProperty('--mz-wallpaper-overlay', String(cfg.overlay));
+			if (cfg.blur && parseInt(cfg.blur) > 0)
+				document.documentElement.style.setProperty('--mz-wallpaper-blur', parseInt(cfg.blur) + 'px');
+			document.body.classList.add('mz-has-wallpaper');
+		};
+		img.onerror = () => window.clearTimeout(timer);
+		img.src = url;
 	},
 
 	/* ----- Sidebar menu ------------------------------------------ */

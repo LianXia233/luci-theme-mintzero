@@ -102,17 +102,13 @@ return view.extend({
 		return /Android|iPhone|iPad|iPod|Mobile|Windows Phone|WebOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || '');
 	}
 
-	function randomApiUrl() {
-		const mode = cfg.mode;
-		let api;
-		if (mode === 'paugram')
-			api = 'https://api.paugram.com/wallpaper/';
-		else if (mode === 'uapis')
-			api = 'https://uapis.cn/api/v1/random/image?category=acg&type=mb';
-		else
-			api = isMobileUA()
-				? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
-				: 'https://api.paugram.com/wallpaper/';
+	function wallpaperSourceUrl() {
+		const grp = isMobileUA() ? (cfg.mobile || {}) : (cfg.pc || {});
+		if (grp.mode === 'custom' && grp.url)
+			return grp.url;
+		const api = isMobileUA()
+			? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
+			: 'https://api.paugram.com/wallpaper/';
 		return api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
 	}
 

@@ -61,6 +61,7 @@ function loadConfig() {
 	const wp = cursor().get_all('mintzero', 'wallpaper') ?? {};
 	return {
 		enabled: wp.enabled ?? DEFAULTS.enabled,
+		ui_random: wp.ui_random ?? '1',
 		pc_mode: sourceMode(wp.pc_mode, DEFAULTS.pc_mode),
 		pc_url: validCustomUrl(wp.pc_url ?? ''),
 		mobile_mode: sourceMode(wp.mobile_mode, DEFAULTS.mobile_mode),
@@ -97,6 +98,7 @@ export function getWallpapers() {
 	if (cfg.enabled == '0') {
 		return {
 			enabled: false,
+			ui_random: cfg.ui_random,
 			pc: null,
 			mobile: null
 		};
@@ -104,6 +106,7 @@ export function getWallpapers() {
 
 	return {
 		enabled: true,
+		ui_random: cfg.ui_random,
 		overlay: cfg.overlay,
 		blur: cfg.blur,
 		pc: deviceGroup(cfg, 'pc'),

@@ -16,6 +16,12 @@ var callFileWrite = rpc.declare({
 	expect: { code: 0 }
 });
 
+var callRefresh = rpc.declare({
+	object: 'mintzero',
+	method: 'refresh',
+	expect: { '': {} }
+});
+
 var PC_CUSTOM = '/www/luci-static/mintzero/custom-pc.jpg';
 var MOBILE_CUSTOM = '/www/luci-static/mintzero/custom-mobile.jpg';
 
@@ -31,6 +37,9 @@ return view.extend({
 
 		s.option(form.Flag, 'enabled', _('Enabled'),
 			_('When disabled, the login page uses the built-in gradient fallback.'));
+
+		const uiRandom = s.option(form.Flag, 'ui_random', _('Random wallpaper on admin pages'),
+			_('When enabled, every login page load and every admin page refresh automatically picks a fresh random image for the current device type.'));
 
 		/* ---- PC source ---- */
 		const pcMode = s.option(form.ListValue, 'pc_mode', _('Desktop source'));
@@ -90,6 +99,15 @@ return view.extend({
 			const btnRow = E('div', { 'class': 'cbi-page-actions mz-wp-actions' }, [
 				E('button', {
 					'type': 'button',
+					'class': 'btn cbi-button cbi-button-edit',
+					'click': function(ev) {
+						ev.preventDefault();
+						ev.stopPropagation();
+						self.handleRefresh(ev);
+					}
+				}, [ _('Refresh wallpaper cache') ]),
+				E('button', {
+					'type': 'button',
 					'class': 'btn cbi-button',
 					'click': function(ev) {
 						ev.preventDefault();
@@ -129,6 +147,21 @@ return view.extend({
 				nodes.insertBefore(btnRow, nodes.firstChild);
 
 			return nodes;
+		});
+	},
+
+	handleRefresh(ev) {
+		if (ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+		}
+		return callRefresh().then((data) => {
+			if (data && data.spawned)
+				ui.addNotification(null, E('p', _('Refresh triggered. The new wallpaper pool loads in the background.')), 'info');
+			else
+				ui.addNotification(null, E('p', _('Random mode is active - nothing to refresh.')), 'notice');
+		}).catch((e) => {
+			ui.addNotification(null, E('p', _('Refresh failed: %s').format(e.message)), 'error');
 		});
 	},
 

@@ -18,18 +18,14 @@
 	   LuCI dispatcher environment. */
 	const wp = uci.get_all('mintzero', 'wallpaper') ?? {};
 
-	/* Wallpaper pool for the login page only. The backend serves cache
-	   immediately and refreshes Bing metadata in the background, so
-	   rendering never blocks on the network. */
-	let wallpaper = { enabled: true, images: [], source: 'embedded' };
+	/* Wallpaper configuration for every page (login + admin UI). */
+	let wallpaper = { enabled: true, pc: null, mobile: null };
 
-	if (blank_page) {
-		try {
-			wallpaper = getWallpapers();
-		}
-		catch (e) {
-			wallpaper = { enabled: true, images: [], source: 'error' };
-		}
+	try {
+		wallpaper = getWallpapers();
+	}
+	catch (e) {
+		wallpaper = { enabled: true, pc: null, mobile: null };
 	}
 
 	http.prepare_content('text/html; charset=UTF-8');
@@ -85,6 +81,7 @@
 				enabled: {{ (wp.enabled == '0' || wallpaper.enabled == false) ? 'false' : 'true' }},
 				overlay: {{ sprintf('%J', wallpaper.overlay ?? '0.45') }},
 				blur: {{ sprintf('%J', wallpaper.blur ?? '0') }},
+				ui_random: {{ (wp.ui_random == '0') ? 'false' : 'true' }},
 				pc: {
 					mode: {{ sprintf('%J', wallpaper.pc?.mode ?? 'random') }},
 					url: {{ sprintf('%J', wallpaper.pc?.url ?? '') }}

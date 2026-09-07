@@ -3646,3 +3646,55 @@ html[data-theme="dark"] {
 	height: 56px;
 	border-radius: 14px;
 }
+
+/* ================================================================
+ * Global random wallpaper on admin pages (body.mz-has-wallpaper)
+ * Wallpaper covers the page background; an overlay keeps text
+ * readable while panels turn slightly translucent.
+ * ================================================================ */
+body.mz-has-wallpaper {
+	background-image: var(--mz-wallpaper, none);
+	background-size: cover;
+	background-position: center;
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+}
+
+body.mz-has-wallpaper::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background: rgba(15, 23, 42, var(--mz-wallpaper-overlay, 0.45));
+	backdrop-filter: blur(var(--mz-wallpaper-blur, 0px));
+}
+
+body.mz-has-wallpaper .mz-main,
+body.mz-has-wallpaper .mz-sidebar {
+	position: relative;
+	z-index: 1;
+}
+
+/* Panels become slightly translucent so the wallpaper shows through,
+   while 86% opacity keeps every text contrast-safe. */
+body.mz-has-wallpaper .mz-card,
+body.mz-has-wallpaper .cbi-section,
+body.mz-has-wallpaper .mz-info-card,
+body.mz-has-wallpaper .mz-port-card,
+body.mz-ring-card {
+	background: rgba(255, 255, 255, 0.86);
+}
+
+html[data-theme="dark"] body.mz-has-wallpaper .mz-card,
+html[data-theme="dark"] body.mz-has-wallpaper .cbi-section,
+html[data-theme="dark"] body.mz-has-wallpaper .mz-info-card,
+html[data-theme="dark"] body.mz-has-wallpaper .mz-port-card,
+html[data-theme="dark"] body.mz-has-wallpaper .mz-ring-card {
+	background: rgba(23, 30, 44, 0.86);
+}
+
+/* The modal overlay stays above the wallpaper backdrop */
+body.mz-has-wallpaper #modal_overlay {
+	z-index: 2000;
+}
