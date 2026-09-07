@@ -57,6 +57,23 @@ function sourceMode(v, dflt) {
 	return (v == 'custom') ? 'custom' : dflt;
 }
 
+function clampOverlay(v) {
+	if (type(v) == 'string' && v =~ /^(0(\.[0-9]+)?|1(\.0*)?)$/)
+		return v;
+	return '0.45';
+}
+
+function clampBlur(v) {
+	let n = int(v ?? '0');
+	if (!(n >= 0))
+		n = 0;
+	if (n > 40)
+		n = 40;
+	return sprintf('%d', n);
+}
+
+/* TZ-16: overlay/blur are clamped here so hand-edited UCI values can
+   neither break the CSS nor produce invalid style output. */
 function loadConfig() {
 	const wp = cursor().get_all('mintzero', 'wallpaper') ?? {};
 	return {
@@ -66,8 +83,8 @@ function loadConfig() {
 		pc_url: validCustomUrl(wp.pc_url ?? ''),
 		mobile_mode: sourceMode(wp.mobile_mode, DEFAULTS.mobile_mode),
 		mobile_url: validCustomUrl(wp.mobile_url ?? ''),
-		overlay: wp.overlay ?? '0.45',
-		blur: wp.blur ?? '0'
+		overlay: clampOverlay(wp.overlay),
+		blur: clampBlur(wp.blur)
 	};
 }
 

@@ -189,10 +189,7 @@ a:hover {
 	color: var(--mz-color-text);
 }
 
-.mz-brand-logo {
-	width: 28px;
-	height: 28px;
-}
+/* (Old 28px brand logo removed 2026-09-07: fully overridden by the 56px rule below.) */
 
 .mz-nav {
 	flex: 1;
@@ -242,29 +239,8 @@ a:hover {
 	border-top: 1px solid var(--mz-color-border);
 }
 
-.mz-modelist {
-	list-style: none;
-	margin: 0 0 var(--mz-spacing-sm);
-	padding: 0;
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--mz-spacing-xs);
-}
-
-.mz-modelist a {
-	display: block;
-	padding: 4px 10px;
-	border-radius: 999px;
-	font-size: .8rem;
-	color: var(--mz-color-text-muted);
-	background: var(--mz-color-surface-2);
-}
-
-.mz-modelist li.active a {
-	background: var(--mz-color-primary-soft);
-	color: var(--mz-color-primary);
-	font-weight: 600;
-}
+/* NOTE (OT-07): the #modemenu element and its renderModeMenu() were removed;
+   these .mz-modelist rules went with them. */
 
 .mz-sidebar-actions {
 	display: flex;
@@ -990,13 +966,7 @@ th {
 	border-radius: 18px;
 }
 
-.mz-login-title {
-	margin: 0;
-	font-size: 1.35rem;
-	font-weight: 700;
-	letter-spacing: .02em;
-	color: #ffffff;
-}
+/* (Removed 2026-09-07: .mz-login-title has no matching element in sysauth.ut.) */
 
 .mz-login-welcome {
 	margin: var(--mz-spacing-xs) 0 var(--mz-spacing-lg);
@@ -1201,7 +1171,7 @@ body.mz-login-active #maincontent {
 /* ---------------------------------------------------------------- */
 .mz-overview-panel { margin-bottom: var(--mz-spacing-lg); }
 .mz-info-cards {
-	display: flex; flex-wrap: wrap; gap: var(--mz-spacing-sm);
+	display: grid; gap: var(--mz-spacing-sm);
 	margin-bottom: var(--mz-spacing-md);
 }
 .mz-info-card {
@@ -1216,7 +1186,7 @@ body.mz-login-active #maincontent {
 	white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .mz-info-model { font-size: .78rem; font-weight: 500; }
-.mz-rings { display: flex; flex-wrap: wrap; gap: var(--mz-spacing-md); }
+.mz-rings { display: grid; gap: var(--mz-spacing-md); }
 .mz-ring-card {
 	flex: 1 1 280px; min-width: 0; display: flex; align-items: center;
 	gap: var(--mz-spacing-md); padding: 16px 18px;
@@ -1243,11 +1213,7 @@ body.mz-login-active #maincontent {
 }
 .mz-ring-pct { font-size: .8rem; color: var(--mz-color-text-muted); margin-top: 1px; }
 .mz-ring-sub { font-size: .76rem; color: var(--mz-color-text-muted); margin-top: 3px; }
-.mz-mem-detail {
-	display: flex; flex-wrap: wrap; gap: 3px 10px; margin-top: 6px;
-	font-size: .72rem; color: var(--mz-color-text-muted);
-}
-.mz-mem-detail span { white-space: nowrap; }
+/* (Removed 2026-09-07: .mz-mem-detail is no longer emitted by overview.js.) */
 @media (max-width: 640px) {
 	.mz-ring-card { flex-basis: 100%; }
 	.mz-ring { width: 80px; height: 80px; }
@@ -1366,7 +1332,7 @@ body.mz-login-active #maincontent {
 	flex: 1 1 300px;
 	min-width: 200px;
 }
-.cbi-value-field input,
+.cbi-value-field input:not([type="checkbox"]):not([type="radio"]),
 .cbi-value-field select,
 .cbi-value-field textarea {
 	width: 100%;
@@ -1698,7 +1664,7 @@ input[type="radio"] {
 	flex: 1 1 300px;
 	min-width: 200px;
 }
-.cbi-value-field input,
+.cbi-value-field input:not([type="checkbox"]):not([type="radio"]),
 .cbi-value-field select,
 .cbi-value-field textarea {
 	width: 100%;
@@ -2095,15 +2061,7 @@ table.cbi-section-table tbody tr:hover td {
 	white-space: normal;
 	overflow: visible;
 }
-.mz-net-device {
-	margin-top: 8px;
-	padding: 8px 10px;
-	background: var(--mz-color-surface-2);
-	border-radius: 8px;
-	font-size: .78rem;
-	color: var(--mz-color-text-muted);
-	line-height: 1.5;
-}
+/* (Removed 2026-09-07: .mz-net-device is no longer emitted by overview.js.) */
 
 /* Responsive */
 @media (max-width: 640px) {
@@ -2286,14 +2244,7 @@ table.cbi-section-table tbody tr:hover td {
 	margin: 0 auto;
 	padding: 24px 28px;
 }
-.mz-topbar-inner {
-	max-width: 1280px;
-	margin: 0 auto;
-	width: 100%;
-	display: flex;
-	align-items: center;
-	gap: var(--mz-spacing-md);
-}
+/* (Removed 2026-09-07: .mz-topbar-inner has no matching element in header.ut.) */
 
 /* Overview panels: wider grids on desktop */
 @media (min-width: 1024px) {
@@ -2770,99 +2721,7 @@ table.cbi-section-table tbody tr:hover td {
 	color: var(--mz-color-primary) !important;
 }
 
-/* ================================================================
- * Dashboard view (admin/mintzero/dashboard) - previously unstyled
- * ================================================================ */
-.mz-dash-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-	gap: var(--mz-spacing-lg);
-	align-items: start;
-}
-
-.mz-card {
-	background: var(--mz-color-surface);
-	border: 1px solid var(--mz-color-border);
-	border-radius: var(--mz-radius-lg);
-	box-shadow: var(--mz-shadow-sm);
-	padding: var(--mz-spacing-lg);
-	box-sizing: border-box;
-}
-
-.mz-card-title {
-	margin: 0 0 var(--mz-spacing-md);
-	padding-bottom: var(--mz-spacing-sm);
-	border-bottom: 1px solid var(--mz-color-border);
-	font-size: 1rem;
-	font-weight: 600;
-	color: var(--mz-color-text);
-}
-
-.mz-card-body {
-	font-size: .9rem;
-	color: var(--mz-color-text);
-}
-
-.mz-card-body .table {
-	margin: 0;
-}
-
-.mz-card-body .table .td {
-	border-bottom: 1px solid var(--mz-color-border);
-	padding: 7px 10px;
-	font-size: .88rem;
-}
-
-.mz-card-body .table .tr:last-child .td {
-	border-bottom: none;
-}
-
-/* Traffic card */
-.mz-traffic {
-	display: flex;
-	flex-direction: column;
-	gap: var(--mz-spacing-sm);
-}
-
-.mz-traffic-row {
-	display: flex;
-	align-items: baseline;
-	justify-content: space-between;
-	gap: var(--mz-spacing-md);
-}
-
-.mz-traffic-label {
-	font-weight: 600;
-	font-size: .9rem;
-}
-
-.mz-traffic-down { color: var(--mz-color-primary); }
-.mz-traffic-up { color: var(--mz-color-success); }
-
-.mz-traffic-now {
-	font-variant-numeric: tabular-nums;
-	font-weight: 600;
-	color: var(--mz-color-text);
-}
-
-.mz-traffic-note {
-	margin: var(--mz-spacing-sm) 0 0;
-	font-size: .8rem;
-	color: var(--mz-color-text-muted);
-	line-height: 1.5;
-}
-
-/* Sparkline (live traffic graph) */
-.mz-spark {
-	display: block;
-	width: 100%;
-	height: 48px;
-	margin-top: var(--mz-spacing-xs);
-}
-
-@media (max-width: 640px) {
-	.mz-dash-grid { grid-template-columns: 1fr; }
-}
+/* (Removed 2026-09-07 OT-27: dashboard view was deleted; .mz-dash-grid/.mz-card/.mz-traffic/.mz-spark had zero emitters.) */
 
 /* ================================================================
  * Dark mode: override hardcoded light backgrounds
@@ -3192,7 +3051,6 @@ html[data-theme="dark"] {
 
 /* Visual polish: headings/cards (buttons live in the unified section above) */
 
-.mz-card-title,
 .cbi-section > h3,
 #view h2,
 .mz-view h2 {
@@ -3662,10 +3520,23 @@ html[data-theme="dark"] {
  * readable while panels turn slightly translucent.
  * ================================================================ */
 body.mz-has-wallpaper {
+	/* Solid color stays as the instant fallback behind the image layer. */
+	background-color: var(--mz-color-background);
+}
+
+/* Fixed image layer (::after) + dim/blur overlay (::before). A real fixed
+	   layer is used instead of background-attachment: fixed, which iOS
+	   Safari ignores (review TZ-10). Paint order: image (z 0) < overlay
+	   (z 1) < content (.mz-main z 1, later sibling) < chrome (z 60+). */
+body.mz-has-wallpaper::after {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
 	background-image: var(--mz-wallpaper, none);
 	background-size: cover;
 	background-position: center;
-	background-attachment: fixed;
 	background-repeat: no-repeat;
 }
 
@@ -3673,10 +3544,11 @@ body.mz-has-wallpaper::before {
 	content: "";
 	position: fixed;
 	inset: 0;
-	z-index: 0;
+	z-index: 1;
 	pointer-events: none;
 	background: rgba(15, 23, 42, var(--mz-wallpaper-overlay, 0.45));
 	backdrop-filter: blur(var(--mz-wallpaper-blur, 0px));
+	-webkit-backdrop-filter: blur(var(--mz-wallpaper-blur, 0px));
 }
 
 /* NOTE: never touch .mz-sidebar positioning here - it is fixed/sticky
@@ -3692,39 +3564,35 @@ body.mz-has-wallpaper .mz-sidebar {
 	z-index: 60;
 }
 
-/* Panels become slightly translucent so the wallpaper shows through,
-   while 86% opacity keeps every text contrast-safe. */
-body.mz-has-wallpaper .mz-card,
-body.mz-has-wallpaper .cbi-section,
-body.mz-has-wallpaper .mz-info-card,
-body.mz-has-wallpaper .mz-port-card,
-body.mz-has-wallpaper .mz-ring-card {
-	background: rgba(255, 255, 255, 0.86);
+/* Frosted app chrome (review TZ-02, 2026-09-07): the sidebar, topbar,
+   footer and sticky action bar used to be fully opaque slabs that cut
+   the wallpaper into pieces. They now share the strong glass tint so
+   the wallpaper flows edge to edge while text stays readable. */
+body.mz-has-wallpaper .mz-sidebar,
+body.mz-has-wallpaper .mz-topbar,
+body.mz-has-wallpaper .mz-footer,
+body.mz-has-wallpaper .cbi-map > .cbi-page-actions,
+body.mz-has-wallpaper #maincontent .cbi-page-actions {
+	background: var(--mz-panel-bg-strong);
+	backdrop-filter: blur(14px) saturate(1.15);
+	-webkit-backdrop-filter: blur(14px) saturate(1.15);
 }
 
-html[data-theme="dark"] body.mz-has-wallpaper .mz-card,
-html[data-theme="dark"] body.mz-has-wallpaper .cbi-section,
-html[data-theme="dark"] body.mz-has-wallpaper .mz-info-card,
-html[data-theme="dark"] body.mz-has-wallpaper .mz-port-card,
-html[data-theme="dark"] body.mz-has-wallpaper .mz-ring-card {
-	background: rgba(23, 30, 44, 0.86);
+/* The hamburger must stay above the raised sidebar (review TZ-07). */
+body.mz-has-wallpaper .mz-sidebar-toggle {
+	z-index: 70;
 }
+
+/* (Removed 2026-09-07 review TZ-05: the old 0.86 panel rules lived here but
+   were fully overridden by the glass layer below. 0.72 / --mz-panel-bg
+   is now the single source of truth.) */
 
 /* The modal overlay stays above the wallpaper backdrop */
 body.mz-has-wallpaper #modal_overlay {
 	z-index: 2000;
 }
 
-/* Keep form controls and tables readable over the wallpaper */
-body.mz-has-wallpaper .cbi-section-table,
-body.mz-has-wallpaper table.table {
-	background: rgba(255, 255, 255, 0.9);
-}
-
-html[data-theme="dark"] body.mz-has-wallpaper .cbi-section-table,
-html[data-theme="dark"] body.mz-has-wallpaper table.table {
-	background: rgba(23, 30, 44, 0.9);
-}
+/* (Removed 2026-09-07 review TZ-05: old 0.9 table rules, superseded by the glass layer below.) */
 
 /* ================================================================
  * Glass cards over the global wallpaper
@@ -3752,7 +3620,6 @@ body.mz-has-wallpaper .cbi-section-node,
 body.mz-has-wallpaper .cbi-section-table,
 body.mz-has-wallpaper table.table,
 body.mz-has-wallpaper .cbi-tabmenu,
-body.mz-has-wallpaper .mz-card,
 body.mz-has-wallpaper .mz-info-card,
 body.mz-has-wallpaper .mz-ring-card,
 body.mz-has-wallpaper .mz-port-card,
@@ -3761,8 +3628,6 @@ body.mz-has-wallpaper .mz-sys-grid,
 body.mz-has-wallpaper .mz-wifi-card,
 body.mz-has-wallpaper .mz-empty-state,
 body.mz-has-wallpaper .mz-table-card,
-body.mz-has-wallpaper .mz-net-panel,
-body.mz-has-wallpaper .mz-overview-panel,
 body.mz-has-wallpaper .ifacebox,
 body.mz-has-wallpaper .ifacebox-head,
 body.mz-has-wallpaper .ifacebox-head.active,
@@ -3775,6 +3640,73 @@ body.mz-has-wallpaper .cbi-dynlist > .item {
 	border-color: rgba(148, 163, 184, 0.3);
 }
 
+/* De-nested glass (review TZ-01/TZ-06, 2026-09-07): only the OUTERMOST
+   container keeps the frosted background. Inner layers go fully
+   transparent - stacked 0.72 layers used to multiply up to ~99%
+   opaque, which is why some cards looked solid. Overview panel
+   wrappers are invisible layout boxes, never glass themselves. */
+body.mz-has-wallpaper .cbi-map,
+body.mz-has-wallpaper .cbi-section-node,
+body.mz-has-wallpaper .cbi-section-table,
+body.mz-has-wallpaper table.table,
+body.mz-has-wallpaper .ifacebox-body,
+body.mz-has-wallpaper .mz-overview-panel,
+body.mz-has-wallpaper .mz-port-panel,
+body.mz-has-wallpaper .mz-net-panel,
+body.mz-has-wallpaper .mz-sys-panel,
+body.mz-has-wallpaper .mz-dhcp-panel,
+body.mz-has-wallpaper .mz-wifi-panel,
+body.mz-has-wallpaper .mz-upnp-panel {
+	background: transparent;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
+}
+body.mz-has-wallpaper .mz-overview-panel,
+body.mz-has-wallpaper .mz-port-panel,
+body.mz-has-wallpaper .mz-net-panel,
+body.mz-has-wallpaper .mz-sys-panel,
+body.mz-has-wallpaper .mz-dhcp-panel,
+body.mz-has-wallpaper .mz-wifi-panel,
+body.mz-has-wallpaper .mz-upnp-panel {
+	border: none;
+}
+
+/* Alert / notice family over wallpaper (review TZ-03): the default
+   (non-variant) boxes were fully opaque slabs. Semantic meaning is
+   carried by the colored borders, which are intentionally preserved -
+   only the fill turns to glass. */
+body.mz-has-wallpaper .alert-message,
+body.mz-has-wallpaper .cbi-change-list,
+body.mz-has-wallpaper .apply-notice,
+body.mz-has-wallpaper #xhr_poll_status,
+body.mz-has-wallpaper .errorbox,
+body.mz-has-wallpaper .warningbox,
+body.mz-has-wallpaper .infobox,
+body.mz-has-wallpaper .cbi-section-error,
+body.mz-has-wallpaper .cbi-map > .cbi-map-descr,
+body.mz-has-wallpaper .cbi-tab-descr {
+	background: var(--mz-panel-bg-strong);
+	backdrop-filter: blur(12px) saturate(1.15);
+	-webkit-backdrop-filter: blur(12px) saturate(1.15);
+}
+
+/* Generic table headers and hover rows over wallpaper (review TZ-03):
+   a light slate wash keeps the zebra/hover affordance without ever
+   painting an opaque block over the wallpaper. */
+body.mz-has-wallpaper table.table thead th,
+body.mz-has-wallpaper table.cbi-section-table thead th,
+body.mz-has-wallpaper .table .table-titles .td {
+	background: rgba(148, 163, 184, 0.18);
+}
+body.mz-has-wallpaper .table .tr:hover .td,
+body.mz-has-wallpaper table.table tr:hover td,
+body.mz-has-wallpaper table.cbi-section-table tr:hover td,
+body.mz-has-wallpaper table.table tbody tr:hover td,
+body.mz-has-wallpaper table.cbi-section-table tbody tr:hover td,
+body.mz-has-wallpaper .mz-data-table tbody tr:hover td {
+	background: rgba(148, 163, 184, 0.16);
+}
+
 /* Sys-info grid uses !important in its base rule; force the glass vars with
    the same specificity plus !important so the wallpaper shows through. */
 body.mz-has-wallpaper .mz-sys-grid {
@@ -3785,12 +3717,16 @@ body.mz-has-wallpaper .mz-sys-grid {
 /* Overview page translucent headers / titles over wallpaper */
 body.mz-has-wallpaper .mz-net-header,
 body.mz-has-wallpaper .mz-data-table thead th {
-	background: rgba(var(--mz-color-primary-rgb, 59, 130, 246), 0.85);
+	background: rgba(var(--mz-color-primary-rgb, 79, 110, 247), 0.9);
+}
+body.mz-has-wallpaper .mz-net-header {
+	color: #fff;
+	text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
 }
 
 html[data-theme="dark"] body.mz-has-wallpaper .mz-net-header,
 html[data-theme="dark"] body.mz-has-wallpaper .mz-data-table thead th {
-	background: rgba(var(--mz-color-primary-rgb, 96, 165, 250), 0.75);
+	background: rgba(var(--mz-color-primary-rgb, 125, 147, 255), 0.85);
 }
 
 /* LuCI ifacebox headers use inline background-color for firewall zones;
@@ -3815,7 +3751,6 @@ body.mz-has-wallpaper .mz-overview-panel {
 
 /* Interaction states: more opaque where the eye is looking */
 body.mz-has-wallpaper .cbi-section:hover,
-body.mz-has-wallpaper .mz-card:hover,
 body.mz-has-wallpaper .mz-info-card:hover,
 body.mz-has-wallpaper .mz-ring-card:hover,
 body.mz-has-wallpaper .mz-port-card:hover,
@@ -3825,7 +3760,6 @@ body.mz-has-wallpaper .mz-wifi-card:hover,
 body.mz-has-wallpaper .mz-table-card:hover,
 body.mz-has-wallpaper .ifacebox:hover,
 body.mz-has-wallpaper .cbi-section:focus-within,
-body.mz-has-wallpaper .mz-card:focus-within,
 body.mz-has-wallpaper .cbi-section-node:focus-within,
 body.mz-has-wallpaper .cbi-dynlist > .item:hover {
 	background: var(--mz-panel-bg-strong);
@@ -3837,8 +3771,7 @@ body.mz-has-wallpaper .mz-sys-grid:hover {
 	border-color: rgba(148, 163, 184, 0.45) !important;
 }
 
-body.mz-has-wallpaper .cbi-section:focus-within,
-body.mz-has-wallpaper .mz-card:focus-within {
+body.mz-has-wallpaper .cbi-section:focus-within {
 	outline: 2px solid var(--mz-color-primary);
 	outline-offset: 1px;
 }
@@ -3851,25 +3784,24 @@ body.mz-has-wallpaper .cbi-section[disabled] {
 	opacity: .8;
 }
 
-/* Text halo keeps titles, labels and helper text readable */
-body.mz-has-wallpaper .cbi-value-title,
-body.mz-has-wallpaper .cbi-value-description,
-body.mz-has-wallpaper .cbi-map-descr,
+/* Text halo keeps titles and form labels readable (review TZ-11,
+   2026-09-07): narrowed from "every table cell" to headings and
+   labels - full-table shadows cost scroll performance and blur small
+   text, and WCAG contrast ignores shadows anyway. */
+body.mz-has-wallpaper .mz-section-title,
+body.mz-has-wallpaper .mz-subtitle,
 body.mz-has-wallpaper h2,
 body.mz-has-wallpaper h3,
 body.mz-has-wallpaper h4,
-body.mz-has-wallpaper th,
-body.mz-has-wallpaper td,
-body.mz-has-wallpaper label,
-body.mz-has-wallpaper .mz-info-card,
-body.mz-has-wallpaper .cbi-tabmenu li {
+body.mz-has-wallpaper .cbi-value-title,
+body.mz-has-wallpaper .cbi-value-description,
+body.mz-has-wallpaper .cbi-map-descr {
 	text-shadow: var(--mz-panel-halo);
 }
 
-/* Slightly deepen the global overlay so cards keep contrast */
-body.mz-has-wallpaper::before {
-	background: rgba(15, 23, 42, calc(var(--mz-wallpaper-overlay, 0.45) * 0.8));
-}
+/* (Removed 2026-09-07 review TZ-05: the "* 0.8" override contradicted its own
+   "deepen" comment and silently weakened the user's configured overlay.
+   The ::before rule above honors the setting as-is.) */
 
 /* ================================================================
  * Table / interface page: never overflow the card
@@ -3922,3 +3854,22 @@ table.table .cbi-button,
 		overflow-x: auto;
 	}
 }
+
+/* ================================================================
+ * Code-review polish (2026-09-07 OT-28 / OT-33 notes)
+ * ================================================================ */
+/* Breadcrumb separators emitted by menu-mintzero.js */
+.mz-crumb-sep {
+	opacity: .45;
+}
+
+/* Wallpaper settings action row (upload buttons) */
+.mz-wp-actions {
+	gap: 8px;
+	margin-bottom: 12px;
+}
+
+/* NOTE (OT-33): .cbi-section-node needs overflow-x:auto for wide tables;
+   absolutely-positioned dropdowns inside it clip vertically by CSS spec.
+   In practice LuCI dropdowns live in .cbi-page-actions (outside any
+   scroll container), so this is a documented non-issue. */

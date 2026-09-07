@@ -8,10 +8,28 @@
 //   - Mobile drawer toggle
 //   - Light/Dark/System color scheme cycling
 //   - Logout link
+//   - Menu group folding (+ FOUC-guard release with safety timeout)
+//   - Firewall zone color bridge for translucent headers
 
 'use strict';
 'require baseclass';
 'require ui';
+
+/* Shared wallpaper helper (review TZ-14): window.mzWpUtil is defined by
+   header.ut so the login page and admin pages share ONE UA/API
+   definition. The local fallback keeps this module working if the
+   header script is ever missing. */
+const mzWp = (typeof window !== 'undefined' && window.mzWpUtil) ? window.mzWpUtil : {
+	isMobileUA() {
+		return /Android|iPhone|iPad|iPod|Mobile|Windows Phone|WebOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || '');
+	},
+	randomUrl(mobile) {
+		const api = mobile
+			? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
+			: 'https://api.paugram.com/wallpaper/';
+		return api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
+	}
+};
 
 return baseclass.extend({
 	__init__() {
@@ -21,12 +39,22 @@ return baseclass.extend({
 		this.initThemeToggle();
 		this.initLogout();
 		this.initGlobalWallpaper();
+		this.initZoneColors();
+
+		/* OT-02 safety net: the FOUC guard (#mainmenu{display:none!important})
+		   is lifted by foldMenu(); if rendering ever failed, force it open
+		   so the user is never left without navigation. */
+		window.setTimeout(() => {
+			const mm = document.getElementById('mainmenu');
+			if (mm && mm.children.length > 0)
+				mm.classList.add('mz-menu-ready');
+		}, 8000);
 	},
 
 	/* ----- Global wallpaper (admin pages) ------------------------ */
 
 	isMobileUA() {
-		return /Android|iPhone|iPad|iPod|Mobile|Windows Phone|WebOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || '');
+		return mzWp.isMobileUA();
 	},
 
 	initGlobalWallpaper() {
@@ -43,13 +71,11 @@ return baseclass.extend({
 		else if (grp.mode === 'custom')
 			return;
 		else {
-			const api = this.isMobileUA()
-				? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
-				: 'https://api.paugram.com/wallpaper/';
-			url = api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
+			url = mzWp.randomUrl(this.isMobileUA());
 		}
 
 		const img = new Image();
+		img.referrerPolicy = 'no-referrer'; /* TZ-13: don't leak the router URL */
 		const timer = window.setTimeout(() => { img.src = ''; }, 12000);
 		img.onload = () => {
 			window.clearTimeout(timer);
@@ -69,7 +95,6 @@ return baseclass.extend({
 	render(tree) {
 		this.renderMainMenu(tree);
 		this.renderBreadcrumb(tree);
-		this.renderModeMenu(tree);
 
 		/* Tab menu for pages with sub-views */
 		let node = tree;
@@ -93,6 +118,7 @@ return baseclass.extend({
 
 		this.renderMenuLevel(ul, tree, '', 0);
 		ul.style.display = '';
+		this.foldMenu();
 	},
 
 	/* Breadcrumb in the topbar, built from the live dispatch path */
@@ -105,9 +131,16 @@ return baseclass.extend({
 		const titles = [];
 		let node = tree;
 
-		/* The first segment is usually 'admin'; the tree root already
-		   represents that node, so start one level deeper. */
-		for (let i = (segs[0] === 'admin' ? 1 : 0); i < segs.length; i++) {
+		/* OT-06: tolerate both tree shapes - a virtual root whose child is
+		   'admin', or a root that already IS 'admin'. */
+		let start = 0;
+		if (segs[0] === 'admin' && node && node.children && node.children['admin']) {
+			node = node.children['admin'];
+			start = 1;
+		} else if (segs[0] === 'admin') {
+			start = 1;
+		}
+		for (let i = start; i < segs.length; i++) {
 			if (!node || !node.children)
 				break;
 			node = node.children[segs[i]];
@@ -180,26 +213,86 @@ return baseclass.extend({
 		container.style.display = '';
 	},
 
-	/* Mode menu: top-level sections (Status / Network / ...) */
-	renderModeMenu(tree) {
-		const ul = document.querySelector('#modemenu');
-		const children = ui.menu.getChildren(tree);
+	/* (Removed 2026-09-07 OT-07: #modemenu is permanently hidden by CSS;
+	   the renderer was dead code.) */
 
-		if (!ul)
-			return;
+	/* ----- Menu folding (moved here from overview.js, OT-12) ---------
 
-		children.forEach((child, index) => {
-			const isActive = L.env.requestpath.length
-				? child.name === L.env.requestpath[0]
-				: index === 0;
+	   Runs synchronously right after render (no polling race), then lifts
+	   the #mainmenu FOUC guard. Collapsed state persists per menu label. */
+	foldMenu() {
+		try {
+			const topLi = document.querySelector('#mainmenu > li');
+			if (topLi) {
+				const topUl = topLi.querySelector(':scope > ul');
+				if (topUl) {
+					while (topUl.firstChild)
+						topLi.parentNode.insertBefore(topUl.firstChild, topLi);
+				}
+				topLi.parentNode.removeChild(topLi);
+			}
 
-			ul.appendChild(E('li', { 'class': isActive ? 'active' : '' }, [
-				E('a', { 'href': L.url(child.name) }, [ _(child.title) ])
-			]));
-		});
+			document.querySelectorAll('#mainmenu > li').forEach((li) => {
+				const sub = li.querySelector(':scope > ul');
+				if (!sub)
+					return;
+				li.classList.add('mz-menu-group');
+				const a = li.querySelector(':scope > a');
+				if (!a)
+					return;
+				const label = a.textContent.trim();
+				const hasActive = sub.querySelector('.active, li.active > a, a.active') !== null;
+				let stored = null;
+				try { stored = localStorage.getItem('mz-nav-' + label); } catch (err) {}
+				const collapsed = stored !== null ? stored === '1' : !hasActive;
+				if (collapsed) {
+					li.classList.add('mz-collapsed');
+					sub.style.display = 'none';
+				}
+				a.addEventListener('click', (e) => {
+					e.preventDefault();
+					const nowCollapsed = li.classList.toggle('mz-collapsed');
+					sub.style.display = nowCollapsed ? 'none' : '';
+					try { localStorage.setItem('mz-nav-' + label, nowCollapsed ? '1' : '0'); } catch (err) {}
+				});
+			});
+		} catch (err) { /* folding must never break rendering */ }
+		const mm = document.getElementById('mainmenu');
+		if (mm)
+			mm.classList.add('mz-menu-ready');
+	},
 
-		if (ul.children.length > 0)
-			ul.style.display = '';
+	/* ----- Firewall zone colors (TZ-04) ----------------------------
+
+	   LuCI paints .ifacebox-head with an inline background-color per
+	   zone. The wallpaper CSS repaints heads translucently through
+	   --zone-color-rgb, which must be populated from the computed color
+	   (it is a custom property, so nothing sets it automatically).
+	   Heads are re-rendered on every XHR poll, hence the observer. */
+	initZoneColors() {
+		const paint = () => {
+			document.querySelectorAll('.ifacebox-head').forEach((head) => {
+				try {
+					const cs = window.getComputedStyle(head).backgroundColor;
+					const m = cs && cs.match(/rgba\?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/);
+					if (!m || (m[4] !== undefined && parseFloat(m[4]) === 0))
+						return;
+					const v = m[1] + ', ' + m[2] + ', ' + m[3];
+					if (head.style.getPropertyValue('--zone-color-rgb') !== v)
+						head.style.setProperty('--zone-color-rgb', v);
+				} catch (err) {}
+			});
+		};
+		paint();
+		let t = null;
+		const view = document.getElementById('mz-view');
+		if (view && window.MutationObserver) {
+			new MutationObserver(() => {
+				if (t)
+					window.clearTimeout(t);
+				t = window.setTimeout(paint, 300);
+			}).observe(view, { childList: true, subtree: true });
+		}
 	},
 
 	/* ----- Sidebar drawer (mobile) ------------------------------- */
@@ -250,12 +343,26 @@ return baseclass.extend({
 	},
 
 	applyTheme(mode) {
-		if (mode == 'system') {
-			const dark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-		} else {
-			document.documentElement.setAttribute('data-theme', mode);
+		/* OT-14: attach the OS-theme listener once; it only acts while the
+		   effective choice is 'system', so toggling back to system mode
+		   follows the OS immediately without a reload. */
+		const mq = window.matchMedia('(prefers-color-scheme: dark)');
+		if (!this._mzThemeListener) {
+			this._mzThemeListener = (ev) => {
+				let saved = null;
+				try { saved = localStorage.getItem('mz-theme'); } catch (e) {}
+				if (saved === 'system' || (saved !== 'light' && saved !== 'dark'))
+					document.documentElement.setAttribute('data-theme', ev.matches ? 'dark' : 'light');
+			};
+			if (mq.addEventListener)
+				mq.addEventListener('change', this._mzThemeListener);
+			else
+				mq.addListener(this._mzThemeListener);
 		}
+		if (mode == 'system')
+			document.documentElement.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+		else
+			document.documentElement.setAttribute('data-theme', mode);
 
 		/* Persist the choice per browser (frontend-only override) */
 		try {
@@ -272,9 +379,15 @@ return baseclass.extend({
 
 		link.addEventListener('click', (ev) => {
 			ev.preventDefault();
+			const fail = () => ui.addNotification(null, E('p', _('Logout failed, please try again.')), 'error');
 			L.ui.sessions ? L.ui.sessions.getLocal().then((s) => {
 				if (s)
-					fetch(L.url('admin/logout'), { method: 'POST' }).then(() => window.location.reload());
+					fetch(L.url('admin/logout'), { method: 'POST' }).then((res) => {
+						if (res && res.ok)
+							window.location.reload();
+						else
+							fail();
+					}).catch(fail);
 			}) : window.location.assign(L.url('admin/logout'));
 		});
 	}

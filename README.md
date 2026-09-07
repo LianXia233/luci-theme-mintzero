@@ -2,17 +2,17 @@
 
 **Mint** —— 现代化 LuCI 主题（包名/路径保留 mintzero 以兼容升级），面向 OpenWrt main / LuCI master（ucode 模板引擎）。
 
-设计方向：现代 Dashboard、卡片式 UI、高信息密度与大量留白，Apple/Linear 风格的克制视觉。不是对其他主题的 CSS 换肤——模板与菜单渲染均基于当前 LuCI master 主题接口实现。
+设计方向：现代总览页、卡片式 UI、高信息密度与大量留白，Apple/Linear 风格的克制视觉。不是对其他主题的 CSS 换肤——模板与菜单渲染均基于当前 LuCI master 主题接口实现。
 
 ## 功能特性
 
 - 基于 CSS 变量（Design Tokens）的现代设计系统：色彩、间距、圆角、阴影、字体
 - 浅色 / 深色 / 跟随系统三种配色（默认跟随系统，尊重 `prefers-color-scheme`；侧栏按钮可覆盖）
-- Bing 每日壁纸全屏登录页，带渐变兜底；支持自定义壁纸（上传图片或填写图片直链）与手动刷新缓存；支持自定义壁纸（上传图片或填写图片直链）与手动刷新缓存
+- 随机壁纸全屏登录页（按设备类型自动选择图源，带渐变兜底）；支持自定义壁纸（上传图片或填写图片直链）
 - 侧栏导航从 LuCI 实时菜单树渲染（无硬编码菜单）
 - 移动端抽屉式导航 + 遮罩
 - 480px 至 1280px+ 全段响应式；移动端表格重排为卡片
-- Dashboard 视图展示真实系统数据（ubus/rpcd）；不支持的值显示 N/A，绝不造假数据
+- 总览页增强（仅在 Status > Overview 加载）：端口状态、系统信息、DHCP/Wireless/UPnP 区块卡片化；不支持的值显示 N/A，绝不造假数据
 - 无障碍：跳转链接、focus-visible、aria 标签、键盘可操作的登录页
 - 无 CDN、无 Web 字体、无图标字体、无前端框架、无 jQuery
 - 国际化就绪（英文 + 简体中文，po 编译为 lmo 随包安装）
@@ -28,26 +28,25 @@ theme/                        # 主题源码（放入 buildroot 的 feeds/luci/t
 ├── Makefile                  # 基于 luci.mk 的包定义
 ├── htdocs/luci-static/mintzero/
 │   ├── cascade.css           # 设计系统 + 布局 + 组件
-│   ├── logo.svg              # 彩色 Logo
-│   ├── logo-mono.svg         # 单色（currentColor）
-│   ├── logo-dark.svg         # 深色模式变体
-│   └── favicon/              # favicon.svg / -48.png / -180.png
+│   ├── overview.js           # 总览页增强（仅 Status > Overview 加载）
+│   ├── overview-banner.png   # 顶栏品牌图
+│   ├── login-logo.png        # 登录页 Logo
+│   └── favicon/              # favicon.svg（矢量）/ -48.png / -180.png
 ├── htdocs/luci-static/resources/
 │   ├── menu-mintzero.js      # 侧栏/菜单渲染器（LuCI JS API）
 │   └── view/mintzero/
 │       ├── sysauth.js        # 登录页前端
-│       ├── dashboard.js      # Dashboard 视图（真实数据）
 │       └── wallpaper.js      # 壁纸设置表单
 ├── ucode/template/themes/mintzero/
 │   ├── header.ut             # 页面骨架、侧栏、顶栏
 │   ├── footer.ut             # 页脚、L.require('menu-mintzero')
-│   ├── sysauth.ut            # 登录页（保留原生认证表单）
-│   └── wallpaper-refresh.ut  # 壁纸缓存手动刷新 JSON 端点
+│   └── sysauth.ut            # 登录页（保留原生认证表单）
 ├── ucode/mintzero/
-│   └── wallpaper.uc          # Bing 元数据抓取 + 缓存 + 校验
+│   └── wallpaper.uc          # UCI 配置读取 + 服务端钳制（无外部请求、无缓存）
 ├── root/
 │   ├── etc/config/mintzero           # UCI 配置
 │   ├── etc/uci-defaults/30_luci-theme-mintzero
+│   ├── usr/libexec/rpcd/mintzero     # ubus 兼容桩（refresh 方法，无实际缓存）
 │   ├── usr/share/luci/menu.d/luci-theme-mintzero.json
 │   ├── usr/share/luci/acl.d/luci-theme-mintzero.json
 │   └── usr/share/rpcd/acl.d/luci-theme-mintzero.json  # rpcd 授权组（菜单 ACL 必需）
@@ -120,59 +119,59 @@ uci commit luci
 /etc/init.d/rpcd reload
 ```
 
-## Bing 壁纸
+## 壁纸机制
 
 ```
-Bing HPImageArchive API
+第三方随机图 API（浏览器直连，不经路由器代理）
+  桌面端：api.paugram.com/wallpaper/
+  移动端（UA 检测）：uapis.cn/api/v1/random/image?category=acg&type=mb
         |
-  ucode 后端（wallpaper.uc）    <- 路由器服务端
-        |  严格 JSON 校验
-        |  host 白名单（仅 www.bing.com）
-        |  4 秒超时
+  自定义图片优先（已上传的 custom-pc.jpg / custom-mobile.jpg，或 http(s) 直链）
+        |
+  登录页/管理页 JS（new Image() 预加载、淡入、referrer 抑制、失败回退）
         v
-元数据缓存（/tmp/mintzero-wallpaper/metadata.json，TTL 可配置）
-        v
-登录页 JS（new Image() 预加载、随机选图、淡入）
-        v
-浏览器直连 Bing CDN 加载图片（不经路由器代理）
+  内置 CSS 渐变兜底（永远可用）
 ```
 
-- 浏览器从不直接调用 Bing API；只有 ucode 后端访问
-- 图片字节由浏览器直连 Bing 加载，路由器不代理图片流量
-- 每次进入登录页随机选图，池子允许时不连续重复
-- 壁纸版权/标题显示在登录页右下角，永不移除
+- 每次进入登录页、每次刷新管理页面都会随机选图（URL 带时间戳防缓存）
+- 服务端**无壁纸缓存**（ucode 后端只读 UCI 配置 + 钳制数值），因此没有"刷新缓存"按钮
+- 图片来源标注在登录页右下角（本地自定义 / Uapis / Paugram），永不移除
 
 ### 离线行为
 
-Bing 不可达（无外网、DNS 失败、超时、API 错误、JSON 异常、图片加载失败）时登录页依然即时渲染，按以下优先级兜底：
+API 不可达（无外网、DNS 失败、超时）时登录页依然即时渲染，按以下优先级兜底：
 
-1. 有效缓存 -> 2. 过期缓存 -> 3. 内置 CSS 渐变
+1. 自定义图片（如已上传或配置直链） -> 2. 内置 CSS 渐变
 
-Bing 绝不阻塞或破坏登录页。
+壁纸加载绝不阻塞或破坏登录页。
 
 ## 壁纸设置
 
-设置页位于 `mintzero` > `Bing Wallpaper`（`/cgi-bin/luci/admin/mintzero/wallpaper/settings`），配置文件 `/etc/config/mintzero`：
+设置页位于 `系统` > `Mint Wallpaper` > `Wallpaper Settings`（`/cgi-bin/luci/admin/system/mintwallpaper/settings`），配置文件 `/etc/config/mintzero`：
 
 | 选项 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
 | enabled | 布尔 | 1 | 壁纸功能开关 |
-| market | 枚举 | zh-CN | Bing 市场（zh-CN / en-US / ja-JP / zh-TW） |
-| cache_ttl | 秒 | 86400 | 元数据缓存有效期 |
-| overlay | 浮点 | 0.45 | 登录页深色遮罩不透明度 |
-| blur | 像素 | 0 | 登录页背景模糊 |
-| random | 布尔 | 1 | 每次访问随机选图 |
+| ui_random | 布尔 | 1 | 管理页面也使用随机壁纸 |
+| pc_mode | 枚举 | random | 桌面端来源（random / custom） |
+| pc_url | 直链 | 空 | 桌面端自定义图片 http(s) 直链 |
+| mobile_mode | 枚举 | random | 移动端来源（random / custom） |
+| mobile_url | 直链 | 空 | 移动端自定义图片 http(s) 直链 |
+| overlay | 浮点 | 0.45 | 深色遮罩不透明度（0.0 - 1.0） |
+| blur | 像素 | 0 | 背景模糊（0 禁用，最大 40） |
+
+上传的图片分别写入 `/www/luci-static/mintzero/custom-pc.jpg` 与 `custom-mobile.jpg`（≤3MB），卸载主题时自动清理。
 
 ## 兼容性
 
 - 目标：当前 OpenWrt main / LuCI master（ucode 模板引擎，`.ut`）
 - 浏览器：Chrome/Chromium、Firefox、Safari、Android WebView（`backdrop-filter` 仅为渐进增强）
-- 无 JavaScript 壁纸、无 CDN、小屏幕下登录页与后台均可正常工作
+- 禁用 JavaScript 时登录与后台仍可使用（壁纸、菜单渲染与动态效果需要 JS）
 
 ## 故障排查
 
 - 主题不可选：手动执行 `sh /etc/uci-defaults/30_luci-theme-mintzero`，然后重启 rpcd
-- 壁纸不出现：检查 `/tmp/mintzero-wallpaper/bing-raw.json`；文件不存在说明路由器无外网或 Bing 不可达，渐变兜底属预期行为
+- 壁纸不出现：随机图由浏览器直连第三方 API；无外网或 API 不可达时显示渐变兜底属预期行为。如需完全离线请上传自定义图片
 - 强制固定配色：在 系统 > 系统 > 语言和外观 选择 `mintzero-light` 或 `mintzero-dark`，或使用侧栏切换按钮
 
 ## 许可证

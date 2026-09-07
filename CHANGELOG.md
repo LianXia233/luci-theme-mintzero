@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed (2026-09-07 代码审查 TZ/OT 全量修复)
+- 壁纸链路：移除无实际缓存的「刷新壁纸缓存」按钮与 rpcd 预取逻辑（`refresh` 方法保留为兼容桩）；上传改用 FileReader base64 + 防重入；overlay/blur 表单校验 + 服务端钳制；`ui_random` 默认与模板对齐；菜单标题英文化（Mint Wallpaper / Wallpaper Settings）
+- 模板：overview.js 仅在 Status > Overview 加载；配色变体由 mediaurlbase 推导；theme-color 跟随变体；移除永久隐藏的 modemenu；壁纸后端失败时输出 HTML 注释
+- 前端：壁纸 UA/API 逻辑收敛到共享 `mzWpUtil`；登录页与管理页图片请求抑制 referrer；登出检查响应状态；目录面包屑与菜单渲染时序加固
+- i18n：po/pot 按当前代码重建（77 条），删除 Dashboard/Bing 遗留与重复条目，补全新增文案的简体中文翻译
+- 资源：删除 3 个内嵌光栅图的 logo SVG（约 418KB）；favicon.svg 换成真正的轻量矢量图标
+- 文档：README 去 Bing 化并同步最新机制、目录树、设置路径与选项表
+
 ### Fixed (2026-09-07 手机端排版与壁纸按钮)
 
 ### Added (2026-09-07 随机壁纸按设备切换 + NTP 列表样式)

@@ -10,9 +10,13 @@
 
 	const boardinfo = ubus.call('system', 'board') ?? {};
 
-	/* Theme variant handling: `theme` is the basename of the configured
-	   mediaurlbase (mintzero | mintzero-light | mintzero-dark). */
-	const themepref = (theme == 'mintzero-dark' ? 'dark' : (theme == 'mintzero-light' ? 'light' : 'system'));
+	/* Theme variant handling: derive the basename of the configured
+	   mediaurlbase (mintzero | mintzero-light | mintzero-dark). The raw
+	   `theme` variable is deliberately not used - its presence in the
+	   template scope is not guaranteed (review OT-08). */
+	const mediasegs = split(media ?? '', '/');
+	const mediabase = mediasegs[length(mediasegs) - 1] ?? 'mintzero';
+	const themepref = (mediabase == 'mintzero-dark' ? 'dark' : (mediabase == 'mintzero-light' ? 'light' : 'system'));
 
 	/* Wallpaper settings from UCI; `uci` is the cursor provided by the
 	   LuCI dispatcher environment. */
@@ -20,12 +24,14 @@
 
 	/* Wallpaper configuration for every page (login + admin UI). */
 	let wallpaper = { enabled: true, pc: null, mobile: null };
+	let wallpaper_error = null;
 
 	try {
 		wallpaper = getWallpapers();
 	}
 	catch (e) {
 		wallpaper = { enabled: true, pc: null, mobile: null };
+		try { wallpaper_error = e.message ?? type(e); } catch (e2) { wallpaper_error = type(e); }
 	}
 
 	http.prepare_content('text/html; charset=UTF-8');
@@ -61,8 +67,12 @@
 	{% endif %}
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta name="darkreader-lock">
+		{% if (themepref == 'light'): %}
+		<meta name="theme-color" content="#f5f6f8">
+		{% else: %}
 		<meta name="theme-color" content="#0f172a">
-		<link rel="stylesheet" href="{{ media }}/cascade.css?v=mz20260907f">
+		{% endif %}
+		<link rel="stylesheet" href="{{ media }}/cascade.css?v=mz20260908a">
 		<link rel="icon" href="{{ media }}/favicon/favicon.svg" sizes="any" type="image/svg+xml">
 		<link rel="icon" href="{{ media }}/favicon/favicon-48.png" sizes="48x48">
 		<link rel="apple-touch-icon" href="{{ media }}/favicon/favicon-180.png">
@@ -92,6 +102,25 @@
 				}
 			};
 		</script>
+		<script>
+			/* Shared wallpaper helper (review TZ-14): the single UA/API
+			   definition used by menu-mintzero.js (admin pages) and the
+			   sysauth view (login page). */
+			window.mzWpUtil = {
+				isMobileUA: function() {
+					return /Android|iPhone|iPad|iPod|Mobile|Windows Phone|WebOS|BlackBerry|Opera Mini|IEMobile/i.test(navigator.userAgent || '');
+				},
+				randomUrl: function(mobile) {
+					var api = mobile
+						? 'https://uapis.cn/api/v1/random/image?category=acg&type=mb'
+						: 'https://api.paugram.com/wallpaper/';
+					return api + (api.indexOf('?') >= 0 ? '&' : '?') + '_mzt=' + Date.now();
+				}
+			};
+		</script>
+		{% if (wallpaper_error): %}
+		<!-- mintzero wallpaper backend failed ({{ wallpaper_error }}); fell back to random APIs -->
+		{% endif %}
 	</head>
 
 	<body class="lang_{{ dispatcher.lang }}" data-page="{{ entityencode(join('-', length(ctx.request_path) ? ctx.request_path : ctx.path), true) }}">
@@ -115,7 +144,6 @@
 			</nav>
 
 			<div class="mz-sidebar-footer">
-				<ul class="mz-modelist" id="modemenu" style="display:none"></ul>
 				<div class="mz-sidebar-actions">
 					<a href="{{ dispatcher.build_url('admin/system/system') }}" class="mz-icon-btn" title="{{ _('System') }}" aria-label="{{ _('System') }}">
 						<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>

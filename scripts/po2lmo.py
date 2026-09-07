@@ -5,6 +5,9 @@ Reimplementation of luci-base po2lmo.c (Apache-2.0, Jo-Philipp Wich).
 Format: data section first (each msgstr padded to 4 bytes), then the
 index (entries sorted by key_id, big-endian uint32 key/val/offset/len),
 then a final big-endian uint32 marker = total data size.
+
+NOTE (OT-26): dev-only utility - the OpenWrt build compiles .po via
+luci-base's host po2lmo; this script exists for local testing.
 """
 import struct
 import sys
@@ -94,8 +97,13 @@ def parse_po(path):
                 plural = unescape(line[14:].rstrip()[:-1])
                 cur = None
             elif line.startswith('msgstr['):
-                plural_num = int(line[7:line.index(']')])
-                msgstr = unescape(line[line.index('" ') + 2:].rstrip()[:-1]) if '" ' in line else ''
+                # OT-26: regex parse - the old index('" ')+2 slicing assumed a
+                # space after the closing quote and silently misparsed the
+                # standard msgstr[0] "..." form (no trailing space).
+                m = re.match(r'^msgstr\[(\d+)\]\s*"(.*)"\s*$', line)
+                assert m, f'malformed msgstr line: {line!r}'
+                plural_num = int(m.group(1))
+                msgstr = unescape(m.group(2))
                 cur = 'str'
             elif line.startswith('msgstr "'):
                 plural_num = 0

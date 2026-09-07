@@ -1,346 +1,323 @@
+# Translation of luci-theme-mintzero to Simplified Chinese
+# Copyright (C) 2026 LianXia233
 msgid ""
-msgstr "Content-Type: text/plain; charset=UTF-8"
+msgstr ""
+"Project-Id-Version: luci-theme-mintzero\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-07 00:00+0000\n"
+"PO-Revision-Date: 2026-09-07 00:00+0800\n"
+"Last-Translator: LianXia233\n"
+"Language-Team: Chinese (Simplified)\n"
+"Language: zh_Hans\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:128
 msgid "Skip to main content"
-msgstr "跳转到主要内容"
+msgstr "跳转到主内容"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:130
 msgid "Toggle navigation menu"
 msgstr "切换导航菜单"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:135
 msgid "Main navigation"
 msgstr "主导航"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:142
 msgid "Menu"
 msgstr "菜单"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:148
 msgid "System"
 msgstr "系统"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:151
 msgid "Switch color scheme"
 msgstr "切换配色方案"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:154
 msgid "Log out"
-msgstr "注销"
+msgstr "退出登录"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:169
 msgid "No password set!"
-msgstr "未设置密码！"
+msgstr "尚未设置密码！"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:170
 msgid "There is no password set on this router. Please configure a root password to protect the web interface."
-msgstr "此路由器尚未设置密码。请配置 root 密码以保护 Web 管理界面。"
+msgstr "此路由器尚未设置密码。请配置 root 密码以保护 Web 界面。"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:172
 msgid "Go to password configuration..."
-msgstr "前往密码配置..."
+msgstr "前往密码设置…"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:179
 msgid "System running in recovery (initramfs) mode."
 msgstr "系统正运行于恢复（initramfs）模式。"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:180
 msgid "No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade"
-msgstr "所有设置更改都不会被保存，重启后将丢失。此模式仅应用于安装固件升级"
+msgstr "设置的更改不会被保存，重启后将丢失。此模式仅应用于安装固件升级"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:182
 msgid "Go to firmware upgrade..."
-msgstr "前往固件升级..."
+msgstr "前往固件升级…"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:189
 msgid "JavaScript required!"
 msgstr "需要 JavaScript！"
 
-#: ucode/template/themes/mintzero/header.ut
+#: ucode/template/themes/mintzero/header.ut:190
 msgid "You must enable JavaScript in your browser or LuCI will not work properly."
-msgstr "必须在浏览器中启用 JavaScript，否则 LuCI 无法正常工作。"
+msgstr "您必须在浏览器中启用 JavaScript，否则 LuCI 将无法正常工作。"
 
-#: ucode/template/themes/mintzero/sysauth.ut
+#: ucode/template/themes/mintzero/sysauth.ut:20
+msgid "Welcome back! Log in to manage your network."
+msgstr "欢迎回来！登录以管理您的网络。"
+
+#: ucode/template/themes/mintzero/sysauth.ut:28
+msgid "Invalid username and/or password! Please try again."
+msgstr "用户名或密码错误！请重试。"
+
+#: ucode/template/themes/mintzero/sysauth.ut:36
 msgid "Username"
 msgstr "用户名"
 
-#: ucode/template/themes/mintzero/sysauth.ut
+#: ucode/template/themes/mintzero/sysauth.ut:40
 msgid "Password"
 msgstr "密码"
 
-#: ucode/template/themes/mintzero/sysauth.ut
-msgid "Invalid username and/or password! Please try again."
-msgstr "用户名和/或密码无效！请重试。"
-
-#: ucode/template/themes/mintzero/sysauth.ut
-msgid "Log in"
-msgstr "登录"
-
-#: ucode/template/themes/mintzero/sysauth.ut
-msgid "Welcome back! Log in to manage your network."
-msgstr "可可，嗨嗨嗨~！登录以管理你的网络。"
-
-#: ucode/template/themes/mintzero/sysauth.ut
+#: ucode/template/themes/mintzero/sysauth.ut:71
 msgid "Remember me"
 msgstr "记住我"
 
-#: ucode/template/themes/mintzero/sysauth.ut
+#: ucode/template/themes/mintzero/sysauth.ut:74
+msgid "Log in"
+msgstr "登录"
+
+#: ucode/template/themes/mintzero/sysauth.ut:80
 msgid "Sign in with Passkey"
 msgstr "使用 Passkey 登录"
 
-#: ucode/template/themes/mintzero/sysauth.ut
+#: ucode/template/themes/mintzero/sysauth.ut:80
 msgid "Passkeys are not configured on this system"
-msgstr "本系统未配置 Passkey"
+msgstr "此系统尚未配置 Passkey"
 
-#: ucode/template/themes/mintzero/sysauth.ut
+#: ucode/template/themes/mintzero/sysauth.ut:99
 msgid "Loading view…"
 msgstr "正在加载视图…"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "N/A"
-msgstr "不可用"
+#: htdocs/luci-static/resources/menu-mintzero.js:382
+msgid "Logout failed, please try again."
+msgstr "退出登录失败，请重试。"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "System"
-msgstr "系统"
+#: htdocs/luci-static/mintzero/overview.js:283
+msgid "no link"
+msgstr "无连接"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Hostname"
-msgstr "主机名"
+#: htdocs/luci-static/mintzero/overview.js:374
+msgid "No IPv4 leases yet"
+msgstr "暂无 IPv4 租约"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Model"
-msgstr "型号"
+#: htdocs/luci-static/mintzero/overview.js:374
+msgid "No IPv6 leases yet"
+msgstr "暂无 IPv6 租约"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Firmware Version"
-msgstr "固件版本"
+#: htdocs/luci-static/mintzero/overview.js:476
+msgid "Port status"
+msgstr "端口状态"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Kernel Version"
-msgstr "内核版本"
+#: htdocs/luci-static/mintzero/overview.js:499
+msgid "Network"
+msgstr "网络"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Resources"
-msgstr "资源"
+#: htdocs/luci-static/mintzero/overview.js:514
+msgid "System information"
+msgstr "系统信息"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Memory Usage"
-msgstr "内存占用"
+#: htdocs/luci-static/mintzero/overview.js:523
+msgid "DHCP leases"
+msgstr "DHCP 租约"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Load Average"
-msgstr "负载"
+#: htdocs/luci-static/mintzero/overview.js:535
+msgid "Wireless"
+msgstr "无线"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Uptime"
-msgstr "运行时间"
+#: htdocs/luci-static/mintzero/overview.js:546
+msgid "associated"
+msgstr "个关联"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Traffic"
-msgstr "流量"
+#: htdocs/luci-static/mintzero/overview.js:552
+msgid "Associated stations"
+msgstr "关联站点"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Download"
-msgstr "下载"
+#: htdocs/luci-static/mintzero/overview.js:559
+msgid "UPnP port mappings"
+msgstr "UPnP 端口映射"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Upload"
-msgstr "上传"
+#: htdocs/luci-static/mintzero/overview.js:561
+msgid "No active port mappings"
+msgstr "暂无活动的端口映射"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Live traffic requires a statistics source (e.g. luci-mod-dashboard or nlbwmon). Without it, values show N/A."
-msgstr "实时流量需要统计来源（如 luci-mod-dashboard 或 nlbwmon）。缺失时显示为不可用。"
+#: htdocs/luci-static/mintzero/overview.js:604
+msgid "Temperature"
+msgstr "温度"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Software"
-msgstr "软件"
+#: htdocs/luci-static/mintzero/overview.js:606
+msgid "Memory"
+msgstr "内存"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "LuCI Version"
-msgstr "LuCI 版本"
+#: htdocs/luci-static/mintzero/overview.js:612
+msgid "Storage"
+msgstr "存储"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Target Platform"
-msgstr "目标平台"
+#: htdocs/luci-static/mintzero/overview.js:617
+msgid "Temp"
+msgstr "温度"
 
-#: htdocs/luci-static/resources/view/mintzero/dashboard.js
-msgid "Collecting data..."
-msgstr "正在收集数据…"
+#: htdocs/luci-static/mintzero/overview.js:855
+msgid "Configuration applied successfully."
+msgstr "配置已成功应用。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-#: root/usr/share/luci/menu.d/luci-theme-mintzero.json
-msgid "Bing Wallpaper"
-msgstr "Bing 壁纸"
+#: htdocs/luci-static/mintzero/overview.js:859
+msgid "Reverted to the last saved configuration."
+msgstr "已恢复到上次保存的配置。"
 
-#: root/usr/share/luci/menu.d/luci-theme-mintzero.json
-msgid "Dashboard"
-msgstr "仪表盘"
+#: htdocs/luci-static/mintzero/overview.js:942
+msgid "Edit"
+msgstr "编辑"
+
+#: htdocs/luci-static/mintzero/overview.js:953
+msgid "Delete"
+msgstr "删除"
+
+#: htdocs/luci-static/resources/view/mintzero/sysauth.js:128
+msgid "Local custom image"
+msgstr "本地自定义图片"
+
+#: htdocs/luci-static/resources/view/mintzero/sysauth.js:131
+msgid "Image source: %s"
+msgstr "图片来源：%s"
+
+#: htdocs/luci-static/resources/view/mintzero/sysauth.js:133
+msgid "Custom image"
+msgstr "自定义图片"
+
+#: htdocs/luci-static/resources/view/mintzero/sysauth.js:139
+msgid "Random wallpaper · Uapis"
+msgstr "随机壁纸 · Uapis"
+
+#: htdocs/luci-static/resources/view/mintzero/sysauth.js:139
+msgid "Random wallpaper · Paugram"
+msgstr "随机壁纸 · Paugram"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:25
+msgid "Mint Wallpaper"
+msgstr "Mint 壁纸"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:26
+msgid "Login page background image. Configure separate sources for desktop and mobile visitors."
+msgstr "登录页背景图片。可为桌面端与移动端访客分别配置来源。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:28
+msgid "Settings"
+msgstr "设置"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:32
+msgid "Enabled"
+msgstr "启用"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:33
+msgid "When disabled, the login page uses the built-in gradient fallback."
+msgstr "禁用后，登录页使用内置渐变背景。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:35
+msgid "Random wallpaper on admin pages"
+msgstr "管理页面随机壁纸"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:36
+msgid "When enabled, every login page load and every admin page refresh automatically picks a fresh random image for the current device type."
+msgstr "启用后，每次加载登录页、每次刷新管理页面都会为当前设备类型自动挑选一张新的随机图片。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:40
+msgid "Desktop source"
+msgstr "桌面端来源"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:41
+msgid "Random (Paugram)"
+msgstr "随机（Paugram）"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:45
+msgid "Desktop custom image URL"
+msgstr "桌面端自定义图片地址"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:46
+msgid "Direct http(s) link to an image. Used when no desktop image has been uploaded."
+msgstr "图片的 http(s) 直链。仅在未上传桌面端图片时使用。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:51
+msgid "Mobile source"
+msgstr "移动端来源"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:52
+msgid "Random ACG (Uapis)"
+msgstr "随机二次元（Uapis）"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:56
+msgid "Mobile custom image URL"
+msgstr "移动端自定义图片地址"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:57
+msgid "Direct http(s) link to an image. Used when no mobile image has been uploaded."
+msgstr "图片的 http(s) 直链。仅在未上传移动端图片时使用。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:62
+msgid "Overlay opacity"
+msgstr "遮罩不透明度"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:63
+msgid "Dark overlay strength over the wallpaper (0.0 - 1.0)."
+msgstr "壁纸上的暗色遮罩强度（0.0 - 1.0）。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:68
+msgid "Must be a number between 0.0 and 1.0."
+msgstr "必须是 0.0 到 1.0 之间的数字。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:71
+msgid "Blur (px)"
+msgstr "模糊（px）"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:72
+msgid "Background blur in pixels; 0 disables."
+msgstr "背景模糊像素；0 表示禁用。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:77
+msgid "Must be an integer between 0 and 40."
+msgstr "必须是 0 到 40 之间的整数。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:93
+msgid "Upload desktop image…"
+msgstr "上传桌面端图片…"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:109
+msgid "Upload mobile image…"
+msgstr "上传移动端图片…"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:136
+msgid "Image is too large (max 3 MB)."
+msgstr "图片过大（最大 3 MB）。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:161
+msgid "Image uploaded. Set the matching source to \"Custom image\" to use it."
+msgstr "图片已上传。请将对应来源设为“自定义图片”以使用。"
+
+#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:164
+msgid "Upload failed: %s"
+msgstr "上传失败：%s"
 
 #: root/usr/share/luci/menu.d/luci-theme-mintzero.json
 msgid "Wallpaper Settings"
 msgstr "壁纸设置"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Background image for the login page. Metadata is fetched server-side with caching; the browser loads the image directly from Bing."
-msgstr "登录页背景图。元数据由服务端缓存获取；图片由浏览器直接从 Bing 加载。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Settings"
-msgstr "设置"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Enabled"
-msgstr "启用"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "When disabled, the login page uses the built-in gradient fallback."
-msgstr "禁用后登录页使用内置渐变兜底背景。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Bing Market"
-msgstr "Bing 市场"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Cache TTL (seconds)"
-msgstr "缓存有效期（秒）"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Overlay opacity"
-msgstr "遮罩不透明度"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Dark overlay strength over the wallpaper (0.0 - 1.0)."
-msgstr "壁纸上的深色遮罩强度（0.0 - 1.0）。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Blur (px)"
-msgstr "模糊（像素）"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Background blur in pixels; 0 disables."
-msgstr "背景模糊像素数；0 为关闭。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Random wallpaper"
-msgstr "随机壁纸"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Mint Wallpaper"
-msgstr "Mint 壁纸"
-
-msgid "Login page background image settings. Random mode uses device-aware wallpaper APIs; the daily mode fetches a Bing photo pool server-side."
-msgstr "登录页背景图设置。随机模式按设备自动选择壁纸 API；每日模式从服务端获取 Bing 图片池。"
-
-msgid "Daily wallpaper (Bing pool)"
-msgstr "每日壁纸（Bing 源）"
-
-msgid "Wallpaper market (daily mode)"
-msgstr "壁纸市场（每日模式）"
-
-msgid "Refresh wallpaper cache"
-msgstr "刷新壁纸缓存"
-
-msgid "Random (Paugram)"
-msgstr "随机壁纸（Paugram）"
-
-msgid "Random ACG (Uapis)"
-msgstr "随机 ACG（Uapis）"
-
-msgid "Desktop source"
-msgstr "桌面端来源"
-
-msgid "Mobile source"
-msgstr "手机端来源"
-
-msgid "Random (Paugram)"
-msgstr "随机壁纸（Paugram）"
-
-msgid "Random ACG (Uapis)"
-msgstr "随机 ACG（Uapis）"
-
-msgid "Desktop custom image URL"
-msgstr "桌面端自定义图片直链"
-
-msgid "Mobile custom image URL"
-msgstr "手机端自定义图片直链"
-
-msgid "Upload desktop image…"
-msgstr "上传桌面端图片…"
-
-msgid "Upload mobile image…"
-msgstr "上传手机端图片…"
-
-msgid "Login page background image. Configure separate sources for desktop and mobile visitors."
-msgstr "登录页背景图。可为桌面与手机访客分别配置来源。"
-
-msgid "Direct http(s) link to an image. Used when no desktop image has been uploaded."
-msgstr "图片的 http(s) 直链。未上传桌面端图片时使用。"
-
-msgid "Direct http(s) link to an image. Used when no mobile image has been uploaded."
-msgstr "图片的 http(s) 直链。未上传手机端图片时使用。"
-
-msgid "Image uploaded. Set the matching source to \"Custom image\" to use it."
-msgstr "上传成功。将对应来源设为「自定义图片」即可使用。"
-
-msgid "Random wallpaper on admin pages"
-msgstr "后台页面随机壁纸"
-
-msgid "When enabled, every login page load and every admin page refresh automatically picks a fresh random image for the current device type."
-msgstr "开启后，每次打开登录页或刷新后台页面时，都会为当前设备类型自动更换一张随机壁纸。"
-
-msgid "Pick a random image from the last fetched pool on each login page load."
-msgstr "每次进入登录页时从最近获取的壁纸池中随机选择一张。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Wallpaper source"
-msgstr "壁纸来源"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Bing daily wallpaper"
-msgstr "Bing 每日壁纸"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Custom image"
-msgstr "自定义图片"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Custom image URL"
-msgstr "自定义图片直链"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Direct http(s) link to an image. Used in \"Custom image\" mode when no image has been uploaded."
-msgstr "图片的 http(s) 直链。在“自定义图片”模式下，未上传图片时使用该链接。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Refresh Bing cache"
-msgstr "刷新 Bing 缓存"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Upload custom image…"
-msgstr "上传自定义图片…"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Refresh triggered. The new wallpaper pool loads in the background and appears after the cache reloads."
-msgstr "刷新已触发。新的壁纸池将在后台加载，缓存更新后即可看到。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Custom image mode is active - nothing to refresh."
-msgstr "当前为自定义图片模式，无需刷新。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Refresh failed: %s"
-msgstr "刷新失败：%s"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Image is too large (max 3 MB)."
-msgstr "图片过大（最大 3 MB）。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Image uploaded. It is used when \"Wallpaper source\" is set to \"Custom image\"."
-msgstr "上传成功。将“壁纸来源”设为“自定义图片”后即可使用。"
-
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js
-msgid "Upload failed: %s"
-msgstr "上传失败：%s"
