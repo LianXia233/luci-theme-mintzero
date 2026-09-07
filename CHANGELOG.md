@@ -46,6 +46,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 主题显示名更名为 **Mint**（LUCI_TITLE=Mint Theme、README、alt 文本；包名/路径保留 mintzero 以兼容升级）
 
 ### Fixed (2026-09-07 壁纸背景排版修复)
+### Changed (2026-09-07 毛玻璃卡片与表格自适应)
+- 壁纸模式下全部卡片统一改为**半透明毛玻璃**：rgba 面板底（浅 0.72 / 暗 0.72）+ `backdrop-filter: blur(12px) saturate(1.15)`，hover/focus-within 时提高至 0.88 保证焦点区可读，disabled 态降至 0.58 并降饱和
+- 标题/标签/说明文字加白色/深色 **halo 文字阴影**，配合加深的遮罩保证明暗两种模式下对比度
+- **接口总览表不再撑破卡片**：table width 100% + 单元格 overflow-wrap:anywhere，卡片容器 overflow-x:auto（窄屏局部滚动），按钮 nowrap + 操作栏 flex-wrap
+- 实测 1600/1280/768/390 四种分辨率均无横向滚动、无文字截断，深色模式卡片 rgba(23,30,44,0.86) + 浅色文字正常
 - P0：全局壁纸开启后整个主内容被顶到页面下方——壁纸样式误将固定定位的侧栏改为 position:relative 使其进入文档流 → 侧栏定位不再被触碰，仅提升层级，并同步处理 stray 选择器
 - 表格与表单区块在壁纸模式下补 90% 底色，保证可读性
 - 登录欢迎语更新为「可可，嗨嗨嗨~！登录以管理你的网络。」

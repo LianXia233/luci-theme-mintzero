@@ -3716,3 +3716,140 @@ html[data-theme="dark"] body.mz-has-wallpaper .cbi-section-table,
 html[data-theme="dark"] body.mz-has-wallpaper table.table {
 	background: rgba(23, 30, 44, 0.9);
 }
+
+/* ================================================================
+ * Glass cards over the global wallpaper
+ * Cards become translucent (frosted) so the wallpaper shows through,
+ * while a slightly stronger background on hover/focus plus a text
+ * halo keeps every label readable in light and dark mode.
+ * ================================================================ */
+body.mz-has-wallpaper {
+	--mz-panel-bg: rgba(255, 255, 255, 0.72);
+	--mz-panel-bg-strong: rgba(255, 255, 255, 0.88);
+	--mz-panel-bg-soft: rgba(255, 255, 255, 0.58);
+	--mz-panel-halo: 0 1px 2px rgba(255, 255, 255, 0.65);
+}
+
+html[data-theme="dark"] body.mz-has-wallpaper {
+	--mz-panel-bg: rgba(23, 30, 44, 0.72);
+	--mz-panel-bg-strong: rgba(23, 30, 44, 0.88);
+	--mz-panel-bg-soft: rgba(23, 30, 44, 0.58);
+	--mz-panel-halo: 0 1px 3px rgba(0, 0, 0, 0.65);
+}
+
+body.mz-has-wallpaper .cbi-map,
+body.mz-has-wallpaper .cbi-section,
+body.mz-has-wallpaper .cbi-section-node,
+body.mz-has-wallpaper .cbi-section-table,
+body.mz-has-wallpaper table.table,
+body.mz-has-wallpaper .cbi-tabmenu,
+body.mz-has-wallpaper .mz-card,
+body.mz-has-wallpaper .mz-info-card,
+body.mz-has-wallpaper .mz-ring-card,
+body.mz-has-wallpaper .mz-port-card,
+body.mz-has-wallpaper .mz-net-panel,
+body.mz-has-wallpaper .mz-overview-panel,
+body.mz-has-wallpaper .cbi-dynlist > .item {
+	background: var(--mz-panel-bg);
+	backdrop-filter: blur(12px) saturate(1.15);
+	-webkit-backdrop-filter: blur(12px) saturate(1.15);
+	border-color: rgba(148, 163, 184, 0.3);
+}
+
+/* Interaction states: more opaque where the eye is looking */
+body.mz-has-wallpaper .cbi-section:hover,
+body.mz-has-wallpaper .mz-card:hover,
+body.mz-has-wallpaper .mz-info-card:hover,
+body.mz-has-wallpaper .cbi-section:focus-within,
+body.mz-has-wallpaper .mz-card:focus-within,
+body.mz-has-wallpaper .cbi-section-node:focus-within,
+body.mz-has-wallpaper .cbi-dynlist > .item:hover {
+	background: var(--mz-panel-bg-strong);
+	border-color: rgba(148, 163, 184, 0.45);
+}
+
+body.mz-has-wallpaper .cbi-section:focus-within,
+body.mz-has-wallpaper .mz-card:focus-within {
+	outline: 2px solid var(--mz-color-primary);
+	outline-offset: 1px;
+}
+
+/* Disabled controls stay dim but legible */
+body.mz-has-wallpaper *:disabled,
+body.mz-has-wallpaper .cbi-section[disabled] {
+	background: var(--mz-panel-bg-soft);
+	color: var(--mz-color-text-muted);
+	opacity: .8;
+}
+
+/* Text halo keeps titles, labels and helper text readable */
+body.mz-has-wallpaper .cbi-value-title,
+body.mz-has-wallpaper .cbi-value-description,
+body.mz-has-wallpaper .cbi-map-descr,
+body.mz-has-wallpaper h2,
+body.mz-has-wallpaper h3,
+body.mz-has-wallpaper h4,
+body.mz-has-wallpaper th,
+body.mz-has-wallpaper td,
+body.mz-has-wallpaper label,
+body.mz-has-wallpaper .mz-info-card,
+body.mz-has-wallpaper .cbi-tabmenu li {
+	text-shadow: var(--mz-panel-halo);
+}
+
+/* Slightly deepen the global overlay so cards keep contrast */
+body.mz-has-wallpaper::before {
+	background: rgba(15, 23, 42, calc(var(--mz-wallpaper-overlay, 0.45) * 0.8));
+}
+
+/* ================================================================
+ * Table / interface page: never overflow the card
+ * ================================================================ */
+.cbi-section-node,
+.cbi-section-table,
+table.table {
+	max-width: 100%;
+}
+
+.cbi-section-table,
+table.table {
+	width: 100%;
+	table-layout: auto;
+}
+
+.cbi-section-node {
+	overflow-x: auto;
+}
+
+table.table th,
+table.table td,
+.cbi-section-table-cell {
+	overflow-wrap: anywhere;
+	word-break: break-word;
+	min-width: 0;
+}
+
+.cbi-section-table-row {
+	max-width: 100%;
+}
+
+.cbi-section-table .cbi-button,
+table.table .cbi-button,
+.cbi-section-table-cell .btn {
+	white-space: nowrap;
+}
+
+.cbi-section-actions,
+.cbi-page-actions {
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+@media (max-width: 768px) {
+	.cbi-section-table,
+	table.table {
+		display: block;
+		width: 100%;
+		overflow-x: auto;
+	}
+}
