@@ -6,10 +6,6 @@
 
 设计方向：现代总览页、卡片式 UI、高信息密度与大量留白，Apple/Linear 风格的克制视觉。不是对其他主题的 CSS 换肤——模板与菜单渲染均基于当前 LuCI master 主题接口实现。
 
-## 预览
-
-<p align="center"><img src="assets/mascot.png" width="220" alt="Mint 主题吉祥物"></p>
-
 ## 功能特性
 
 - 基于 CSS 变量（Design Tokens）的现代设计系统：色彩、间距、圆角、阴影、字体
