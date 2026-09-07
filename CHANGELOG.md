@@ -40,6 +40,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 登录页 logo 改用圆形像素头像（login-logo.png 换为圆形透明版）
 - 状态概览页信息卡上方新增方形像素头像 banner（overview-banner.png，96px 居中，随面板惰性创建）
 - 侧栏品牌区移除 mintzero 文字，仅保留居中的品牌 logo
+- 登录欢迎语更新为「可可，嗨嗨嗨~！登录以管理你的网络。」
+
+### Fixed (2026-09-07 概览页修复)
+- 移除状态概览面板上方的像素头像 banner（应需求撤下），相关 JS 注入与 CSS 一并清理
+- 修复 overview.js 在 banner 调整过程中被误损坏的问题：概览面板数据卡片与 CPU/内存/存储圆环恢复正常渲染（从完好历史版本恢复）
 - 壁纸来源新增两个随机源选项：「随机壁纸（Paugram）」「随机 ACG（Uapis）」，选择后登录页直接从对应 API 拉图（模式经 header.ut 嵌入前端）；随机壁纸开关仅在每日壁纸模式下作为兼容开关
 
 ### Changed (2026-09-07 品牌形象更新)
