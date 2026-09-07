@@ -81,13 +81,13 @@ jobs:
           # Replace the SDK's multi-feed default with the single feed we need.
           echo "src-git luci https://github.com/openwrt/luci.git;master" > feeds.conf.default
           ./scripts/feeds update luci
-          mkdir -p feeds/luci/themes/luci-theme-mintzero
-          cp -a "$GITHUB_WORKSPACE"/theme/* feeds/luci/themes/luci-theme-mintzero/
+          mkdir -p feeds/luci/themes/luci-theme-mint
+          cp -a "$GITHUB_WORKSPACE"/theme/* feeds/luci/themes/luci-theme-mint/
           ./scripts/feeds install -a
           # Manually symlink our theme package (feeds install can't find manually added dirs)
           mkdir -p package/feeds/luci
-          ln -sf ../../../feeds/luci/themes/luci-theme-mintzero package/feeds/luci/luci-theme-mintzero
-          ls -la package/feeds/luci/luci-theme-mintzero/Makefile || { echo "::error::Theme Makefile not found after symlink"; exit 1; }
+          ln -sf ../../../feeds/luci/themes/luci-theme-mint package/feeds/luci/luci-theme-mint
+          ls -la package/feeds/luci/luci-theme-mint/Makefile || { echo "::error::Theme Makefile not found after symlink"; exit 1; }
 
       - name: Configure
         run: |
@@ -95,11 +95,11 @@ jobs:
           # JS minification stays on: jsmin ships with luci-base/host.
           # CSS minification (csstidy) lives in the large packages feed and is
           # deliberately disabled - pulling that feed would defeat this fast path.
-          echo "CONFIG_PACKAGE_luci-theme-mintzero=m" >> .config
+          echo "CONFIG_PACKAGE_luci-theme-mint=m" >> .config
           echo "CONFIG_LUCI_JSMIN=y" >> .config
           echo "CONFIG_LUCI_CSSTIDY=n" >> .config
           make defconfig
-          grep -q "CONFIG_PACKAGE_luci-theme-mintzero=m" .config || {
+          grep -q "CONFIG_PACKAGE_luci-theme-mint=m" .config || {
             echo "::error::theme package not selectable"; exit 1;
           }
 
@@ -111,13 +111,13 @@ jobs:
       - name: Build theme package
         run: |
           cd sdk
-          make package/feeds/luci/luci-theme-mintzero/compile V=s -j$(nproc) IGNORE_ERRORS=1
+          make package/feeds/luci/luci-theme-mint/compile V=s -j$(nproc) IGNORE_ERRORS=1
 
       - name: Collect artifacts
         run: |
           cd sdk
           mkdir -p "$GITHUB_WORKSPACE"/artifacts
-          find bin/packages -name 'luci-theme-mintzero*' -exec cp {} "$GITHUB_WORKSPACE"/artifacts/ \;
+          find bin/packages -name 'luci-theme-mint*' -exec cp {} "$GITHUB_WORKSPACE"/artifacts/ \;
 
           # Rename artifacts with version suffix for clarity
           cd "$GITHUB_WORKSPACE"/artifacts
@@ -132,7 +132,7 @@ jobs:
       - name: Upload to workflow artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: luci-theme-mintzero-${{ matrix.suffix }}
+          name: luci-theme-mint-${{ matrix.suffix }}
           path: artifacts/*
 
       - name: Determine release info

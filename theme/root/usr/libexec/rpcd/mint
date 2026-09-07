@@ -1,5 +1,5 @@
 #!/bin/sh
-# mintzero ubus service (compatibility stub)
+# mint ubus service (compatibility stub)
 # Copyright (C) 2026 LianXia233
 # Licensed to the public under the Apache License 2.0.
 #

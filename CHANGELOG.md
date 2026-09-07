@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to **luci-theme-mintzero** will be documented in this file.
+All notable changes to **luci-theme-mint** will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -30,22 +30,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 表格操作列相邻按钮间距 + 单元格 `overflow-wrap`
 
 **壁纸功能与第三方兼容**
-- 壁纸来源可选 Bing 每日壁纸或自定义图片；自定义支持上传图片（≤3MB，写入 /www/luci-static/mintzero/custom.jpg）或填写 http(s) 图片直链
-- 「刷新 Bing 缓存」手动刷新按钮（新增 `admin/mintzero/wallpaper/refresh` JSON 端点，跳过节流锁强制重取）
+- 壁纸来源可选 Bing 每日壁纸或自定义图片；自定义支持上传图片（≤3MB，写入 /www/luci-static/mint/custom.jpg）或填写 http(s) 图片直链
+- 「刷新 Bing 缓存」手动刷新按钮（新增 `admin/mint/wallpaper/refresh` JSON 端点，跳过节流锁强制重取）
 - cbi 选项卡（`ul.cbi-tabmenu`）完整样式：active 蓝色下划线、disabled 灰色
 - 第三方应用设计变量桥接：定义 `--brand/--surface/--text/--hairline` 等 21 个变量映射到主题 token（修复 taygedo 等应用白底白字不可见）
 - 新增 `scripts/po2lmo.py`（po → lmo 编译器，PoC 于实机验证）
 
 ### Changed (2026-09-07)
 
+**主题与仓库更名 → luci-theme-mint**
+- 包名、GitHub 仓库、ACL/menu 清单文件、po Project-Id-Version、CI 构建路径与产物统一更名 `luci-theme-mintzero` → `luci-theme-mint`
+- 路径统一 `mintzero` → `mint`：`/luci-static/mint`、`/www/luci-static/mint`、`ucode/mint/`、`view/mint/`、`rpcd/mint`、`/etc/config/mint`
+- 标识符同步：UCI 段 `mint.wallpaper`、ubus 对象 `mint`、`window.mintWallpaper`、ucode 模块 `luci.mint.wallpaper`、视图 `mint.sysauth`、`L.require('menu-mint')`
+- 变体更名 `mintzero-light/dark` → `mint-light/dark`（symlink 重建）、注册键 `MintLight/MintDark`
+- 注意：UCI 段名变更（`mintzero` → `mint`）会使升级后旧壁纸配置失效并回退默认，旧段有意不做迁移
+
 **壁纸设置迁移 + 按钮挂载加固**
-- 移除 mintzero 独立菜单与 Dashboard 页面（与概览页功能冲突）：删除 `admin/mintzero/*` 全部路由与 `view/mintzero/dashboard.js`
+- 移除 mint 独立菜单与 Dashboard 页面（与概览页功能冲突）：删除 `admin/mint/*` 全部路由与 `view/mint/dashboard.js`
 - 壁纸设置迁移至「系统」菜单下，更名「Mint壁纸设置」（`admin/system/mintwallpaper/settings`），刷新端点同步迁移至 `admin/system/mintwallpaper/refresh`
 - 壁纸页刷新/上传按钮挂载逻辑加固：优先注入地图自带操作栏（与保存/重置同排），操作栏未渲染时回退插入地图顶部
 
 **去 Bing 化 + RPC 刷新端点**
 - 壁纸页全面去 Bing 字样：标题「Mint Wallpaper」，来源选项「每日壁纸（Bing 源）/ 自定义图片」，市场选项改为「壁纸市场（每日模式）」，刷新按钮改为「刷新壁纸缓存」
-- 刷新端点从页面路由改为 **rpcd ubus 服务**（`/usr/libexec/rpcd/mintzero`，方法 `mintzero refresh`）：不再注册菜单/tab，点击按钮不再跳出后台 JSON 页面，改由 ubus RPC 原地返回状态
+- 刷新端点从页面路由改为 **rpcd ubus 服务**（`/usr/libexec/rpcd/mint`，方法 `mint refresh`）：不再注册菜单/tab，点击按钮不再跳出后台 JSON 页面，改由 ubus RPC 原地返回状态
 - 部署设置 `luci.main.resource_version=mz20260907f` 强制所有客户端浏览器刷新静态资源缓存（解决 view JS 缓存导致按钮/选项不显示的问题）
 - 清理 po 中 Dashboard 遗留条目，新增迁移后文案的简体中文翻译
 
@@ -56,12 +63,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 自定义支持直链或上传（分别写入 custom-pc.jpg / custom-mobile.jpg，3MB 上限）
 - 登录页按访问设备 UA 自动使用对应组的配置，失败保持渐变兜底
 - 移除 Bing 每日壁纸模式及市场/缓存期选项，上传后端服务改经 rpcd ubus
-- 登录页顶部移除 mintzero 文字，改用方形像素头像图（login-logo.png，泛洪抠白保透明、88px 圆角展示）
+- 登录页顶部移除 mint 文字，改用方形像素头像图（login-logo.png，泛洪抠白保透明、88px 圆角展示）
 - 登录页 logo 改用圆形像素头像（login-logo.png 换为圆形透明版）
 - 状态概览页信息卡上方新增方形像素头像 banner（overview-banner.png，96px 居中，随面板惰性创建）
-- 侧栏品牌区移除 mintzero 文字，仅保留居中的品牌 logo
+- 侧栏品牌区移除 mint 文字，仅保留居中的品牌 logo
 - 侧栏品牌 logo 更新为方形像素头像（overview-banner.png，56px 圆角居中）
-- 主题显示名更名为 **Mint**（LUCI_TITLE=Mint Theme、README、alt 文本；包名/路径保留 mintzero 以兼容升级）
+- 主题显示名更名为 **Mint**（LUCI_TITLE=Mint Theme、README、alt 文本；包名/路径随 2026-09-07 仓库更名统一为 mint）
 
 **毛玻璃卡片与表格自适应**
 - 壁纸模式下全部卡片统一改为**半透明毛玻璃**：rgba 面板底（浅 0.72 / 暗 0.72）+ `backdrop-filter: blur(12px) saturate(1.15)`，hover/focus-within 时提高至 0.88 保证焦点区可读，disabled 态降至 0.58 并降饱和
@@ -112,11 +119,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 壁纸来源新增两个随机源选项：「随机壁纸（Paugram）」「随机 ACG（Uapis）」，选择后登录页直接从对应 API 拉图（模式经 header.ut 嵌入前端）；随机壁纸开关仅在每日壁纸模式下作为兼容开关
 
 **ACL / 主题 / 弹窗链路**
-- P0：ACL 只安装到 `/usr/share/luci/acl.d/` 而 rpcd 只读 `/usr/share/rpcd/acl.d/`，致 `wallpaper` 授权组缺失、`admin/mintzero` 菜单整体消失 → 新增 `theme/root/usr/share/rpcd/acl.d/luci-theme-mintzero.json`，实机验证菜单恢复
+- P0：ACL 只安装到 `/usr/share/luci/acl.d/` 而 rpcd 只读 `/usr/share/rpcd/acl.d/`，致 `wallpaper` 授权组缺失、`admin/mint` 菜单整体消失 → 新增 `theme/root/usr/share/rpcd/acl.d/luci-theme-mint.json`，实机验证菜单恢复
 - P1：暗色模式下 `warningbox`/`alert-message`/`infobox`/`cbi-change-list`/`#xhr_poll_status` 硬编码浅色背景刺眼 → 追加 `html[data-theme="dark"]` 覆盖改用 token 颜色
 - P1：footer.ut 隐藏条件表达式缺少右括号（`>= 0` 后语法错误）致整个内联脚本失效 → 补全括号，`node --check` 通过
 - P2：SVG 圆环 `transform-origin` 重复声明 → 收敛为 `transform-box: fill-box; transform-origin: center`
-- P2：`htdocs/luci-static/mintzero/menu-mintzero.js` 死代码副本与 `resources/` 版本冲突 → 删除
+- P2：`htdocs/luci-static/mint/menu-mint.js` 死代码副本与 `resources/` 版本冲突 → 删除
 - P0：LuCI 动态弹窗（无线编辑、上传、保存并应用进度等）完全无样式——`#modal_overlay` 为 body 末尾静态透明 div（实测 1600×10177px、y=-4639），被 z-40 侧栏遮挡且进度弹窗不可见（用户误以为卡死）→ 弹窗层修复后全部正常居中显示
 - P1：`#modal_overlay` 初版无条件显示暗色背景与空弹窗白块 → 改为仅 `body.modal-overlay-active` 时显示背景/弹窗，默认 `pointer-events: none` 不再拦截登录页点击
 - P1：syslog/dmesg 日志输出为裸 `<textarea>`，浏览器默认宽约 163px，日志被压成窄条 → `#maincontent textarea` 全宽 + 等宽字体，PC/手机验证正常
@@ -128,8 +135,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - P0：cbi-dropdown 关闭态未隐藏未选中项（LuCI 用 `selected` **属性**而非 class），保存并应用按钮堆叠所有选项、高度 92px，误杀修复时又因选择器写错导致按钮文字消失 → 最终规则 `:not([selected]):not(.hidden)`
 - P1：手机端每个选项间隔 ~340px——`.cbi-value-field { flex: 1 1 300px }` 的 basis 在列布局下变成高度 300px → 移动端改为 `flex: 1 1 auto`
 - P1：wallpaper.uc 中 `validCustomUrl` 定义在调用方 `loadConfig` 之后，ucode 不做函数提升，登录页壁纸报 error、刷新端点 500 → 函数移到调用前
-- P1：设备 `/etc/config/mintzero` 的 section type 为 `mintzero` 而视图按 `wallpaper` 过滤，设置页显示「尚无任何配置」→ 修正设备配置类型
-- P2：主题 po 翻译未安装到设备（无 lmo 文件），Dashboard/mintzero 页面中英混杂 → po 编译 lmo 部署至 `/usr/lib/lua/luci/i18n/luci-theme-mintzero.zh-cn.lmo`，登录页与 mintzero 页面全中文
+- P1：设备 `/etc/config/mint` 的 section type 为 `mint` 而视图按 `wallpaper` 过滤，设置页显示「尚无任何配置」→ 修正设备配置类型
+- P2：主题 po 翻译未安装到设备（无 lmo 文件），Dashboard/mint 页面中英混杂 → po 编译 lmo 部署至 `/usr/lib/lua/luci/i18n/luci-theme-mint.zh-cn.lmo`，登录页与 mint 页面全中文
 - P2：Dashboard Resources 卡片值显示 N/A 且真实值散落行外（DOM 结构错误）→ 值直接填入对应行
 - P2：移动端保存/应用按钮全宽且过高 → 统一 32px 高、auto 宽度、行内排列，与「保存/重置」对齐
 - P1：概览页数据冻结不自动刷新——footer.ut 的 `initOverview()` 只在加载时解析一次被 LuCI 轮询更新的隐藏原始表格，生成的面板是静态快照 → 改为可重入（重建前先移除旧面板）并每 5 秒从实时数据重建，实测运行时间/负载/CPU 使用率持续更新
@@ -158,7 +165,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 概览页全 section 重写为卡片 UI（系统信息 / DHCP 租约 / 无线 / 已连接站点 / UPnP 端口映射）
 - 概览页端口状态卡片（接口名 / 连接状态 / 速率 / 所属区域 / 上下行流量）
 - 概览页网络上游卡片（IPv4/IPv6 协议 / 地址 / 网关 / DNS / 有效期 / 设备信息）
-- 页脚居中 + mintzero 链接指向主题仓库
+- 页脚居中 + mint 链接指向主题仓库
 - 圆环进度条内显示百分比数字（SVG text，方向修正）
 
 ### Changed（早期迭代，未标日期）
@@ -193,7 +200,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - wallpaper.uc ucode 兼容修复（for-of / indexOf / shquote / 函数声明提升 / 模块导出）
-- uci-defaults 变体名含连字符致 `uci: Parse error` → 改用驼峰 `MintzeroLight` / `MintzeroDark`
+- uci-defaults 变体名含连字符致 `uci: Parse error` → 改用驼峰 `MintLight` / `MintDark`
 - 按钮下拉 / 表单布局 / 菜单默认折叠 / 响应式样式
 - 圆环内百分比数字显示
 
@@ -203,7 +210,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - 初始主题框架：header.ut / footer.ut / cascade.css
-- 4 主题变体注册（mintzero / mintzero-light / mintzero-dark / mintzero-dark-compact）
+- 4 主题变体注册（mint / mint-light / mint-dark / mint-dark-compact）
 - Bing 每日壁纸后端（wallpaper.uc，兼容 libucode20230711）
 - GitHub Actions CI（预编译 SDK，构建时间 40-60min 降至 5-10min）
 - nightly APK 自动发布
@@ -217,6 +224,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-[Unreleased]: https://github.com/LianXia233/luci-theme-mintzero/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/LianXia233/luci-theme-mintzero/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/LianXia233/luci-theme-mintzero/releases/tag/v0.1.0
+[Unreleased]: https://github.com/LianXia233/luci-theme-mint/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/LianXia233/luci-theme-mint/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/LianXia233/luci-theme-mint/releases/tag/v0.1.0

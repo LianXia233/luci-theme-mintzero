@@ -1,6 +1,6 @@
 # Release Guide
 
-本文档说明如何创建和发布 luci-theme-mintzero 的正式版本。
+本文档说明如何创建和发布 luci-theme-mint 的正式版本。
 
 ## 自动发布流程
 
@@ -32,8 +32,8 @@
 ### 产物说明
 
 编译产物为架构无关的 OpenWrt 安装包（主题无 `src/`，luci.mk 设 `PKGARCH=all`；双目标构建仅作验证，产物内容相同）：
-- `luci-theme-mintzero-v1.0.0-x86_64.ipk` - x86_64 架构
-- `luci-theme-mintzero-v1.0.0-mediatek_filogic.ipk` - MediaTek Filogic 架构
+- `luci-theme-mint-v1.0.0-x86_64.ipk` - x86_64 架构
+- `luci-theme-mint-v1.0.0-mediatek_filogic.ipk` - MediaTek Filogic 架构
 
 每个版本在两个位置都可下载：
 1. **GitHub Releases** - 正式版本页面
@@ -73,7 +73,7 @@ git push origin --tags
 
 ### 方法三：GitHub Web 界面
 
-1. 访问 https://github.com/LianXia233/luci-theme-mintzero/tags
+1. 访问 https://github.com/LianXia233/luci-theme-mint/tags
 2. 点击"Releases"或"Create a new release"
 3. 输入标签名 `v1.0.0`
 4. 添加发布说明
@@ -83,13 +83,13 @@ git push origin --tags
 
 ### GitHub Actions
 
-1. 访问 https://github.com/LianXia233/luci-theme-mintzero/actions
+1. 访问 https://github.com/LianXia233/luci-theme-mint/actions
 2. 找到最新的 "Build Package" 工作流运行
 3. 查看各个步骤的日志
 
 ### Releases 页面
 
-1. 访问 https://github.com/LianXia233/luci-theme-mintzero/releases
+1. 访问 https://github.com/LianXia233/luci-theme-mint/releases
 2. 找到对应的版本（如 v1.0.0）
 3. 查看产物文件列表
 
@@ -142,8 +142,8 @@ git push origin --tags
 下载对应架构的 `.ipk` 文件后安装到 OpenWrt 设备：
 
 ```sh
-scp luci-theme-mintzero-v1.0.0-x86_64.ipk root@192.168.1.1:/tmp/
-ssh root@192.168.1.1 "opkg install /tmp/luci-theme-mintzero-v1.0.0-x86_64.ipk"
+scp luci-theme-mint-v1.0.0-x86_64.ipk root@192.168.1.1:/tmp/
+ssh root@192.168.1.1 "opkg install /tmp/luci-theme-mint-v1.0.0-x86_64.ipk"
 ```
 
 # 致谢
@@ -175,7 +175,7 @@ A: 在 GitHub Releases 页面直接编辑版本信息，无需重新构建。
 A: 查看 GitHub Actions 日志，修复问题后删除标签重新发布。
 
 ### Q: 如何下载特定版本？
-A: 访问 https://github.com/LianXia233/luci-theme-mintzero/releases/tag/v1.0.0
+A: 访问 https://github.com/LianXia233/luci-theme-mint/releases/tag/v1.0.0
 
 ## 更多信息
 

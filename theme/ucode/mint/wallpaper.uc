@@ -1,4 +1,4 @@
-// mintzero wallpaper backend
+// mint wallpaper backend
 // Copyright (C) 2026 LianXia233
 // Licensed to the public under the Apache License 2.0.
 //
@@ -21,8 +21,8 @@ import { cursor } from 'uci';
 
 // Uploaded custom images, served statically by uhttpd (no auth needed:
 // the login page is pre-authentication).
-const CUSTOM_PC = '/www/luci-static/mintzero/custom-pc.jpg';
-const CUSTOM_MOBILE = '/www/luci-static/mintzero/custom-mobile.jpg';
+const CUSTOM_PC = '/www/luci-static/mint/custom-pc.jpg';
+const CUSTOM_MOBILE = '/www/luci-static/mint/custom-mobile.jpg';
 
 const DEFAULTS = {
 	enabled: '1',
@@ -75,7 +75,7 @@ function clampBlur(v) {
 /* TZ-16: overlay/blur are clamped here so hand-edited UCI values can
    neither break the CSS nor produce invalid style output. */
 function loadConfig() {
-	const wp = cursor().get_all('mintzero', 'wallpaper') ?? {};
+	const wp = cursor().get_all('mint', 'wallpaper') ?? {};
 	return {
 		enabled: wp.enabled ?? DEFAULTS.enabled,
 		ui_random: wp.ui_random ?? '1',
@@ -93,7 +93,7 @@ function loadConfig() {
 function resolveCustom(path, url) {
 	const st = stat(path);
 	if (st && st.type == 'file' && st.size)
-		return '/luci-static/mintzero/' + substr(path, rindex(path, '/') + 1);
+		return '/luci-static/mint/' + substr(path, rindex(path, '/') + 1);
 
 	return validCustomUrl(url);
 }

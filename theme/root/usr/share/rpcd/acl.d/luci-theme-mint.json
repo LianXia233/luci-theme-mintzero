@@ -1,19 +1,19 @@
 {
 	"wallpaper": {
-		"description": "Grant access to the mintzero wallpaper settings",
+		"description": "Grant access to the mint wallpaper settings",
 		"read": {
 			"uci": [
 				[
-					"mintzero"
+					"mint"
 				]
 			],
 			"ubus": {
-				"mintzero": [
+				"mint": [
 					"refresh"
 				]
 			},
 			"file": {
-				"/www/luci-static/mintzero": [
+				"/www/luci-static/mint": [
 					"list"
 				]
 			}
@@ -21,19 +21,19 @@
 		"write": {
 			"uci": [
 				[
-					"mintzero"
+					"mint"
 				]
 			],
 			"ubus": {
-				"mintzero": [
+				"mint": [
 					"refresh"
 				]
 			},
 			"file": {
-				"/www/luci-static/mintzero/custom-pc.jpg": [
+				"/www/luci-static/mint/custom-pc.jpg": [
 					"write"
 				],
-				"/www/luci-static/mintzero/custom-mobile.jpg": [
+				"/www/luci-static/mint/custom-mobile.jpg": [
 					"write"
 				]
 			}

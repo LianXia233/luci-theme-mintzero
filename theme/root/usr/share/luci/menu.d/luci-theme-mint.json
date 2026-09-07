@@ -10,7 +10,7 @@
 				"wallpaper"
 			],
 			"uci": {
-				"mintzero": true
+				"mint": true
 			}
 		}
 	},
@@ -19,7 +19,7 @@
 		"order": 1,
 		"action": {
 			"type": "view",
-			"path": "mintzero/wallpaper"
+			"path": "mint/wallpaper"
 		}
 	}
 }

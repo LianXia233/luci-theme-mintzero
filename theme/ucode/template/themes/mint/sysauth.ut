@@ -1,5 +1,5 @@
 {#
- mintzero - modern LuCI theme, login page
+ mint - modern LuCI theme, login page
  Copyright (C) 2026 LianXia233
  Licensed to the public under the Apache License 2.0.
 
@@ -99,7 +99,7 @@
 	<div class="spinning">{{ _('Loading view…') }}</div>
 	<script>
 		L.require('ui').then(function(ui) {
-			ui.instantiateView('mintzero.sysauth');
+			ui.instantiateView('mint.sysauth');
 		});
 	</script>
 </div>

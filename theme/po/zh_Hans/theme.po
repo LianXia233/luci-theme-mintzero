@@ -1,8 +1,8 @@
-# Translation of luci-theme-mintzero to Simplified Chinese
+# Translation of luci-theme-mint to Simplified Chinese
 # Copyright (C) 2026 LianXia233
 msgid ""
 msgstr ""
-"Project-Id-Version: luci-theme-mintzero\n"
+"Project-Id-Version: luci-theme-mint\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-09-07 00:00+0000\n"
 "PO-Revision-Date: 2026-09-07 00:00+0800\n"
@@ -14,310 +14,310 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ucode/template/themes/mintzero/header.ut:128
+#: ucode/template/themes/mint/header.ut:128
 msgid "Skip to main content"
 msgstr "跳转到主内容"
 
-#: ucode/template/themes/mintzero/header.ut:130
+#: ucode/template/themes/mint/header.ut:130
 msgid "Toggle navigation menu"
 msgstr "切换导航菜单"
 
-#: ucode/template/themes/mintzero/header.ut:135
+#: ucode/template/themes/mint/header.ut:135
 msgid "Main navigation"
 msgstr "主导航"
 
-#: ucode/template/themes/mintzero/header.ut:142
+#: ucode/template/themes/mint/header.ut:142
 msgid "Menu"
 msgstr "菜单"
 
-#: ucode/template/themes/mintzero/header.ut:148
+#: ucode/template/themes/mint/header.ut:148
 msgid "System"
 msgstr "系统"
 
-#: ucode/template/themes/mintzero/header.ut:151
+#: ucode/template/themes/mint/header.ut:151
 msgid "Switch color scheme"
 msgstr "切换配色方案"
 
-#: ucode/template/themes/mintzero/header.ut:154
+#: ucode/template/themes/mint/header.ut:154
 msgid "Log out"
 msgstr "退出登录"
 
-#: ucode/template/themes/mintzero/header.ut:169
+#: ucode/template/themes/mint/header.ut:169
 msgid "No password set!"
 msgstr "尚未设置密码！"
 
-#: ucode/template/themes/mintzero/header.ut:170
+#: ucode/template/themes/mint/header.ut:170
 msgid "There is no password set on this router. Please configure a root password to protect the web interface."
 msgstr "此路由器尚未设置密码。请配置 root 密码以保护 Web 界面。"
 
-#: ucode/template/themes/mintzero/header.ut:172
+#: ucode/template/themes/mint/header.ut:172
 msgid "Go to password configuration..."
 msgstr "前往密码设置…"
 
-#: ucode/template/themes/mintzero/header.ut:179
+#: ucode/template/themes/mint/header.ut:179
 msgid "System running in recovery (initramfs) mode."
 msgstr "系统正运行于恢复（initramfs）模式。"
 
-#: ucode/template/themes/mintzero/header.ut:180
+#: ucode/template/themes/mint/header.ut:180
 msgid "No changes to settings will be stored and are lost after rebooting. This mode should only be used to install a firmware upgrade"
 msgstr "设置的更改不会被保存，重启后将丢失。此模式仅应用于安装固件升级"
 
-#: ucode/template/themes/mintzero/header.ut:182
+#: ucode/template/themes/mint/header.ut:182
 msgid "Go to firmware upgrade..."
 msgstr "前往固件升级…"
 
-#: ucode/template/themes/mintzero/header.ut:189
+#: ucode/template/themes/mint/header.ut:189
 msgid "JavaScript required!"
 msgstr "需要 JavaScript！"
 
-#: ucode/template/themes/mintzero/header.ut:190
+#: ucode/template/themes/mint/header.ut:190
 msgid "You must enable JavaScript in your browser or LuCI will not work properly."
 msgstr "您必须在浏览器中启用 JavaScript，否则 LuCI 将无法正常工作。"
 
-#: ucode/template/themes/mintzero/sysauth.ut:20
+#: ucode/template/themes/mint/sysauth.ut:20
 msgid "Welcome back! Log in to manage your network."
 msgstr "欢迎回来！登录以管理您的网络。"
 
-#: ucode/template/themes/mintzero/sysauth.ut:28
+#: ucode/template/themes/mint/sysauth.ut:28
 msgid "Invalid username and/or password! Please try again."
 msgstr "用户名或密码错误！请重试。"
 
-#: ucode/template/themes/mintzero/sysauth.ut:36
+#: ucode/template/themes/mint/sysauth.ut:36
 msgid "Username"
 msgstr "用户名"
 
-#: ucode/template/themes/mintzero/sysauth.ut:40
+#: ucode/template/themes/mint/sysauth.ut:40
 msgid "Password"
 msgstr "密码"
 
-#: ucode/template/themes/mintzero/sysauth.ut:71
+#: ucode/template/themes/mint/sysauth.ut:71
 msgid "Remember me"
 msgstr "记住我"
 
-#: ucode/template/themes/mintzero/sysauth.ut:74
+#: ucode/template/themes/mint/sysauth.ut:74
 msgid "Log in"
 msgstr "登录"
 
-#: ucode/template/themes/mintzero/sysauth.ut:80
+#: ucode/template/themes/mint/sysauth.ut:80
 msgid "Sign in with Passkey"
 msgstr "使用 Passkey 登录"
 
-#: ucode/template/themes/mintzero/sysauth.ut:80
+#: ucode/template/themes/mint/sysauth.ut:80
 msgid "Passkeys are not configured on this system"
 msgstr "此系统尚未配置 Passkey"
 
-#: ucode/template/themes/mintzero/sysauth.ut:99
+#: ucode/template/themes/mint/sysauth.ut:99
 msgid "Loading view…"
 msgstr "正在加载视图…"
 
-#: htdocs/luci-static/resources/menu-mintzero.js:382
+#: htdocs/luci-static/resources/menu-mint.js:382
 msgid "Logout failed, please try again."
 msgstr "退出登录失败，请重试。"
 
-#: htdocs/luci-static/mintzero/overview.js:283
+#: htdocs/luci-static/mint/overview.js:283
 msgid "no link"
 msgstr "无连接"
 
-#: htdocs/luci-static/mintzero/overview.js:374
+#: htdocs/luci-static/mint/overview.js:374
 msgid "No IPv4 leases yet"
 msgstr "暂无 IPv4 租约"
 
-#: htdocs/luci-static/mintzero/overview.js:374
+#: htdocs/luci-static/mint/overview.js:374
 msgid "No IPv6 leases yet"
 msgstr "暂无 IPv6 租约"
 
-#: htdocs/luci-static/mintzero/overview.js:476
+#: htdocs/luci-static/mint/overview.js:476
 msgid "Port status"
 msgstr "端口状态"
 
-#: htdocs/luci-static/mintzero/overview.js:499
+#: htdocs/luci-static/mint/overview.js:499
 msgid "Network"
 msgstr "网络"
 
-#: htdocs/luci-static/mintzero/overview.js:514
+#: htdocs/luci-static/mint/overview.js:514
 msgid "System information"
 msgstr "系统信息"
 
-#: htdocs/luci-static/mintzero/overview.js:523
+#: htdocs/luci-static/mint/overview.js:523
 msgid "DHCP leases"
 msgstr "DHCP 租约"
 
-#: htdocs/luci-static/mintzero/overview.js:535
+#: htdocs/luci-static/mint/overview.js:535
 msgid "Wireless"
 msgstr "无线"
 
-#: htdocs/luci-static/mintzero/overview.js:546
+#: htdocs/luci-static/mint/overview.js:546
 msgid "associated"
 msgstr "个关联"
 
-#: htdocs/luci-static/mintzero/overview.js:552
+#: htdocs/luci-static/mint/overview.js:552
 msgid "Associated stations"
 msgstr "关联站点"
 
-#: htdocs/luci-static/mintzero/overview.js:559
+#: htdocs/luci-static/mint/overview.js:559
 msgid "UPnP port mappings"
 msgstr "UPnP 端口映射"
 
-#: htdocs/luci-static/mintzero/overview.js:561
+#: htdocs/luci-static/mint/overview.js:561
 msgid "No active port mappings"
 msgstr "暂无活动的端口映射"
 
-#: htdocs/luci-static/mintzero/overview.js:604
+#: htdocs/luci-static/mint/overview.js:604
 msgid "Temperature"
 msgstr "温度"
 
-#: htdocs/luci-static/mintzero/overview.js:606
+#: htdocs/luci-static/mint/overview.js:606
 msgid "Memory"
 msgstr "内存"
 
-#: htdocs/luci-static/mintzero/overview.js:612
+#: htdocs/luci-static/mint/overview.js:612
 msgid "Storage"
 msgstr "存储"
 
-#: htdocs/luci-static/mintzero/overview.js:617
+#: htdocs/luci-static/mint/overview.js:617
 msgid "Temp"
 msgstr "温度"
 
-#: htdocs/luci-static/mintzero/overview.js:855
+#: htdocs/luci-static/mint/overview.js:855
 msgid "Configuration applied successfully."
 msgstr "配置已成功应用。"
 
-#: htdocs/luci-static/mintzero/overview.js:859
+#: htdocs/luci-static/mint/overview.js:859
 msgid "Reverted to the last saved configuration."
 msgstr "已恢复到上次保存的配置。"
 
-#: htdocs/luci-static/mintzero/overview.js:942
+#: htdocs/luci-static/mint/overview.js:942
 msgid "Edit"
 msgstr "编辑"
 
-#: htdocs/luci-static/mintzero/overview.js:953
+#: htdocs/luci-static/mint/overview.js:953
 msgid "Delete"
 msgstr "删除"
 
-#: htdocs/luci-static/resources/view/mintzero/sysauth.js:128
+#: htdocs/luci-static/resources/view/mint/sysauth.js:128
 msgid "Local custom image"
 msgstr "本地自定义图片"
 
-#: htdocs/luci-static/resources/view/mintzero/sysauth.js:131
+#: htdocs/luci-static/resources/view/mint/sysauth.js:131
 msgid "Image source: %s"
 msgstr "图片来源：%s"
 
-#: htdocs/luci-static/resources/view/mintzero/sysauth.js:133
+#: htdocs/luci-static/resources/view/mint/sysauth.js:133
 msgid "Custom image"
 msgstr "自定义图片"
 
-#: htdocs/luci-static/resources/view/mintzero/sysauth.js:139
+#: htdocs/luci-static/resources/view/mint/sysauth.js:139
 msgid "Random wallpaper · Uapis"
 msgstr "随机壁纸 · Uapis"
 
-#: htdocs/luci-static/resources/view/mintzero/sysauth.js:139
+#: htdocs/luci-static/resources/view/mint/sysauth.js:139
 msgid "Random wallpaper · Paugram"
 msgstr "随机壁纸 · Paugram"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:25
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:25
 msgid "Mint Wallpaper"
 msgstr "Mint 壁纸"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:26
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:26
 msgid "Login page background image. Configure separate sources for desktop and mobile visitors."
 msgstr "登录页背景图片。可为桌面端与移动端访客分别配置来源。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:28
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:28
 msgid "Settings"
 msgstr "设置"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:32
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:32
 msgid "Enabled"
 msgstr "启用"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:33
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:33
 msgid "When disabled, the login page uses the built-in gradient fallback."
 msgstr "禁用后，登录页使用内置渐变背景。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:35
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:35
 msgid "Random wallpaper on admin pages"
 msgstr "管理页面随机壁纸"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:36
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:36
 msgid "When enabled, every login page load and every admin page refresh automatically picks a fresh random image for the current device type."
 msgstr "启用后，每次加载登录页、每次刷新管理页面都会为当前设备类型自动挑选一张新的随机图片。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:40
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:40
 msgid "Desktop source"
 msgstr "桌面端来源"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:41
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:41
 msgid "Random (Paugram)"
 msgstr "随机（Paugram）"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:45
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:45
 msgid "Desktop custom image URL"
 msgstr "桌面端自定义图片地址"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:46
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:46
 msgid "Direct http(s) link to an image. Used when no desktop image has been uploaded."
 msgstr "图片的 http(s) 直链。仅在未上传桌面端图片时使用。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:51
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:51
 msgid "Mobile source"
 msgstr "移动端来源"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:52
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:52
 msgid "Random ACG (Uapis)"
 msgstr "随机二次元（Uapis）"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:56
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:56
 msgid "Mobile custom image URL"
 msgstr "移动端自定义图片地址"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:57
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:57
 msgid "Direct http(s) link to an image. Used when no mobile image has been uploaded."
 msgstr "图片的 http(s) 直链。仅在未上传移动端图片时使用。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:62
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:62
 msgid "Overlay opacity"
 msgstr "遮罩不透明度"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:63
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:63
 msgid "Dark overlay strength over the wallpaper (0.0 - 1.0)."
 msgstr "壁纸上的暗色遮罩强度（0.0 - 1.0）。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:68
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:68
 msgid "Must be a number between 0.0 and 1.0."
 msgstr "必须是 0.0 到 1.0 之间的数字。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:71
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:71
 msgid "Blur (px)"
 msgstr "模糊（px）"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:72
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:72
 msgid "Background blur in pixels; 0 disables."
 msgstr "背景模糊像素；0 表示禁用。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:77
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:77
 msgid "Must be an integer between 0 and 40."
 msgstr "必须是 0 到 40 之间的整数。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:93
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:93
 msgid "Upload desktop image…"
 msgstr "上传桌面端图片…"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:109
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:109
 msgid "Upload mobile image…"
 msgstr "上传移动端图片…"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:136
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:136
 msgid "Image is too large (max 3 MB)."
 msgstr "图片过大（最大 3 MB）。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:161
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:161
 msgid "Image uploaded. Set the matching source to \"Custom image\" to use it."
 msgstr "图片已上传。请将对应来源设为“自定义图片”以使用。"
 
-#: htdocs/luci-static/resources/view/mintzero/wallpaper.js:164
+#: htdocs/luci-static/resources/view/mint/wallpaper.js:164
 msgid "Upload failed: %s"
 msgstr "上传失败：%s"
 
-#: root/usr/share/luci/menu.d/luci-theme-mintzero.json
+#: root/usr/share/luci/menu.d/luci-theme-mint.json
 msgid "Wallpaper Settings"
 msgstr "壁纸设置"

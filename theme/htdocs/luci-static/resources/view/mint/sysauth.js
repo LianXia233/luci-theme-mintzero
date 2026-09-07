@@ -1,8 +1,8 @@
-// mintzero login view
+// mint login view
 // Copyright (C) 2026 LianXia233
 // Licensed to the public under the Apache License 2.0.
 //
-// Frontend for the mintzero login page. The login card rendered by
+// Frontend for the mint login page. The login card rendered by
 // sysauth.ut contains the single native LuCI login form, so authentication
 // is a plain POST of luci_username / luci_password - no JS in the loop.
 // This module only adds remember-username and the wallpaper background.
@@ -95,7 +95,7 @@ return view.extend({
 		const wp = mzWp();
 		const mobile = wp.isMobileUA();
 
-		const cfg = window.mintzeroWallpaper ?? {};
+		const cfg = window.mintWallpaper ?? {};
 		if (cfg.enabled !== false && bg) {
 			applyWallpaperSettings(cfg);
 

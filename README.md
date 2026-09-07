@@ -1,6 +1,6 @@
-# Mint (luci-theme-mintzero)
+# Mint (luci-theme-mint)
 
-**Mint** —— 现代化 LuCI 主题（包名/路径保留 mintzero 以兼容升级），面向 OpenWrt main / LuCI master（ucode 模板引擎）。
+**Mint** —— 现代化 LuCI 主题（包名/路径随 2026-09-07 更名统一为 mint），面向 OpenWrt main / LuCI master（ucode 模板引擎）。
 
 设计方向：现代总览页、卡片式 UI、高信息密度与大量留白，Apple/Linear 风格的克制视觉。不是对其他主题的 CSS 换肤——模板与菜单渲染均基于当前 LuCI master 主题接口实现。
 
@@ -26,30 +26,30 @@
 .github/workflows/build.yml   # GitHub Actions 云编译（x86_64 + mediatek/filogic）
 theme/                        # 主题源码（放入 buildroot 的 feeds/luci/themes/ 下编译）
 ├── Makefile                  # 基于 luci.mk 的包定义
-├── htdocs/luci-static/mintzero/
+├── htdocs/luci-static/mint/
 │   ├── cascade.css           # 设计系统 + 布局 + 组件
 │   ├── overview.js           # 总览页增强（仅 Status > Overview 加载）
 │   ├── overview-banner.png   # 顶栏品牌图
 │   ├── login-logo.png        # 登录页 Logo
 │   └── favicon/              # favicon.svg（矢量）/ -48.png / -180.png
 ├── htdocs/luci-static/resources/
-│   ├── menu-mintzero.js      # 侧栏/菜单渲染器（LuCI JS API）
-│   └── view/mintzero/
+│   ├── menu-mint.js      # 侧栏/菜单渲染器（LuCI JS API）
+│   └── view/mint/
 │       ├── sysauth.js        # 登录页前端
 │       └── wallpaper.js      # 壁纸设置表单
-├── ucode/template/themes/mintzero/
+├── ucode/template/themes/mint/
 │   ├── header.ut             # 页面骨架、侧栏、顶栏
-│   ├── footer.ut             # 页脚、L.require('menu-mintzero')
+│   ├── footer.ut             # 页脚、L.require('menu-mint')
 │   └── sysauth.ut            # 登录页（保留原生认证表单）
-├── ucode/mintzero/
+├── ucode/mint/
 │   └── wallpaper.uc          # UCI 配置读取 + 服务端钳制（无外部请求、无缓存）
 ├── root/
-│   ├── etc/config/mintzero           # UCI 配置
-│   ├── etc/uci-defaults/30_luci-theme-mintzero
-│   ├── usr/libexec/rpcd/mintzero     # ubus 兼容桩（refresh 方法，无实际缓存）
-│   ├── usr/share/luci/menu.d/luci-theme-mintzero.json
-│   ├── usr/share/luci/acl.d/luci-theme-mintzero.json
-│   └── usr/share/rpcd/acl.d/luci-theme-mintzero.json  # rpcd 授权组（菜单 ACL 必需）
+│   ├── etc/config/mint           # UCI 配置
+│   ├── etc/uci-defaults/30_luci-theme-mint
+│   ├── usr/libexec/rpcd/mint     # ubus 兼容桩（refresh 方法，无实际缓存）
+│   ├── usr/share/luci/menu.d/luci-theme-mint.json
+│   ├── usr/share/luci/acl.d/luci-theme-mint.json
+│   └── usr/share/rpcd/acl.d/luci-theme-mint.json  # rpcd 授权组（菜单 ACL 必需）
 └── po/                       # templates + zh_Hans
 ```
 
@@ -80,24 +80,24 @@ cd sdk
 
 echo "src-git luci https://github.com/openwrt/luci.git;master" > feeds.conf.default
 ./scripts/feeds update luci
-mkdir -p feeds/luci/themes/luci-theme-mintzero
-cp -a /本地路径/luci-theme-mintzero/theme/* feeds/luci/themes/luci-theme-mintzero/
+mkdir -p feeds/luci/themes/luci-theme-mint
+cp -a /本地路径/luci-theme-mint/theme/* feeds/luci/themes/luci-theme-mint/
 ./scripts/feeds install -a
 
-echo "CONFIG_PACKAGE_luci-theme-mintzero=m" >> .config
+echo "CONFIG_PACKAGE_luci-theme-mint=m" >> .config
 make defconfig
-make package/feeds/luci/luci-theme-mintzero/compile -j$(nproc) V=s
+make package/feeds/luci/luci-theme-mint/compile -j$(nproc) V=s
 ```
 
 ### 方式二：完整 buildroot
 
-把 `theme/` 目录内容放入 buildroot 的 `feeds/luci/themes/luci-theme-mintzero/`，然后：
+把 `theme/` 目录内容放入 buildroot 的 `feeds/luci/themes/luci-theme-mint/`，然后：
 
 ```sh
 ./scripts/feeds update -a
-./scripts/feeds install luci-theme-mintzero
-make menuconfig   # LuCI -> 4. Themes -> luci-theme-mintzero
-make package/luci-theme-mintzero/compile -j$(nproc) V=s
+./scripts/feeds install luci-theme-mint
+make menuconfig   # LuCI -> 4. Themes -> luci-theme-mint
+make package/luci-theme-mint/compile -j$(nproc) V=s
 ```
 
 buildroot 场景强烈建议启用 ccache（首次仍要编译工具链，之后增量编译显著加速）：
@@ -114,7 +114,7 @@ make defconfig
 安装后 uci-defaults 会自动注册并启用主题：
 
 ```sh
-uci set luci.main.mediaurlbase=/luci-static/mintzero
+uci set luci.main.mediaurlbase=/luci-static/mint
 uci commit luci
 /etc/init.d/rpcd reload
 ```
@@ -147,7 +147,7 @@ API 不可达（无外网、DNS 失败、超时）时登录页依然即时渲染
 
 ## 壁纸设置
 
-设置页位于 `系统` > `Mint Wallpaper` > `Wallpaper Settings`（`/cgi-bin/luci/admin/system/mintwallpaper/settings`），配置文件 `/etc/config/mintzero`：
+设置页位于 `系统` > `Mint Wallpaper` > `Wallpaper Settings`（`/cgi-bin/luci/admin/system/mintwallpaper/settings`），配置文件 `/etc/config/mint`：
 
 | 选项 | 类型 | 默认值 | 说明 |
 |---|---|---|---|
@@ -160,7 +160,7 @@ API 不可达（无外网、DNS 失败、超时）时登录页依然即时渲染
 | overlay | 浮点 | 0.45 | 深色遮罩不透明度（0.0 - 1.0） |
 | blur | 像素 | 0 | 背景模糊（0 禁用，最大 40） |
 
-上传的图片分别写入 `/www/luci-static/mintzero/custom-pc.jpg` 与 `custom-mobile.jpg`（≤3MB），卸载主题时自动清理。
+上传的图片分别写入 `/www/luci-static/mint/custom-pc.jpg` 与 `custom-mobile.jpg`（≤3MB），卸载主题时自动清理。
 
 ## 兼容性
 
@@ -170,9 +170,9 @@ API 不可达（无外网、DNS 失败、超时）时登录页依然即时渲染
 
 ## 故障排查
 
-- 主题不可选：手动执行 `sh /etc/uci-defaults/30_luci-theme-mintzero`，然后重启 rpcd
+- 主题不可选：手动执行 `sh /etc/uci-defaults/30_luci-theme-mint`，然后重启 rpcd
 - 壁纸不出现：随机图由浏览器直连第三方 API；无外网或 API 不可达时显示渐变兜底属预期行为。如需完全离线请上传自定义图片
-- 强制固定配色：在 系统 > 系统 > 语言和外观 选择 `mintzero-light` 或 `mintzero-dark`，或使用侧栏切换按钮
+- 强制固定配色：在 系统 > 系统 > 语言和外观 选择 `mint-light` 或 `mint-dark`，或使用侧栏切换按钮
 
 ## 许可证
 

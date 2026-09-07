@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <!-- MintZero "M" mark (OT-18): replaced a 151 KB raster-embedded SVG with a real vector. -->
+  <!-- Mint "M" mark (OT-18): replaced a 151 KB raster-embedded SVG with a real vector. -->
   <rect width="64" height="64" rx="14" fill="#4f6ef7"/>
   <path d="M14 46V18l12 16 6-8 6 8 12-16v28h-8V31l-10 13-10-13v15z" fill="#fff"/>
 </svg>

@@ -1,9 +1,9 @@
 /*
- * mintzero - status overview enhancer
+ * mint - status overview enhancer
  * Copyright (C) 2026 LianXia233
  * Licensed to the public under the Apache License 2.0.
  *
- * Builds mintzero overview panels once, then patches live values in place
+ * Builds mint overview panels once, then patches live values in place
  * so LuCI XHR polls do not force a full DOM tear-down every few seconds.
  */
 (function () {
@@ -779,7 +779,7 @@
 	}
 
 	function boot() {
-		/* Menu folding moved to menu-mintzero.js (OT-12); this script only
+		/* Menu folding moved to menu-mint.js (OT-12); this script only
 		   owns the overview panels (and only loads there, see footer.ut). */
 		var ready = false;
 

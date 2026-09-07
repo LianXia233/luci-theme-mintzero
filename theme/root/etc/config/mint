@@ -1,7 +1,7 @@
-# mintzero wallpaper configuration
-# Read by the ucode wallpaper backend; see /usr/share/ucode/luci/mintzero/
+# mint wallpaper configuration
+# Read by the ucode wallpaper backend; see /usr/share/ucode/luci/mint/
 
-config mintzero 'wallpaper'
+config mint 'wallpaper'
 	option enabled '1'
 	# Random wallpaper on admin pages (in addition to the login page)
 	option ui_random '1'

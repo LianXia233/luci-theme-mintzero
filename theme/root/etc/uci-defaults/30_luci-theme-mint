@@ -1,0 +1,49 @@
+#!/bin/sh
+# uci-defaults script for luci-theme-mint
+# Registers the theme variants in luci.themes and activates the theme on
+# fresh installs. The theme keys are package-owned and rewritten on every
+# install/upgrade; the user's active theme (luci.main.mediaurlbase) is
+# only touched on fresh installs.
+
+# Each variant gets its own mediaurlbase so that the LuCI theme selector
+# can switch between them: header/footer/sysauth templates are looked up
+# under themes/$(basename mediaurlbase)/, and htdocs/luci-static/ plus
+# ucode/template/themes/ provide mint-light / mint-dark symlinks
+# pointing to the mint originals.
+# NOTE: UCI option names may only contain [a-zA-Z0-9_]; hyphens (e.g.
+# "mint-light") make uci set fail with uci: Parse error, so the
+# registered keys use CamelCase while the mediaurlbase values keep the
+# hyphenated symlink paths.
+uci set luci.themes.mint=/luci-static/mint
+uci set luci.themes.MintLight=/luci-static/mint-light
+uci set luci.themes.MintDark=/luci-static/mint-dark
+
+# Wallpaper defaults for the mint UCI section. Only written when the
+# section does not exist yet, so user config survives upgrades.
+if ! uci -q get mint.wallpaper 2>/dev/null; then
+	uci -q set mint.wallpaper=wallpaper 2>/dev/null || {
+		[ -f /etc/config/mint ] || touch /etc/config/mint
+		uci set mint.wallpaper=wallpaper
+	}
+	uci -q set mint.wallpaper.enabled=1
+	uci -q set mint.wallpaper.ui_random=1
+	uci -q set mint.wallpaper.pc_mode=random
+	uci -q set mint.wallpaper.mobile_mode=random
+	uci -q set mint.wallpaper.overlay=0.45
+	uci -q set mint.wallpaper.blur=0
+fi
+
+# Drop obsolete pre-2026-09-07 keys (Bing era) so upgrades don't accumulate
+# dead options (review TZ-17 / OT-29).
+for _opt in market cache_ttl random mode count; do
+	uci -q delete mint.wallpaper.$_opt
+done
+
+if [ "$PKG_UPGRADE" != 1 ]; then
+	uci -q set luci.main.mediaurlbase=/luci-static/mint
+fi
+
+uci commit luci
+uci commit mint
+
+exit 0

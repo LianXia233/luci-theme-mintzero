@@ -1,11 +1,11 @@
 /*
- * mintzero - modern LuCI theme
+ * mint - modern LuCI theme
  * Copyright (C) 2026 LianXia233
  * Licensed to the public under the Apache License 2.0.
  *
  * Design tokens first, then layout, then LuCI component overrides.
  * Dark mode is driven by html[data-theme="dark"] (set by header.ut JS
- * from the mintzero-dark theme registration or prefers-color-scheme).
+ * from the mint-dark theme registration or prefers-color-scheme).
  */
 
 /* ---------------------------------------------------------------- */
@@ -1150,7 +1150,7 @@ body.mz-login-active #maincontent {
 }
 
 /* ---------------------------------------------------------------- */
-/* Collapsible menu groups (menu-mintzero.js)                       */
+/* Collapsible menu groups (menu-mint.js)                       */
 /* ---------------------------------------------------------------- */
 .mz-menu > li > ul {
 	padding-left: 0;
@@ -1170,7 +1170,7 @@ body.mz-login-active #maincontent {
 	margin-left: 12px;
 }
 /* ---------------------------------------------------------------- */
-/* Overview ring panel (menu-mintzero.js)                           */
+/* Overview ring panel (menu-mint.js)                           */
 /* ---------------------------------------------------------------- */
 .mz-overview-panel { margin-bottom: var(--mz-spacing-lg); }
 .mz-info-cards {
@@ -3861,7 +3861,7 @@ table.table .cbi-button,
 /* ================================================================
  * Code-review polish (2026-09-07 OT-28 / OT-33 notes)
  * ================================================================ */
-/* Breadcrumb separators emitted by menu-mintzero.js */
+/* Breadcrumb separators emitted by menu-mint.js */
 .mz-crumb-sep {
 	opacity: .45;
 }

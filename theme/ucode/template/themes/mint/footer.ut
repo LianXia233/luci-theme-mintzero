@@ -1,5 +1,5 @@
 {#
- mintzero - modern LuCI theme
+ mint - modern LuCI theme
  Copyright (C) 2026 LianXia233
  Licensed to the public under the Apache License 2.0.
 -#}
@@ -17,10 +17,10 @@
 				<a href="{{ entityencode(version.disturl ?? '#', true) }}" target="_blank" rel="noreferrer">
 					{{ version.distname }} {{ version.distversion }} ({{ version.distrevision }})</a>
 				<span class="mz-footer-sep">|</span>
-				<a href="https://github.com/LianXia233/luci-theme-mintzero" target="_blank" rel="noreferrer" class="mz-footer-brand">mintzero</a>
+				<a href="https://github.com/LianXia233/luci-theme-mint" target="_blank" rel="noreferrer" class="mz-footer-brand">mint</a>
 			</span>
 		</footer>
-		<script>L.require('menu-mintzero')</script>
+		<script>L.require('menu-mint')</script>
 		{% if (join('-', length(ctx.request_path) ? ctx.request_path : ctx.path) == 'admin-status-overview'): %}
 		<script src="{{ media }}/overview.js?v=mz20260908a" defer></script>
 		{% endif %}

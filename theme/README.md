@@ -1,4 +1,4 @@
-# mintzero
+# mint
 
 A modern, lightweight, responsive LuCI theme for current OpenWrt/LuCI master
 (ucode-based, ucode template engine).
@@ -36,12 +36,12 @@ feed), then:
 
 ```sh
 ./scripts/feeds update -a
-./scripts/feeds install luci-theme-mintzero
-make menuconfig   # LuCI -> 4. Themes -> luci-theme-mintzero
-make package/luci-theme-mintzero/compile V=s
+./scripts/feeds install luci-theme-mint
+make menuconfig   # LuCI -> 4. Themes -> luci-theme-mint
+make package/luci-theme-mint/compile V=s
 ```
 
-Install the resulting `luci-theme-mintzero_*.apk`/`.ipk` on the device, or use
+Install the resulting `luci-theme-mint_*.apk`/`.ipk` on the device, or use
 `opkg install` / `apk add` with the built artifact.
 
 ### Selecting the theme
@@ -49,7 +49,7 @@ Install the resulting `luci-theme-mintzero_*.apk`/`.ipk` on the device, or use
 After installation the theme is registered automatically via uci-defaults:
 
 ```sh
-uci set luci.main.mediaurlbase=/luci-static/mintzero
+uci set luci.main.mediaurlbase=/luci-static/mint
 uci commit luci
 /etc/init.d/rpcd reload
 ```
@@ -96,7 +96,7 @@ Wallpaper loading is never allowed to block or break the login page.
 A settings page is provided under `System` > `Mint Wallpaper` >
 `Wallpaper Settings`
 (`/cgi-bin/luci/admin/system/mintwallpaper/settings`), backed by
-`/etc/config/mintzero`:
+`/etc/config/mint`:
 
 | Option | Type | Default | Meaning |
 |---|---|---|---|
@@ -109,7 +109,7 @@ A settings page is provided under `System` > `Mint Wallpaper` >
 | overlay | float | 0.45 | dark overlay opacity (0.0 - 1.0) |
 | blur | px | 0 | background blur (0 disables, max 40) |
 
-Uploaded images are written to `/www/luci-static/mintzero/custom-pc.jpg` and
+Uploaded images are written to `/www/luci-static/mint/custom-pc.jpg` and
 `custom-mobile.jpg` (max 3 MB each) and are removed when the theme is
 uninstalled.
 
@@ -118,33 +118,33 @@ uninstalled.
 Directory layout (follows current LuCI master conventions):
 
 ```
-luci-theme-mintzero/
+luci-theme-mint/
 ├── Makefile                  # luci.mk based package
-├── htdocs/luci-static/mintzero/
+├── htdocs/luci-static/mint/
 │   ├── cascade.css           # design system + layout + components
 │   ├── overview.js           # status overview enhancement (overview only)
 │   ├── overview-banner.png   # topbar brand image
 │   ├── login-logo.png        # login page logo
 │   └── favicon/              # favicon.svg (vector) / -48.png / -180.png
 ├── htdocs/luci-static/resources/
-│   ├── menu-mintzero.js      # sidebar/menu renderer (LuCI JS API)
-│   └── view/mintzero/
+│   ├── menu-mint.js      # sidebar/menu renderer (LuCI JS API)
+│   └── view/mint/
 │       ├── sysauth.js        # login page frontend
 │       └── wallpaper.js      # wallpaper settings form
-├── ucode/template/themes/mintzero/
+├── ucode/template/themes/mint/
 │   ├── header.ut             # shell, sidebar, topbar
-│   ├── footer.ut             # footer, L.require('menu-mintzero')
+│   ├── footer.ut             # footer, L.require('menu-mint')
 │   └── sysauth.ut            # login page (native form kept intact)
-├── ucode/mintzero/
+├── ucode/mint/
 │   └── wallpaper.uc          # UCI config loader + server-side clamping
 │                             # (no external requests, no cache)
 ├── root/
-│   ├── etc/config/mintzero           # UCI config
-│   ├── etc/uci-defaults/30_luci-theme-mintzero
-│   ├── usr/libexec/rpcd/mintzero     # ubus compatibility stub
-│   ├── usr/share/luci/menu.d/luci-theme-mintzero.json
-│   ├── usr/share/luci/acl.d/luci-theme-mintzero.json
-│   └── usr/share/rpcd/acl.d/luci-theme-mintzero.json
+│   ├── etc/config/mint           # UCI config
+│   ├── etc/uci-defaults/30_luci-theme-mint
+│   ├── usr/libexec/rpcd/mint     # ubus compatibility stub
+│   ├── usr/share/luci/menu.d/luci-theme-mint.json
+│   ├── usr/share/luci/acl.d/luci-theme-mint.json
+│   └── usr/share/rpcd/acl.d/luci-theme-mint.json
 └── po/ (templates + zh_Hans)
 ```
 
@@ -154,11 +154,11 @@ Requires a current OpenWrt buildroot with the LuCI feed. The package uses the
 standard `luci.mk` build; CSS/JS minification is applied by the standard LuCI
 build options (`LUCI_MINIFY_CSS`, `LUCI_MINIFY_JS`). ucode template
 precompilation is disabled (`LUCI_MINIFY_UT=0`) because `header.ut` imports
-the theme's own backend module `luci.mintzero.wallpaper`, which cannot be
+the theme's own backend module `luci.mint.wallpaper`, which cannot be
 resolved by the build host's ucode compiler.
 
 ```sh
-make package/luci-theme-mintzero/compile V=s
+make package/luci-theme-mint/compile V=s
 ```
 
 ## Compatibility
@@ -173,12 +173,12 @@ make package/luci-theme-mintzero/compile V=s
 ## Troubleshooting
 
 - Theme not selectable: run the uci-defaults script manually
-  (`sh /etc/uci-defaults/30_luci-theme-mintzero`), then reload rpcd.
+  (`sh /etc/uci-defaults/30_luci-theme-mint`), then reload rpcd.
 - Wallpaper never appears: random images are fetched directly by the browser
   from third-party APIs; the gradient fallback is expected behavior when
   offline or when the APIs are unreachable. Upload a custom image for a fully
   offline setup.
-- Want to force a fixed scheme: pick `mintzero-light` or `mintzero-dark` in
+- Want to force a fixed scheme: pick `mint-light` or `mint-dark` in
   System > System > Language and Style, or use the sidebar toggle.
 
 ## License

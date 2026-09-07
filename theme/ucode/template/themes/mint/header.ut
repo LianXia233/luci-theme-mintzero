@@ -1,26 +1,26 @@
 {#
- mintzero - modern LuCI theme
+ mint - modern LuCI theme
  Copyright (C) 2026 LianXia233
  Licensed to the public under the Apache License 2.0.
 -#}
 
 {%
 	import { getuid, getspnam } from 'luci.core';
-	import { getWallpapers } from 'luci.mintzero.wallpaper';
+	import { getWallpapers } from 'luci.mint.wallpaper';
 
 	const boardinfo = ubus.call('system', 'board') ?? {};
 
 	/* Theme variant handling: derive the basename of the configured
-	   mediaurlbase (mintzero | mintzero-light | mintzero-dark). The raw
+	   mediaurlbase (mint | mint-light | mint-dark). The raw
 	   `theme` variable is deliberately not used - its presence in the
 	   template scope is not guaranteed (review OT-08). */
 	const mediasegs = split(media ?? '', '/');
-	const mediabase = mediasegs[length(mediasegs) - 1] ?? 'mintzero';
-	const themepref = (mediabase == 'mintzero-dark' ? 'dark' : (mediabase == 'mintzero-light' ? 'light' : 'system'));
+	const mediabase = mediasegs[length(mediasegs) - 1] ?? 'mint';
+	const themepref = (mediabase == 'mint-dark' ? 'dark' : (mediabase == 'mint-light' ? 'light' : 'system'));
 
 	/* Wallpaper settings from UCI; `uci` is the cursor provided by the
 	   LuCI dispatcher environment. */
-	const wp = uci.get_all('mintzero', 'wallpaper') ?? {};
+	const wp = uci.get_all('mint', 'wallpaper') ?? {};
 
 	/* Wallpaper configuration for every page (login + admin UI). */
 	let wallpaper = { enabled: true, pc: null, mobile: null };
@@ -87,7 +87,7 @@
 		<script>
 			/* Expose wallpaper settings to the frontend (server-rendered,
 			   no extra request). */
-			window.mintzeroWallpaper = {
+			window.mintWallpaper = {
 				enabled: {{ (wp.enabled == '0' || wallpaper.enabled == false) ? 'false' : 'true' }},
 				overlay: {{ sprintf('%J', wallpaper.overlay ?? '0.45') }},
 				blur: {{ sprintf('%J', wallpaper.blur ?? '0') }},
@@ -104,7 +104,7 @@
 		</script>
 		<script>
 			/* Shared wallpaper helper (review TZ-14): the single UA/API
-			   definition used by menu-mintzero.js (admin pages) and the
+			   definition used by menu-mint.js (admin pages) and the
 			   sysauth view (login page). */
 			window.mzWpUtil = {
 				isMobileUA: function() {
@@ -119,7 +119,7 @@
 			};
 		</script>
 		{% if (wallpaper_error): %}
-		<!-- mintzero wallpaper backend failed ({{ wallpaper_error }}); fell back to random APIs -->
+		<!-- mint wallpaper backend failed ({{ wallpaper_error }}); fell back to random APIs -->
 		{% endif %}
 	</head>
 

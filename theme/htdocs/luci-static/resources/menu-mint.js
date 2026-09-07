@@ -1,8 +1,8 @@
-// mintzero theme frontend logic
+// mint theme frontend logic
 // Copyright (C) 2026 LianXia233
 // Licensed to the public under the Apache License 2.0.
 //
-// Loaded via L.require('menu-mintzero') from footer.ut. Extends the LuCI
+// Loaded via L.require('menu-mint') from footer.ut. Extends the LuCI
 // baseclass and implements:
 //   - Sidebar menu rendering from the live LuCI menu tree
 //   - Mobile drawer toggle
@@ -58,7 +58,7 @@ return baseclass.extend({
 	},
 
 	initGlobalWallpaper() {
-		const cfg = window.mintzeroWallpaper;
+		const cfg = window.mintWallpaper;
 		if (!cfg || cfg.enabled === false || cfg.ui_random === false)
 			return;
 		if (document.getElementById('mz-login'))

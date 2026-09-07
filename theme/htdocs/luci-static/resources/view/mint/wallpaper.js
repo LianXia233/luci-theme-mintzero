@@ -1,4 +1,4 @@
-// mintzero wallpaper settings view
+// mint wallpaper settings view
 // Copyright (C) 2026 LianXia233
 // Licensed to the public under the Apache License 2.0.
 
@@ -16,13 +16,13 @@ var callFileWrite = rpc.declare({
 	expect: { code: 0 }
 });
 
-var PC_CUSTOM = '/www/luci-static/mintzero/custom-pc.jpg';
-var MOBILE_CUSTOM = '/www/luci-static/mintzero/custom-mobile.jpg';
+var PC_CUSTOM = '/www/luci-static/mint/custom-pc.jpg';
+var MOBILE_CUSTOM = '/www/luci-static/mint/custom-mobile.jpg';
 
 return view.extend({
 	render() {
 		const self = this;
-		const m = new form.Map('mintzero', _('Mint Wallpaper'),
+		const m = new form.Map('mint', _('Mint Wallpaper'),
 			_('Login page background image. Configure separate sources for desktop and mobile visitors.'));
 
 		const s = m.section(form.TypedSection, 'wallpaper', null, _('Settings'));
