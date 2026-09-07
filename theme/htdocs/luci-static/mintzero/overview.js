@@ -239,6 +239,16 @@
 		return cards;
 	}
 
+	var NET_KEEP = {
+		'协议': true, '协议:': true, 'Protocol': true,
+		'地址': true, '地址:': true, 'Address': true, 'IPv6-地址': true,
+		'网关': true, '网关:': true, 'Gateway': true,
+		'DNS': true, 'DNS:': true,
+		'已连接': true, '已连接:': true, 'Connected': true,
+		'剩余有效期': true, '剩余有效期:': true, 'Expires': true,
+		'分发前缀': true, '分发前缀:': true, 'Prefix': true
+	};
+
 	function collectNet(section) {
 		var cards = [];
 		if (!section) return cards;
@@ -247,20 +257,31 @@
 			var title = head ? head.textContent.trim() : '';
 			var body = box.querySelector('.ifacebox-body');
 			var items = [];
-			var deviceInfo = '';
+			var seenDns = false;
 			if (body) {
-				body.querySelectorAll('.nowrap').forEach(function (nw) {
-					var strong = nw.querySelector('strong');
+				body.querySelectorAll(':scope > .nowrap, :scope > * > .nowrap').forEach(function (nw) {
+					var strong = nw.querySelector(':scope > strong');
 					var label = strong ? strong.textContent.trim() : '';
 					var value = nw.textContent.replace(label, '').trim();
-					if (label && value && label.indexOf('DHCPv6') < 0 &&
-						label.indexOf('设备') < 0 && label.indexOf('MAC') < 0)
-						items.push({ label: label, value: value });
+					if (!label || !value) return;
+					var key = label.replace(/[:：]\s*$/, '').trim();
+					if (key.indexOf('DHCPv6') === 0) return;
+					if (key === 'DNS' || key.indexOf('DNS') === 0) {
+						if (seenDns) return;
+						seenDns = true;
+						key = 'DNS';
+					} else if (key === '分发前缀') {
+						key = '前缀';
+					} else if (key === '剩余有效期') {
+						key = '有效期';
+					}
+					if (NET_KEEP[key]) {
+						if (value.length > 48) value = value.substring(0, 46) + '…';
+						items.push({ label: key, value: value });
+					}
 				});
-				var devBadge = body.querySelector('.ifacebadge');
-				if (devBadge) deviceInfo = devBadge.textContent.trim().replace(/\s+/g, ' ');
 			}
-			cards.push({ title: title, items: items, device: deviceInfo });
+			cards.push({ title: title, items: items });
 		});
 		return cards;
 	}
@@ -416,10 +437,9 @@
 					'<div class="mz-net-body">' +
 					n.items.map(function (it) {
 						return '<div class="mz-net-row"><span class="mz-net-label">' +
-							esc(it.label) + '</span><span class="mz-net-value">' +
-							esc(it.value) + '</span></div>';
+							esc(it.label) + '</span><span class="mz-net-value" title="' +
+							esc(it.value) + '">' + esc(it.value) + '</span></div>';
 					}).join('') +
-					(n.device ? '<div class="mz-net-device">' + esc(n.device) + '</div>' : '') +
 					'</div></div>';
 			}).join('') + '</div>';
 	}
@@ -498,10 +518,6 @@
 	}
 
 	function buildCoreHtml(core) {
-		var memDetail = core.memDetails.map(function (d) {
-			return '<span>' + esc(d.label) + ' ' + esc(d.value) + '</span>';
-		}).join('');
-
 		return '<div class="mz-info-cards">' +
 			'<div class="mz-info-card"><div class="mz-info-label">设备</div>' +
 			'<div class="mz-info-value" data-mz-id="hostname">' + esc(core.hostname) + '</div></div>' +
@@ -522,7 +538,6 @@
 			'<div class="mz-ring-pct" data-mz-id="mem-pct">' +
 			esc(core.mem.used) + ' / ' + esc(core.mem.total) + ' ' + esc(core.mem.totalUnit) +
 			'</div>' +
-			'<div class="mz-mem-detail" data-mz-id="mem-detail">' + memDetail + '</div>' +
 			'</div></div>' +
 			'<div class="mz-ring-card">' + ringHtml(core.storage.pct, 'mz-ring-storage', 'storage') +
 			'<div class="mz-ring-info"><div class="mz-ring-title">存储</div>' +
@@ -569,10 +584,6 @@
 			}
 		}
 
-		var memDetail = core.memDetails.map(function (d) {
-			return '<span>' + esc(d.label) + ' ' + esc(d.value) + '</span>';
-		}).join('');
-		setHtml(panel, 'mem-detail', memDetail);
 	}
 
 	function hideOriginalSections() {

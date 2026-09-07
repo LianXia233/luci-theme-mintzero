@@ -51,6 +51,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 标题/标签/说明文字加白色/深色 **halo 文字阴影**，配合加深的遮罩保证明暗两种模式下对比度
 - **接口总览表不再撑破卡片**：table width 100% + 单元格 overflow-wrap:anywhere，卡片容器 overflow-x:auto（窄屏局部滚动），按钮 nowrap + 操作栏 flex-wrap
 - 实测 1600/1280/768/390 四种分辨率均无横向滚动、无文字截断，深色模式卡片 rgba(23,30,44,0.86) + 浅色文字正常
+
+### Changed (2026-09-07 概览页与接口页卡片透明化 + 信息精简)
+- **补全所有遗漏的半透明卡片类**：概览页 .mz-net-card/.mz-sys-grid/.mz-wifi-card/.mz-empty-state/.mz-table-card、接口页 .ifacebox/.ifacebox-head/.ifacebox-body/.ifacebadge 等全部纳入毛玻璃样式，壁纸可在所有页面卡片后透出
+- 新增 --mz-color-primary-rgb 变量，使网络/DHCP 表格蓝色表头也能半透明；接口页防火墙区域表头保留色相但强制 78% 透明度（深色模式 55%），覆盖内联样式
+- **概览页信息精简**：网络卡片仅保留 协议/地址/网关/DNS/已连接 5 项关键信息，DNS 多条合并为一条，过长地址截断并显示 title；内存卡片移除冗长的缓存/缓冲明细，仅保留 used/total；端口卡片内边距与字号整体收紧
+- 网络卡片 body 改为 2 列网格布局，标签与值对齐更整齐；系统信息网格本身作为半透明卡片容器（其子项保持透明底+底边框），兼顾统一风格与可读性
+
 - P0：全局壁纸开启后整个主内容被顶到页面下方——壁纸样式误将固定定位的侧栏改为 position:relative 使其进入文档流 → 侧栏定位不再被触碰，仅提升层级，并同步处理 stray 选择器
 - 表格与表单区块在壁纸模式下补 90% 底色，保证可读性
 - 登录欢迎语更新为「可可，嗨嗨嗨~！登录以管理你的网络。」

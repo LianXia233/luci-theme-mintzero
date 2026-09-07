@@ -15,6 +15,7 @@
 :root {
 	/* Color - light */
 	--mz-color-primary: #4f6ef7;
+	--mz-color-primary-rgb: 79, 110, 247;
 	--mz-color-primary-hover: #435be0;
 	--mz-color-primary-soft: rgba(79, 110, 247, .12);
 	--mz-color-primary-strong: #3d5ae8;
@@ -73,6 +74,7 @@
 /* Dark surfaces - multi-level, never pure black */
 html[data-theme="dark"] {
 	--mz-color-primary: #7d93ff;
+	--mz-color-primary-rgb: 125, 147, 255;
 	--mz-color-primary-hover: #94a7ff;
 	--mz-color-primary-soft: rgba(125, 147, 255, .16);
 	--mz-color-primary-strong: #a8b7ff;
@@ -1986,7 +1988,7 @@ table.cbi-section-table tbody tr:hover td {
 	background: var(--mz-color-surface);
 	border: 1px solid var(--mz-color-border);
 	border-radius: 12px;
-	padding: 18px 16px;
+	padding: 14px 12px;
 	text-align: center;
 	transition: box-shadow .15s, transform .15s;
 }
@@ -2002,15 +2004,15 @@ table.cbi-section-table tbody tr:hover td {
 	opacity: .7;
 }
 .mz-port-name {
-	font-size: 1.1rem;
+	font-size: 1rem;
 	font-weight: 700;
-	margin-bottom: 10px;
+	margin-bottom: 6px;
 	color: var(--mz-color-text);
 }
 .mz-port-status {
-	font-size: .88rem;
+	font-size: .82rem;
 	color: var(--mz-color-text-muted);
-	margin-bottom: 8px;
+	margin-bottom: 6px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -2025,17 +2027,17 @@ table.cbi-section-table tbody tr:hover td {
 .mz-port-dot.up { background: var(--mz-color-success); }
 .mz-port-dot.down { background: var(--mz-color-text-muted); }
 .mz-port-zones {
-	font-size: .78rem;
+	font-size: .75rem;
 	color: var(--mz-color-text-muted);
-	margin-bottom: 10px;
-	line-height: 1.5;
+	margin-bottom: 6px;
+	line-height: 1.4;
 }
 .mz-port-traffic {
 	display: flex;
 	justify-content: center;
-	gap: 14px;
-	font-size: .82rem;
-	padding-top: 10px;
+	gap: 12px;
+	font-size: .78rem;
+	padding-top: 6px;
 	border-top: 1px solid var(--mz-color-border);
 }
 .mz-port-traffic .mz-tx { color: var(--mz-color-primary); }
@@ -2056,44 +2058,51 @@ table.cbi-section-table tbody tr:hover td {
 .mz-net-header {
 	background: var(--mz-color-primary);
 	color: #fff;
-	padding: 12px 18px;
-	font-size: .95rem;
+	padding: 10px 14px;
+	font-size: .9rem;
 	font-weight: 600;
 	text-align: center;
 }
 .mz-net-body {
-	padding: 14px 18px;
+	padding: 12px 14px;
 }
 .mz-net-row {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: 12px;
-	padding: 6px 0;
+	display: grid;
+	grid-template-columns: 4.5em 1fr;
+	align-items: center;
+	gap: 10px;
+	padding: 5px 0;
 	border-bottom: 1px solid var(--mz-color-border);
-	font-size: .85rem;
+	font-size: .82rem;
 }
 .mz-net-row:last-child {
 	border-bottom: none;
 }
 .mz-net-label {
 	color: var(--mz-color-text-muted);
-	flex-shrink: 0;
 	font-weight: 500;
 }
 .mz-net-value {
 	color: var(--mz-color-text);
 	text-align: right;
 	word-break: break-all;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.mz-net-value:hover,
+.mz-net-value:focus {
+	white-space: normal;
+	overflow: visible;
 }
 .mz-net-device {
-	margin-top: 10px;
-	padding: 10px 12px;
+	margin-top: 8px;
+	padding: 8px 10px;
 	background: var(--mz-color-surface-2);
 	border-radius: 8px;
-	font-size: .8rem;
+	font-size: .78rem;
 	color: var(--mz-color-text-muted);
-	line-height: 1.6;
+	line-height: 1.5;
 }
 
 /* Responsive */
@@ -3747,8 +3756,18 @@ body.mz-has-wallpaper .mz-card,
 body.mz-has-wallpaper .mz-info-card,
 body.mz-has-wallpaper .mz-ring-card,
 body.mz-has-wallpaper .mz-port-card,
+body.mz-has-wallpaper .mz-net-card,
+body.mz-has-wallpaper .mz-sys-grid,
+body.mz-has-wallpaper .mz-wifi-card,
+body.mz-has-wallpaper .mz-empty-state,
+body.mz-has-wallpaper .mz-table-card,
 body.mz-has-wallpaper .mz-net-panel,
 body.mz-has-wallpaper .mz-overview-panel,
+body.mz-has-wallpaper .ifacebox,
+body.mz-has-wallpaper .ifacebox-head,
+body.mz-has-wallpaper .ifacebox-head.active,
+body.mz-has-wallpaper .ifacebox-body,
+body.mz-has-wallpaper .ifacebadge,
 body.mz-has-wallpaper .cbi-dynlist > .item {
 	background: var(--mz-panel-bg);
 	backdrop-filter: blur(12px) saturate(1.15);
@@ -3756,16 +3775,66 @@ body.mz-has-wallpaper .cbi-dynlist > .item {
 	border-color: rgba(148, 163, 184, 0.3);
 }
 
+/* Sys-info grid uses !important in its base rule; force the glass vars with
+   the same specificity plus !important so the wallpaper shows through. */
+body.mz-has-wallpaper .mz-sys-grid {
+	background: var(--mz-panel-bg) !important;
+	border-color: rgba(148, 163, 184, 0.3) !important;
+}
+
+/* Overview page translucent headers / titles over wallpaper */
+body.mz-has-wallpaper .mz-net-header,
+body.mz-has-wallpaper .mz-data-table thead th {
+	background: rgba(var(--mz-color-primary-rgb, 59, 130, 246), 0.85);
+}
+
+html[data-theme="dark"] body.mz-has-wallpaper .mz-net-header,
+html[data-theme="dark"] body.mz-has-wallpaper .mz-data-table thead th {
+	background: rgba(var(--mz-color-primary-rgb, 96, 165, 250), 0.75);
+}
+
+/* LuCI ifacebox headers use inline background-color for firewall zones;
+   preserve the zone hue but force translucency over the wallpaper. */
+body.mz-has-wallpaper .ifacebox-head {
+	background-color: rgba(var(--zone-color-rgb, 128, 128, 128), 0.78) !important;
+}
+
+html[data-theme="dark"] body.mz-has-wallpaper .ifacebox-head {
+	background-color: rgba(var(--zone-color-rgb, 128, 128, 128), 0.55) !important;
+}
+
+body.mz-has-wallpaper .mz-section-title,
+body.mz-has-wallpaper .mz-subtitle {
+	text-shadow: var(--mz-panel-halo);
+}
+
+/* Keep overview panel spacing airy but compact */
+body.mz-has-wallpaper .mz-overview-panel {
+	margin-bottom: var(--mz-spacing-md);
+}
+
 /* Interaction states: more opaque where the eye is looking */
 body.mz-has-wallpaper .cbi-section:hover,
 body.mz-has-wallpaper .mz-card:hover,
 body.mz-has-wallpaper .mz-info-card:hover,
+body.mz-has-wallpaper .mz-ring-card:hover,
+body.mz-has-wallpaper .mz-port-card:hover,
+body.mz-has-wallpaper .mz-net-card:hover,
+body.mz-has-wallpaper .mz-sys-grid:hover,
+body.mz-has-wallpaper .mz-wifi-card:hover,
+body.mz-has-wallpaper .mz-table-card:hover,
+body.mz-has-wallpaper .ifacebox:hover,
 body.mz-has-wallpaper .cbi-section:focus-within,
 body.mz-has-wallpaper .mz-card:focus-within,
 body.mz-has-wallpaper .cbi-section-node:focus-within,
 body.mz-has-wallpaper .cbi-dynlist > .item:hover {
 	background: var(--mz-panel-bg-strong);
 	border-color: rgba(148, 163, 184, 0.45);
+}
+
+body.mz-has-wallpaper .mz-sys-grid:hover {
+	background: var(--mz-panel-bg-strong) !important;
+	border-color: rgba(148, 163, 184, 0.45) !important;
 }
 
 body.mz-has-wallpaper .cbi-section:focus-within,
