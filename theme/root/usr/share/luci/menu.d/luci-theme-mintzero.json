@@ -1,16 +1,7 @@
 {
-	"admin/mintzero": {
-		"title": "mintzero",
-		"order": 89,
-		"action": { "type": "firstchild" },
-		"depends": {
-			"acl": [ "wallpaper" ]
-		}
-	},
-
-	"admin/mintzero/wallpaper": {
-		"title": "Wallpaper Settings",
-		"order": 90,
+	"admin/system/mintwallpaper": {
+		"title": "Mint壁纸设置",
+		"order": 60,
 		"action": { "type": "firstchild" },
 		"depends": {
 			"acl": [ "wallpaper" ],
@@ -18,8 +9,8 @@
 		}
 	},
 
-	"admin/mintzero/wallpaper/settings": {
-		"title": "Bing Wallpaper",
+	"admin/system/mintwallpaper/settings": {
+		"title": "Mint壁纸设置",
 		"order": 1,
 		"action": {
 			"type": "view",
@@ -27,8 +18,8 @@
 		}
 	},
 
-	"admin/mintzero/wallpaper/refresh": {
-		"title": "Wallpaper Refresh",
+	"admin/system/mintwallpaper/refresh": {
+		"title": "Mint壁纸刷新",
 		"order": 2,
 		"action": {
 			"type": "template",
@@ -36,15 +27,6 @@
 		},
 		"depends": {
 			"acl": [ "wallpaper" ]
-		}
-	},
-
-	"admin/mintzero/dashboard": {
-		"title": "Dashboard",
-		"order": 1,
-		"action": {
-			"type": "view",
-			"path": "mintzero/dashboard"
 		}
 	}
 }

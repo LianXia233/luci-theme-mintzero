@@ -93,7 +93,15 @@ var callFileWrite = rpc.declare({
 				}, [ _('Upload custom image…') ])
 			]);
 
-			nodes.insertBefore(btnRow, nodes.firstChild);
+			/* Attach to the map's own action bar (next to 保存/重置);
+			   fall back to prepending at the top of the map if the bar
+			   has not been rendered yet. */
+			const bar = nodes.querySelector('.cbi-page-actions');
+			if (bar)
+				bar.insertBefore(btnRow, bar.firstChild);
+			else
+				nodes.insertBefore(btnRow, nodes.firstChild);
+
 			return nodes;
 		});
 	},
@@ -103,7 +111,7 @@ var callFileWrite = rpc.declare({
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
-		return fetch(L.url('admin/mintzero/wallpaper/refresh'), {
+		return fetch(L.url('admin/system/mintwallpaper/refresh'), {
 			method: 'POST',
 			credentials: 'same-origin'
 		}).then(r => r.json()).then((data) => {
