@@ -6,7 +6,7 @@
 
 include $(TOPDIR)/rules.mk
 
-LUCI_TITLE:=mintzero Theme
+LUCI_TITLE:=Mint Theme
 LUCI_DEPENDS:=+luci-base +ucode-mod-fs +ucode-mod-uci
 # Ship the ucode templates as source: header.ut imports the theme's own
 # backend module (luci.mintzero.wallpaper), which the build host cannot

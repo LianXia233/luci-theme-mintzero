@@ -106,7 +106,7 @@
 		<aside id="mz-sidebar" class="mz-sidebar" aria-label="{{ _('Main navigation') }}">
 			<div class="mz-brand">
 				<a href="/" class="mz-brand-link">
-					<img src="{{ media }}/overview-banner.png" alt="mintzero" class="mz-brand-logo">
+					<img src="{{ media }}/overview-banner.png" alt="Mint" class="mz-brand-logo">
 				</a>
 			</div>
 

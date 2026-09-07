@@ -1,6 +1,6 @@
-# luci-theme-mintzero
+# Mint (luci-theme-mintzero)
 
-现代化 LuCI 主题，面向 OpenWrt main / LuCI master（ucode 模板引擎）。
+**Mint** —— 现代化 LuCI 主题（包名/路径保留 mintzero 以兼容升级），面向 OpenWrt main / LuCI master（ucode 模板引擎）。
 
 设计方向：现代 Dashboard、卡片式 UI、高信息密度与大量留白，Apple/Linear 风格的克制视觉。不是对其他主题的 CSS 换肤——模板与菜单渲染均基于当前 LuCI master 主题接口实现。
 

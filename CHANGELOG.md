@@ -42,6 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 登录页 logo 改用圆形像素头像（login-logo.png 换为圆形透明版）
 - 状态概览页信息卡上方新增方形像素头像 banner（overview-banner.png，96px 居中，随面板惰性创建）
 - 侧栏品牌区移除 mintzero 文字，仅保留居中的品牌 logo
+- 侧栏品牌 logo 更新为方形像素头像（overview-banner.png，56px 圆角居中）
+- 主题显示名更名为 **Mint**（LUCI_TITLE=Mint Theme、README、alt 文本；包名/路径保留 mintzero 以兼容升级）
+
+### Fixed (2026-09-07 壁纸背景排版修复)
+- P0：全局壁纸开启后整个主内容被顶到页面下方——壁纸样式误将固定定位的侧栏改为 position:relative 使其进入文档流 → 侧栏定位不再被触碰，仅提升层级，并同步处理 stray 选择器
+- 表格与表单区块在壁纸模式下补 90% 底色，保证可读性
 - 登录欢迎语更新为「可可，嗨嗨嗨~！登录以管理你的网络。」
 
 ### Fixed (2026-09-07 概览页修复)
