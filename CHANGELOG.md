@@ -88,6 +88,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed (2026-09-07)
 
+**实机验证修复（2026-09-07）**
+- 修复 header.ut 模板编译错误：`{% else: %}` 的非法冒号导致 LuCI ucode 模板引擎报 `Syntax error: Expecting expression`，主题加载失败回退 fallback → 改为 `{% else %}`（`if/elif/for` 条件行带冒号为官方写法，`else` 不接受冒号）
 **第二轮代码审查 · 遗留修复（本轮）**
 - P2：防火墙 zone 头颜色桥接失效——`initZoneColors` 正则 `rgba\?\(` 把 `?` 转义为字面量，永不匹配 computed 背景色（`rgba(...)`/`rgb(...)`）→ `--zone-color-rgb` 从不设置，壁纸模式下所有 zone 头回退为同一种灰 → 正则改回 `rgba?\(`（程序验证 4 种实际格式全部匹配）
 - P2：登录卡壁纸遮挡——`.mz-login-card` 透明度 0.72 叠加登录页遮罩后卡片区壁纸透出仅 ≈11–15% → 降至 0.55（透出 ≈18–25%），保留 blur(14px) 毛玻璃保证文字对比度

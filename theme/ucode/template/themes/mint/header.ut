@@ -69,7 +69,7 @@
 		<meta name="darkreader-lock">
 		{% if (themepref == 'light'): %}
 		<meta name="theme-color" content="#f5f6f8">
-		{% else: %}
+		{% else %}
 		<meta name="theme-color" content="#0f172a">
 		{% endif %}
 		<link rel="stylesheet" href="{{ media }}/cascade.css?v=mz20260908a">
