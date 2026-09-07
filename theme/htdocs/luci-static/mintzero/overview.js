@@ -197,15 +197,6 @@
 		if (el.textContent !== next) el.textContent = next;
 	}
 
-	function setHtml(root, id, html) {
-		var el = root.querySelector('[data-mz-id="' + id + '"]');
-		if (!el) return;
-		if (el.getAttribute('data-mz-html') !== html) {
-			el.innerHTML = html;
-			el.setAttribute('data-mz-html', html);
-		}
-	}
-
 	function collectCore(tables) {
 		var info = tableMap(tables[0]);
 		var cpuRaw = pick(info, 'CPU 使用率（%）', 'CPU 使用率', 'CPU usage');

@@ -9,37 +9,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Fixed (2026-09-07 代码审查 TZ/OT 全量修复)
-- 壁纸链路：移除无实际缓存的「刷新壁纸缓存」按钮与 rpcd 预取逻辑（`refresh` 方法保留为兼容桩）；上传改用 FileReader base64 + 防重入；overlay/blur 表单校验 + 服务端钳制；`ui_random` 默认与模板对齐；菜单标题英文化（Mint Wallpaper / Wallpaper Settings）
-- 模板：overview.js 仅在 Status > Overview 加载；配色变体由 mediaurlbase 推导；theme-color 跟随变体；移除永久隐藏的 modemenu；壁纸后端失败时输出 HTML 注释
-- 前端：壁纸 UA/API 逻辑收敛到共享 `mzWpUtil`；登录页与管理页图片请求抑制 referrer；登出检查响应状态；目录面包屑与菜单渲染时序加固
-- i18n：po/pot 按当前代码重建（77 条），删除 Dashboard/Bing 遗留与重复条目，补全新增文案的简体中文翻译
-- 资源：删除 3 个内嵌光栅图的 logo SVG（约 418KB）；favicon.svg 换成真正的轻量矢量图标
-- 文档：README 去 Bing 化并同步最新机制、目录树、设置路径与选项表
+### Added (2026-09-07)
 
-### Fixed (2026-09-07 手机端排版与壁纸按钮)
-
-### Added (2026-09-07 随机壁纸按设备切换 + NTP 列表样式)
+**随机壁纸按设备切换 + NTP 列表样式**
 - 随机壁纸改为按访问设备类型自动选择第三方 API：桌面端 `api.paugram.com/wallpaper/`，移动端（UA 检测）`uapis.cn/api/v1/random/image?category=acg&type=mb`；带时间戳防缓存，API 加载失败自动回退本地 Bing 壁纸池，再失败回退渐变兜底（原流程不受影响）
 - 候选 NTP 服务器等 cbi-dynlist 动态列表主题化：条目卡片化（浅灰底、圆角、悬停描边）、新增输入行与 + 按钮对齐排版，宽度收敛至 480px
 - cbi-dynlist 条目注入可见的「编辑 ✎ / 删除 ✕」按钮：LuCSI 原生删除热区是不可见的 ::after 伪元素（本主题无样式导致热区为 0 宽，无法删除），且原生无就地编辑；通过 `L.dom.findClassInstance` 调用 DynamicList 组件原生 removeItem/addItem，保证与 uci staging 正确同步（实测编辑/删除/保存并应用后 /etc/config/system 生效）
 
-- P1：手机端保存/应用/重置按钮全宽——480/768px 断点把操作栏堆叠并把所有按钮拉伸到 100% 宽 → 恢复行内排列、内容自适应宽度（32px 高）
-- P1：应用成功后无任何提示（LuCSI 应用完成仅关闭弹窗）——主题监听 `uci-applied` / `uci-reverted` 事件弹出成功/回滚通知；因应用成功后页面会重载，通知通过 sessionStorage 标记在重载后的页面上补显
-- P2：「正在应用更改」弹窗美化：居中排版、加大字号、底部进度条动画
-- P1：手机端保存/应用/重置按钮过宽——统一收窄（内容自适应宽、32px 等高、文字不截断，下拉省略符隐藏仅保留箭头）
-### Changed (2026-09-07 壁纸设置迁移 + 按钮挂载加固)
+**顶栏与状态栏增强**
+- 顶栏面包屑导航（`renderBreadcrumb`，基于 `L.env.dispatchpath` 逐级显示当前页面路径）
+- 主题切换按钮选择持久化到 localStorage（`mz-theme`），刷新后不再回退
+- 端口/网络/系统/DHCP/无线/UPnP 区块识别改为中英文双语匹配，兼容英文界面
+- postrm 卸载时同时清理 `/usr/share/luci/acl.d/` 与 `/usr/share/rpcd/acl.d/` 两处 ACL 及主题 uci 变体
+
+**弹窗系统与表单布局**
+- 全站弹窗系统样式（`#modal_overlay` fixed 全屏 + z-index 2000 + 半透明背景，`.modal` 居中 720px/90vh 内部滚动，640px 以下窄屏适配）
+- 保存/应用操作栏吸底（`.cbi-page-actions` sticky bottom），滚动时始终可见
+- 「保存并应用」统一主色（蓝底白字 + hover 提亮），样式一致不再丑
+- 表单控件全局 `box-sizing: border-box`，修复 system 页输入框溢出字段容器 26px
+- 表格操作列相邻按钮间距 + 单元格 `overflow-wrap`
+
+**壁纸功能与第三方兼容**
+- 壁纸来源可选 Bing 每日壁纸或自定义图片；自定义支持上传图片（≤3MB，写入 /www/luci-static/mintzero/custom.jpg）或填写 http(s) 图片直链
+- 「刷新 Bing 缓存」手动刷新按钮（新增 `admin/mintzero/wallpaper/refresh` JSON 端点，跳过节流锁强制重取）
+- cbi 选项卡（`ul.cbi-tabmenu`）完整样式：active 蓝色下划线、disabled 灰色
+- 第三方应用设计变量桥接：定义 `--brand/--surface/--text/--hairline` 等 21 个变量映射到主题 token（修复 taygedo 等应用白底白字不可见）
+- 新增 `scripts/po2lmo.py`（po → lmo 编译器，PoC 于实机验证）
+
+### Changed (2026-09-07)
+
+**壁纸设置迁移 + 按钮挂载加固**
 - 移除 mintzero 独立菜单与 Dashboard 页面（与概览页功能冲突）：删除 `admin/mintzero/*` 全部路由与 `view/mintzero/dashboard.js`
 - 壁纸设置迁移至「系统」菜单下，更名「Mint壁纸设置」（`admin/system/mintwallpaper/settings`），刷新端点同步迁移至 `admin/system/mintwallpaper/refresh`
 - 壁纸页刷新/上传按钮挂载逻辑加固：优先注入地图自带操作栏（与保存/重置同排），操作栏未渲染时回退插入地图顶部
 
-### Changed (2026-09-07 去 Bing 化 + RPC 刷新端点)
+**去 Bing 化 + RPC 刷新端点**
 - 壁纸页全面去 Bing 字样：标题「Mint Wallpaper」，来源选项「每日壁纸（Bing 源）/ 自定义图片」，市场选项改为「壁纸市场（每日模式）」，刷新按钮改为「刷新壁纸缓存」
 - 刷新端点从页面路由改为 **rpcd ubus 服务**（`/usr/libexec/rpcd/mintzero`，方法 `mintzero refresh`）：不再注册菜单/tab，点击按钮不再跳出后台 JSON 页面，改由 ubus RPC 原地返回状态
 - 部署设置 `luci.main.resource_version=mz20260907f` 强制所有客户端浏览器刷新静态资源缓存（解决 view JS 缓存导致按钮/选项不显示的问题）
 - 清理 po 中 Dashboard 遗留条目，新增迁移后文案的简体中文翻译
 
-### Changed (2026-09-07 双端独立壁纸源)
+**双端独立壁纸源**
 - 新增「后台页面随机壁纸」开关：开启后随机壁纸**全局覆盖登录后的所有页面**（body 背景 + 可调遮罩 + 面板 86% 半透明，保证文字可读），关闭后仅登录页生效
 - 随机壁纸每次登录/刷新自动更换（时间戳防缓存），加载失败自动回退渐变兜底
 - 壁纸来源重构为**桌面端 / 手机端双组独立配置**：各组可选「随机 API（桌面 Paugram / 手机 Uapis ACG）」或「自定义图片」
@@ -53,31 +63,80 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 侧栏品牌 logo 更新为方形像素头像（overview-banner.png，56px 圆角居中）
 - 主题显示名更名为 **Mint**（LUCI_TITLE=Mint Theme、README、alt 文本；包名/路径保留 mintzero 以兼容升级）
 
-### Fixed (2026-09-07 壁纸背景排版修复)
-### Changed (2026-09-07 毛玻璃卡片与表格自适应)
+**毛玻璃卡片与表格自适应**
 - 壁纸模式下全部卡片统一改为**半透明毛玻璃**：rgba 面板底（浅 0.72 / 暗 0.72）+ `backdrop-filter: blur(12px) saturate(1.15)`，hover/focus-within 时提高至 0.88 保证焦点区可读，disabled 态降至 0.58 并降饱和
 - 标题/标签/说明文字加白色/深色 **halo 文字阴影**，配合加深的遮罩保证明暗两种模式下对比度
 - **接口总览表不再撑破卡片**：table width 100% + 单元格 overflow-wrap:anywhere，卡片容器 overflow-x:auto（窄屏局部滚动），按钮 nowrap + 操作栏 flex-wrap
 - 实测 1600/1280/768/390 四种分辨率均无横向滚动、无文字截断，深色模式卡片 rgba(23,30,44,0.86) + 浅色文字正常
 
-### Changed (2026-09-07 概览页与接口页卡片透明化 + 信息精简)
+**概览页与接口页卡片透明化 + 信息精简**
 - **补全所有遗漏的半透明卡片类**：概览页 .mz-net-card/.mz-sys-grid/.mz-wifi-card/.mz-empty-state/.mz-table-card、接口页 .ifacebox/.ifacebox-head/.ifacebox-body/.ifacebadge 等全部纳入毛玻璃样式，壁纸可在所有页面卡片后透出
 - 新增 --mz-color-primary-rgb 变量，使网络/DHCP 表格蓝色表头也能半透明；接口页防火墙区域表头保留色相但强制 78% 透明度（深色模式 55%），覆盖内联样式
 - **概览页信息精简**：网络卡片仅保留 协议/地址/网关/DNS/已连接 5 项关键信息，DNS 多条合并为一条，过长地址截断并显示 title；内存卡片移除冗长的缓存/缓冲明细，仅保留 used/total；端口卡片内边距与字号整体收紧
 - 网络卡片 body 改为 2 列网格布局，标签与值对齐更整齐；系统信息网格本身作为半透明卡片容器（其子项保持透明底+底边框），兼顾统一风格与可读性
 
+**品牌形象更新**
+- 全新像素风品牌 logo：侧栏品牌、登录页 logo、favicon（svg/48/180）全部替换为像素猫娘头像
+- 边缘白底经泛洪填充转为透明、圆形裁剪去除 JPEG 噪点，透明像素完整保留
+
+### Fixed (2026-09-07)
+
+**第二轮代码审查 · 遗留修复（本轮）**
+- P2：防火墙 zone 头颜色桥接失效——`initZoneColors` 正则 `rgba\?\(` 把 `?` 转义为字面量，永不匹配 computed 背景色（`rgba(...)`/`rgb(...)`）→ `--zone-color-rgb` 从不设置，壁纸模式下所有 zone 头回退为同一种灰 → 正则改回 `rgba?\(`（程序验证 4 种实际格式全部匹配）
+- P2：登录卡壁纸遮挡——`.mz-login-card` 透明度 0.72 叠加登录页遮罩后卡片区壁纸透出仅 ≈11–15% → 降至 0.55（透出 ≈18–25%），保留 blur(14px) 毛玻璃保证文字对比度
+- P3：登出对空会话仍静默——`L.ui.sessions.getLocal()` 返回空会话（登录态已过期）时点击登出无任何响应 → 空会话分支直接跳转 `/admin/logout`
+- P3：overview.js `setHtml` 死代码（全仓无调用方）→ 删除
+
+**代码审查 TZ/OT 全量修复**
+- 壁纸链路：移除无实际缓存的「刷新壁纸缓存」按钮与 rpcd 预取逻辑（`refresh` 方法保留为兼容桩）；上传改用 FileReader base64 + 防重入；overlay/blur 表单校验 + 服务端钳制；`ui_random` 默认与模板对齐；菜单标题英文化（Mint Wallpaper / Wallpaper Settings）
+- 模板：overview.js 仅在 Status > Overview 加载；配色变体由 mediaurlbase 推导；theme-color 跟随变体；移除永久隐藏的 modemenu；壁纸后端失败时输出 HTML 注释
+- 前端：壁纸 UA/API 逻辑收敛到共享 `mzWpUtil`；登录页与管理页图片请求抑制 referrer；登出检查响应状态；目录面包屑与菜单渲染时序加固
+- i18n：po/pot 按当前代码重建（77 条），删除 Dashboard/Bing 遗留与重复条目，补全新增文案的简体中文翻译
+- 资源：删除 3 个内嵌光栅图的 logo SVG（约 418KB）；favicon.svg 换成真正的轻量矢量图标
+- 文档：README 去 Bing 化并同步最新机制、目录树、设置路径与选项表
+
+**手机端排版与壁纸按钮**
+- P1：手机端保存/应用/重置按钮全宽——480/768px 断点把操作栏堆叠并把所有按钮拉伸到 100% 宽 → 恢复行内排列、内容自适应宽度（32px 高）
+- P1：应用成功后无任何提示（LuCSI 应用完成仅关闭弹窗）——主题监听 `uci-applied` / `uci-reverted` 事件弹出成功/回滚通知；因应用成功后页面会重载，通知通过 sessionStorage 标记在重载后的页面上补显
+- P2：「正在应用更改」弹窗美化：居中排版、加大字号、底部进度条动画
+- P1：手机端保存/应用/重置按钮过宽——统一收窄（内容自适应宽、32px 等高、文字不截断，下拉省略符隐藏仅保留箭头）
+
+**壁纸背景排版**
 - P0：全局壁纸开启后整个主内容被顶到页面下方——壁纸样式误将固定定位的侧栏改为 position:relative 使其进入文档流 → 侧栏定位不再被触碰，仅提升层级，并同步处理 stray 选择器
 - 表格与表单区块在壁纸模式下补 90% 底色，保证可读性
 - 登录欢迎语更新为「可可，嗨嗨嗨~！登录以管理你的网络。」
 
-### Fixed (2026-09-07 概览页修复)
+**概览页修复**
 - 移除状态概览面板上方的像素头像 banner（应需求撤下），相关 JS 注入与 CSS 一并清理
 - 修复 overview.js 在 banner 调整过程中被误损坏的问题：概览面板数据卡片与 CPU/内存/存储圆环恢复正常渲染（从完好历史版本恢复）
 - 壁纸来源新增两个随机源选项：「随机壁纸（Paugram）」「随机 ACG（Uapis）」，选择后登录页直接从对应 API 拉图（模式经 header.ut 嵌入前端）；随机壁纸开关仅在每日壁纸模式下作为兼容开关
 
-### Changed (2026-09-07 品牌形象更新)
-- 全新像素风品牌 logo：侧栏品牌、登录页 logo、favicon（svg/48/180）全部替换为像素猫娘头像
-- 边缘白底经泛洪填充转为透明、圆形裁剪去除 JPEG 噪点，透明像素完整保留
+**ACL / 主题 / 弹窗链路**
+- P0：ACL 只安装到 `/usr/share/luci/acl.d/` 而 rpcd 只读 `/usr/share/rpcd/acl.d/`，致 `wallpaper` 授权组缺失、`admin/mintzero` 菜单整体消失 → 新增 `theme/root/usr/share/rpcd/acl.d/luci-theme-mintzero.json`，实机验证菜单恢复
+- P1：暗色模式下 `warningbox`/`alert-message`/`infobox`/`cbi-change-list`/`#xhr_poll_status` 硬编码浅色背景刺眼 → 追加 `html[data-theme="dark"]` 覆盖改用 token 颜色
+- P1：footer.ut 隐藏条件表达式缺少右括号（`>= 0` 后语法错误）致整个内联脚本失效 → 补全括号，`node --check` 通过
+- P2：SVG 圆环 `transform-origin` 重复声明 → 收敛为 `transform-box: fill-box; transform-origin: center`
+- P2：`htdocs/luci-static/mintzero/menu-mintzero.js` 死代码副本与 `resources/` 版本冲突 → 删除
+- P0：LuCI 动态弹窗（无线编辑、上传、保存并应用进度等）完全无样式——`#modal_overlay` 为 body 末尾静态透明 div（实测 1600×10177px、y=-4639），被 z-40 侧栏遮挡且进度弹窗不可见（用户误以为卡死）→ 弹窗层修复后全部正常居中显示
+- P1：`#modal_overlay` 初版无条件显示暗色背景与空弹窗白块 → 改为仅 `body.modal-overlay-active` 时显示背景/弹窗，默认 `pointer-events: none` 不再拦截登录页点击
+- P1：syslog/dmesg 日志输出为裸 `<textarea>`，浏览器默认宽约 163px，日志被压成窄条 → `#maincontent textarea` 全宽 + 等宽字体，PC/手机验证正常
+- P1：日志页筛选行 label 中途折行、控件溢出（手机端）→ 筛选行 flex 换行 + label 禁止折行
+- P2：`.mz-view` 横向溢出护栏（`overflow-x: clip`），网络页表格轻微出血不再撑开页面
+
+**壁纸与页面功能修复**
+- P0：**所有页面 tab 选项卡失效、编辑弹窗全部选项平铺**——根因是 LuCI `switchTab()` 只切换 `data-tab-active` 属性，面板隐藏完全依赖主题 CSS，而主题缺少 `[data-tab-active="false"] { display: none }` 规则 → 补上后 tab 正常切换，弹窗高度从 10177px 恢复正常
+- P0：cbi-dropdown 关闭态未隐藏未选中项（LuCI 用 `selected` **属性**而非 class），保存并应用按钮堆叠所有选项、高度 92px，误杀修复时又因选择器写错导致按钮文字消失 → 最终规则 `:not([selected]):not(.hidden)`
+- P1：手机端每个选项间隔 ~340px——`.cbi-value-field { flex: 1 1 300px }` 的 basis 在列布局下变成高度 300px → 移动端改为 `flex: 1 1 auto`
+- P1：wallpaper.uc 中 `validCustomUrl` 定义在调用方 `loadConfig` 之后，ucode 不做函数提升，登录页壁纸报 error、刷新端点 500 → 函数移到调用前
+- P1：设备 `/etc/config/mintzero` 的 section type 为 `mintzero` 而视图按 `wallpaper` 过滤，设置页显示「尚无任何配置」→ 修正设备配置类型
+- P2：主题 po 翻译未安装到设备（无 lmo 文件），Dashboard/mintzero 页面中英混杂 → po 编译 lmo 部署至 `/usr/lib/lua/luci/i18n/luci-theme-mintzero.zh-cn.lmo`，登录页与 mintzero 页面全中文
+- P2：Dashboard Resources 卡片值显示 N/A 且真实值散落行外（DOM 结构错误）→ 值直接填入对应行
+- P2：移动端保存/应用按钮全宽且过高 → 统一 32px 高、auto 宽度、行内排列，与「保存/重置」对齐
+- P1：概览页数据冻结不自动刷新——footer.ut 的 `initOverview()` 只在加载时解析一次被 LuCI 轮询更新的隐藏原始表格，生成的面板是静态快照 → 改为可重入（重建前先移除旧面板）并每 5 秒从实时数据重建，实测运行时间/负载/CPU 使用率持续更新
+- P2：保存并应用下拉按钮与「保存/重置」高度不一致 → 统一 34px（移动端 32px），下拉内部行高压平
+- P2：概览信息卡内容串行（"OWRT型号Hiveton…"）——innerText 正则跨单元格吞并相邻标签 → 改为逐单元格 label→value 解析，中英文标签均支持
+
+**品牌与交互细节**
 - P1：随机壁纸去除 Bing 壁纸池回退——随机模式仅使用按设备选择的第三方 API（桌面 paugram / 移动 uapis acg-mb），API 失败时保持 CSS 渐变兜底
 - P2：侧栏菜单组双重三角形显示异常——`.mz-menu-group > a::after` 在两处重复定义（border 三角与字符 ▾ 属性混合同时渲染）→ 合并为单一 border 三角
 - P1：无线编辑弹窗手机端每个标签行被撑到 120px 高——`.modal .cbi-value-title { flex: 0 0 120px }` 的 flex-basis 在列布局下变成高度 → 改为 `flex: 0 0 auto; width: 100%`，弹窗内表单行恢复紧凑
@@ -85,7 +144,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - P2：弹窗内无线状态 <output> 文本块限高 9rem 内部滚动，避免状态行超过 1000px
 - P2：保存/重置按钮配色对齐官方 LuCI 分层（保存浅蓝、重置浅红），修复合并后的基础按钮规则在文件后部覆盖前部配色层的问题（配色层追加至文件末尾）
 
-### Added
+### Added（早期迭代，未标日期）
 - 菜单一级标题加粗 700 字重 + 深色，与二级菜单明确区分
 - 顶部信息卡片（设备/运行时间/平均负载/型号）统一 72px 高度 + 垂直居中
 - 系统信息 11 项整合到单个大卡片内，分隔线列表布局
@@ -102,14 +161,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 页脚居中 + mintzero 链接指向主题仓库
 - 圆环进度条内显示百分比数字（SVG text，方向修正）
 
-### Changed
+### Changed（早期迭代，未标日期）
 - 系统信息 label 固定 110px 灰色，value 左对齐 flex:1 占满剩余空间
 - 信息卡片 label .78rem 500 字重，value 1rem 700 字重
 - 菜单一级标题 .95rem 700 字重深色，二级 .88rem 400 字重灰色
 - 网格容器从 `1fr` 拉伸改为固定最大列宽，卡片不拉伸
 - 表格卡片去掉 max-width 限制，全宽居左
 
-### Fixed
+### Fixed（早期迭代，未标日期）
 - 菜单顶部多余的"管理权"节点移除（子项提升到顶层）
 - 系统信息卡片高度不一致（固件版本换行致 64px vs 42px）→ 统一等高
 - apply 按钮无 `.important` 类时显示为白色 → 强制蓝色
@@ -119,56 +178,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 圆环百分比文字方向错误（SVG rotate(-90deg) 连带 text 旋转）→ text 反向 rotate(90deg)
 - 全页面排版混乱 / 按钮样式错误 / 响应式缺失 → 全面补充 LuCI 组件样式
 - 保存并应用下拉按钮显示为蓝色块 + 项目符号列表 → 补充 `.cbi-dropdown` 系列样式
-
-### Added (2026-09-07 第二轮修复)
-- 顶栏面包屑导航（`renderBreadcrumb`，基于 `L.env.dispatchpath` 逐级显示当前页面路径）
-- Dashboard 视图完整样式（`.mz-dash-grid` 自适应网格 + `.mz-card` 卡片 + 流量行 + 迷你图容器，640px 以下单列）
-- 主题切换按钮选择持久化到 localStorage（`mz-theme`），刷新后不再回退
-- 端口/网络/系统/DHCP/无线/UPnP 区块识别改为中英文双语匹配，兼容英文界面
-- postrm 卸载时同时清理 `/usr/share/luci/acl.d/` 与 `/usr/share/rpcd/acl.d/` 两处 ACL 及主题 uci 变体
-
-### Fixed (2026-09-07 第二轮修复)
-- P0：ACL 只安装到 `/usr/share/luci/acl.d/` 而 rpcd 只读 `/usr/share/rpcd/acl.d/`，致 `wallpaper` 授权组缺失、`admin/mintzero` 菜单整体消失 → 新增 `theme/root/usr/share/rpcd/acl.d/luci-theme-mintzero.json`，实机验证菜单恢复
-- P1：暗色模式下 `warningbox`/`alert-message`/`infobox`/`cbi-change-list`/`#xhr_poll_status` 硬编码浅色背景刺眼 → 追加 `html[data-theme="dark"]` 覆盖改用 token 颜色
-- P1：footer.ut 隐藏条件表达式缺少右括号（`>= 0` 后语法错误）致整个内联脚本失效 → 补全括号，`node --check` 通过
-- P2：SVG 圆环 `transform-origin` 重复声明 → 收敛为 `transform-box: fill-box; transform-origin: center`
-- P2：`htdocs/luci-static/mintzero/menu-mintzero.js` 死代码副本与 `resources/` 版本冲突 → 删除
-
-### Added (2026-09-07 第三轮修复)
-- 全站弹窗系统样式（`#modal_overlay` fixed 全屏 + z-index 2000 + 半透明背景，`.modal` 居中 720px/90vh 内部滚动，640px 以下窄屏适配）
-- 保存/应用操作栏吸底（`.cbi-page-actions` sticky bottom），滚动时始终可见
-- 「保存并应用」统一主色（蓝底白字 + hover 提亮），样式一致不再丑
-- 表单控件全局 `box-sizing: border-box`，修复 system 页输入框溢出字段容器 26px
-- 表格操作列相邻按钮间距 + 单元格 `overflow-wrap`
-
-### Fixed (2026-09-07 第三轮修复)
-- P0：LuCI 动态弹窗（无线编辑、上传、保存并应用进度等）完全无样式——`#modal_overlay` 为 body 末尾静态透明 div（实测 1600×10177px、y=-4639），被 z-40 侧栏遮挡且进度弹窗不可见（用户误以为卡死）→ 弹窗层修复后全部正常居中显示
-- P1：`#modal_overlay` 初版无条件显示暗色背景与空弹窗白块 → 改为仅 `body.modal-overlay-active` 时显示背景/弹窗，默认 `pointer-events: none` 不再拦截登录页点击
-- P1：syslog/dmesg 日志输出为裸 `<textarea>`，浏览器默认宽约 163px，日志被压成窄条 → `#maincontent textarea` 全宽 + 等宽字体，PC/手机验证正常
-- P1：日志页筛选行 label 中途折行、控件溢出（手机端）→ 筛选行 flex 换行 + label 禁止折行
-- P2：`.mz-view` 横向溢出护栏（`overflow-x: clip`），网络页表格轻微出血不再撑开页面
-
-### Added (2026-09-07 第四轮修复 + 壁纸功能)
-- 壁纸来源可选 Bing 每日壁纸或自定义图片；自定义支持上传图片（≤3MB，写入 /www/luci-static/mintzero/custom.jpg）或填写 http(s) 图片直链
-- 「刷新 Bing 缓存」手动刷新按钮（新增 `admin/mintzero/wallpaper/refresh` JSON 端点，跳过节流锁强制重取）
-- cbi 选项卡（`ul.cbi-tabmenu`）完整样式：active 蓝色下划线、disabled 灰色
-- 第三方应用设计变量桥接：定义 `--brand/--surface/--text/--hairline` 等 21 个变量映射到主题 token（修复 taygedo 等应用白底白字不可见）
-- 新增 `scripts/po2lmo.py`（po → lmo 编译器，PoC 于实机验证）
-
-### Fixed (2026-09-07 第四轮修复)
-- P0：**所有页面 tab 选项卡失效、编辑弹窗全部选项平铺**——根因是 LuCI `switchTab()` 只切换 `data-tab-active` 属性，面板隐藏完全依赖主题 CSS，而主题缺少 `[data-tab-active="false"] { display: none }` 规则 → 补上后 tab 正常切换，弹窗高度从 10177px 恢复正常
-- P0：cbi-dropdown 关闭态未隐藏未选中项（LuCI 用 `selected` **属性**而非 class），保存并应用按钮堆叠所有选项、高度 92px，误杀修复时又因选择器写错导致按钮文字消失 → 最终规则 `:not([selected]):not(.hidden)`
-- P1：手机端每个选项间隔 ~340px——`.cbi-value-field { flex: 1 1 300px }` 的 basis 在列布局下变成高度 300px → 移动端改为 `flex: 1 1 auto`
-- P1：wallpaper.uc 中 `validCustomUrl` 定义在调用方 `loadConfig` 之后，ucode 不做函数提升，登录页壁纸报 error、刷新端点 500 → 函数移到调用前
-- P1：设备 `/etc/config/mintzero` 的 section type 为 `mintzero` 而视图按 `wallpaper` 过滤，设置页显示「尚无任何配置」→ 修正设备配置类型
-- P2：主题 po 翻译未安装到设备（无 lmo 文件），Dashboard/mintzero 页面中英混杂 → po 编译 lmo 部署至 `/usr/lib/lua/luci/i18n/luci-theme-mintzero.zh-cn.lmo`，登录页与 mintzero 页面全中文
-- P2：Dashboard Resources 卡片值显示 N/A 且真实值散落行外（DOM 结构错误）→ 值直接填入对应行
-- P2：移动端保存/应用按钮全宽且过高 → 统一 32px 高、auto 宽度、行内排列，与「保存/重置」对齐
-
-### Fixed (2026-09-07 第五轮修复)
-- P1：概览页数据冻结不自动刷新——footer.ut 的 `initOverview()` 只在加载时解析一次被 LuCI 轮询更新的隐藏原始表格，生成的面板是静态快照 → 改为可重入（重建前先移除旧面板）并每 5 秒从实时数据重建，实测运行时间/负载/CPU 使用率持续更新
-- P2：保存并应用下拉按钮与「保存/重置」高度不一致 → 统一 34px（移动端 32px），下拉内部行高压平
-- P2：概览信息卡内容串行（"OWRT型号Hiveton…"）——innerText 正则跨单元格吞并相邻标签 → 改为逐单元格 label→value 解析，中英文标签均支持
 
 ---
 

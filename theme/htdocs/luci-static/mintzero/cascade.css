@@ -949,7 +949,10 @@ th {
 	box-sizing: border-box;
 	padding: var(--mz-spacing-xl);
 	border-radius: var(--mz-radius-xl);
-	background: rgba(15, 21, 36, .72);
+	/* P2-2 (2026-09-07 review round 2): 0.72 -> 0.55 so the login card no
+	   longer masks the wallpaper (~18-25% show-through vs ~11-15%); the
+	   14px backdrop blur keeps text contrast. */
+	background: rgba(15, 21, 36, .55);
 	border: 1px solid rgba(255, 255, 255, .09);
 	backdrop-filter: blur(14px);
 	-webkit-backdrop-filter: blur(14px);

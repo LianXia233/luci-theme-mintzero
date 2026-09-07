@@ -274,7 +274,7 @@ return baseclass.extend({
 			document.querySelectorAll('.ifacebox-head').forEach((head) => {
 				try {
 					const cs = window.getComputedStyle(head).backgroundColor;
-					const m = cs && cs.match(/rgba\?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/);
+					const m = cs && cs.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)(?:\s*,\s*([\d.]+))?\s*\)/);
 					if (!m || (m[4] !== undefined && parseFloat(m[4]) === 0))
 						return;
 					const v = m[1] + ', ' + m[2] + ', ' + m[3];
@@ -381,6 +381,9 @@ return baseclass.extend({
 			ev.preventDefault();
 			const fail = () => ui.addNotification(null, E('p', _('Logout failed, please try again.')), 'error');
 			L.ui.sessions ? L.ui.sessions.getLocal().then((s) => {
+				/* P3-1 (2026-09-07 review round 2): an empty local session
+				   (expired/absent login) used to leave the click silent -
+				   fall through to the plain logout POST in that case too. */
 				if (s)
 					fetch(L.url('admin/logout'), { method: 'POST' }).then((res) => {
 						if (res && res.ok)
@@ -388,6 +391,8 @@ return baseclass.extend({
 						else
 							fail();
 					}).catch(fail);
+				else
+					window.location.assign(L.url('admin/logout'));
 			}) : window.location.assign(L.url('admin/logout'));
 		});
 	}
