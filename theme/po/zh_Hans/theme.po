@@ -227,6 +227,21 @@ msgid "Random wallpaper"
 msgstr "随机壁纸"
 
 #: htdocs/luci-static/resources/view/mintzero/wallpaper.js
+msgid "Mint Wallpaper"
+msgstr "Mint 壁纸"
+
+msgid "Login page background image settings. Random mode uses device-aware wallpaper APIs; the daily mode fetches a Bing photo pool server-side."
+msgstr "登录页背景图设置。随机模式按设备自动选择壁纸 API；每日模式从服务端获取 Bing 图片池。"
+
+msgid "Daily wallpaper (Bing pool)"
+msgstr "每日壁纸（Bing 源）"
+
+msgid "Wallpaper market (daily mode)"
+msgstr "壁纸市场（每日模式）"
+
+msgid "Refresh wallpaper cache"
+msgstr "刷新壁纸缓存"
+
 msgid "Pick a random image from the last fetched pool on each login page load."
 msgstr "每次进入登录页时从最近获取的壁纸池中随机选择一张。"
 

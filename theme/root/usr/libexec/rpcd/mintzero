@@ -1,0 +1,36 @@
+#!/bin/sh
+# mintzero ubus service: wallpaper cache refresh
+# Copyright (C) 2026 LianXia233
+# Licensed to the public under the Apache License 2.0.
+
+case "$1" in
+	list)
+		echo '{"refresh":{}}'
+		;;
+	call)
+		case "$2" in
+			refresh)
+				mode="$(uci -q get mintzero.wallpaper.mode || echo bing)"
+				if [ "$mode" = "custom" ]; then
+					echo '{"spawned":false,"mode":"custom"}'
+					exit 0
+				fi
+				# drop cache + throttle lock, then fetch fresh metadata
+				rm -f /tmp/mintzero-wallpaper/bing-raw.json \
+					/tmp/mintzero-wallpaper/refresh.lock
+				mkdir -p /tmp/mintzero-wallpaper
+				mkt="$(uci -q get mintzero.wallpaper.market || echo zh-CN)"
+				cnt="$(uci -q get mintzero.wallpaper.count || echo 8)"
+				wget -q -O /tmp/mintzero-wallpaper/bing-raw.json \
+					-T 8 -U "mintzero-wallpaper/1.0" \
+					"https://www.bing.com/HPImageArchive.aspx?format=js&idx=0&n=${cnt}&mkt=${mkt}" \
+					>/dev/null 2>&1 &
+				echo '{"spawned":true,"mode":"bing"}'
+				;;
+			*)
+				echo '{"error":"invalid method"}'
+				;;
+		esac
+		;;
+esac
+exit 0

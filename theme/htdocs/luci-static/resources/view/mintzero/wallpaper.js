@@ -9,6 +9,12 @@
 'require uci';
 'require ui';
 
+var callRefresh = rpc.declare({
+	object: 'mintzero',
+	method: 'refresh',
+	expect: { '': {} }
+});
+
 var callFileWrite = rpc.declare({
 	object: 'file',
 	method: 'write',
@@ -19,8 +25,8 @@ var callFileWrite = rpc.declare({
 	return view.extend({
 		render() {
 			const self = this;
-			const m = new form.Map('mintzero', _('Bing Wallpaper'),
-			_('Background image for the login page. Metadata is fetched server-side with caching; the browser loads the image directly from Bing.'));
+			const m = new form.Map('mintzero', _('Mint Wallpaper'),
+			_('Login page background image settings. Random mode uses device-aware wallpaper APIs; the daily mode fetches a Bing photo pool server-side.'));
 
 		const s = m.section(form.TypedSection, 'wallpaper', null, _('Settings'));
 		s.addremove = false;
@@ -30,7 +36,7 @@ var callFileWrite = rpc.declare({
 			_('When disabled, the login page uses the built-in gradient fallback.'));
 
 		const mode = s.option(form.ListValue, 'mode', _('Wallpaper source'));
-		mode.value('bing', _('Bing daily wallpaper'));
+		mode.value('bing', _('Daily wallpaper (Bing pool)'));
 		mode.value('custom', _('Custom image'));
 		mode.default = 'bing';
 
@@ -39,7 +45,7 @@ var callFileWrite = rpc.declare({
 		url.rmempty = true;
 		url.depends('mode', 'custom');
 
-		const market = s.option(form.ListValue, 'market', _('Bing Market'));
+		const market = s.option(form.ListValue, 'market', _('Wallpaper market (daily mode)'));
 		market.value('zh-CN', 'zh-CN');
 		market.value('en-US', 'en-US');
 		market.value('ja-JP', 'ja-JP');
@@ -74,7 +80,7 @@ var callFileWrite = rpc.declare({
 						ev.stopPropagation();
 						self.handleRefresh(ev);
 					}
-				}, [ _('Refresh Bing cache') ]),
+				}, [ _('Refresh wallpaper cache') ]),
 				E('input', {
 					'type': 'file',
 					'id': 'mz-wp-file',
@@ -111,10 +117,7 @@ var callFileWrite = rpc.declare({
 			ev.preventDefault();
 			ev.stopPropagation();
 		}
-		return fetch(L.url('admin/system/mintwallpaper/refresh'), {
-			method: 'POST',
-			credentials: 'same-origin'
-		}).then(r => r.json()).then((data) => {
+		return callRefresh().then((data) => {
 			if (data && data.spawned)
 				ui.addNotification(null, E('p', _('Refresh triggered. The new wallpaper pool loads in the background and appears after the cache reloads.')), 'info');
 			else

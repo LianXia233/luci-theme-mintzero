@@ -2,31 +2,24 @@
 	"admin/system/mintwallpaper": {
 		"title": "Mint壁纸设置",
 		"order": 60,
-		"action": { "type": "firstchild" },
+		"action": {
+			"type": "firstchild"
+		},
 		"depends": {
-			"acl": [ "wallpaper" ],
-			"uci": { "mintzero": true }
+			"acl": [
+				"wallpaper"
+			],
+			"uci": {
+				"mintzero": true
+			}
 		}
 	},
-
 	"admin/system/mintwallpaper/settings": {
 		"title": "Mint壁纸设置",
 		"order": 1,
 		"action": {
 			"type": "view",
 			"path": "mintzero/wallpaper"
-		}
-	},
-
-	"admin/system/mintwallpaper/refresh": {
-		"title": "Mint壁纸刷新",
-		"order": 2,
-		"action": {
-			"type": "template",
-			"path": "themes/mintzero/wallpaper-refresh"
-		},
-		"depends": {
-			"acl": [ "wallpaper" ]
 		}
 	}
 }

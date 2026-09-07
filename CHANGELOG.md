@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 移除 mintzero 独立菜单与 Dashboard 页面（与概览页功能冲突）：删除 `admin/mintzero/*` 全部路由与 `view/mintzero/dashboard.js`
 - 壁纸设置迁移至「系统」菜单下，更名「Mint壁纸设置」（`admin/system/mintwallpaper/settings`），刷新端点同步迁移至 `admin/system/mintwallpaper/refresh`
 - 壁纸页刷新/上传按钮挂载逻辑加固：优先注入地图自带操作栏（与保存/重置同排），操作栏未渲染时回退插入地图顶部
+
+### Changed (2026-09-07 去 Bing 化 + RPC 刷新端点)
+- 壁纸页全面去 Bing 字样：标题「Mint Wallpaper」，来源选项「每日壁纸（Bing 源）/ 自定义图片」，市场选项改为「壁纸市场（每日模式）」，刷新按钮改为「刷新壁纸缓存」
+- 刷新端点从页面路由改为 **rpcd ubus 服务**（`/usr/libexec/rpcd/mintzero`，方法 `mintzero refresh`）：不再注册菜单/tab，点击按钮不再跳出后台 JSON 页面，改由 ubus RPC 原地返回状态
+- 部署设置 `luci.main.resource_version=mz20260907f` 强制所有客户端浏览器刷新静态资源缓存（解决 view JS 缓存导致按钮/选项不显示的问题）
+- 清理 po 中 Dashboard 遗留条目，新增迁移后文案的简体中文翻译
 - P1：随机壁纸去除 Bing 壁纸池回退——随机模式仅使用按设备选择的第三方 API（桌面 paugram / 移动 uapis acg-mb），API 失败时保持 CSS 渐变兜底
 - P2：侧栏菜单组双重三角形显示异常——`.mz-menu-group > a::after` 在两处重复定义（border 三角与字符 ▾ 属性混合同时渲染）→ 合并为单一 border 三角
 - P1：无线编辑弹窗手机端每个标签行被撑到 120px 高——`.modal .cbi-value-title { flex: 0 0 120px }` 的 flex-basis 在列布局下变成高度 → 改为 `flex: 0 0 auto; width: 100%`，弹窗内表单行恢复紧凑
